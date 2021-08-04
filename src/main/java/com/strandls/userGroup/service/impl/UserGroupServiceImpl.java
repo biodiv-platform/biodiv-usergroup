@@ -154,8 +154,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
-	
-	@Inject 
+
+	@Inject
 	private UserGroupDataTableDao userGroupDataTableDao;
 
 	@Inject
@@ -1840,8 +1840,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		return null;	
+		return null;
 	}
+
 	public List<UserGroupIbp> fetchBySpeciesId(Long speciesId) {
 
 		List<UserGroupSpecies> ugSpeciesList = ugSpeciesDao.findBySpeciesId(speciesId);

@@ -1139,7 +1139,6 @@ public class UserGroupController {
 		}
 	}
 
-	
 	@GET
 	@Path(ApiConstants.DATATABLE + "/{dataTableId}")
 	@Consumes(MediaType.TEXT_PLAIN)
