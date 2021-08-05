@@ -39,7 +39,8 @@ public class UserGroupExpanded {
 	 * @param speciesGroupIds
 	 * @param habitatIds
 	 */
-	public UserGroupExpanded(Long id, String name, String icon, String webAddress, Boolean isParticipatory, Long memberCount, Date foundedOn, Date startDate, List<Long> speciesGroupIds, List<Long> habitatIds) {
+	public UserGroupExpanded(Long id, String name, String icon, String webAddress, Boolean isParticipatory,
+			Long memberCount, Date foundedOn, Date startDate, List<Long> speciesGroupIds, List<Long> habitatIds) {
 		super();
 		this.id = id;
 		this.name = name;

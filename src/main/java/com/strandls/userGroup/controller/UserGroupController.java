@@ -262,7 +262,7 @@ public class UserGroupController {
 	@Path(ApiConstants.LIST)
 	@Produces(MediaType.APPLICATION_JSON)
 
-	@ApiOperation(value = "Find all the UserGroups for list page", notes = "Returns all the UserGroups for list page", response = UserGroupIbp.class, responseContainer = "List")
+	@ApiOperation(value = "Find all the UserGroups for list page", notes = "Returns all the UserGroups for list page", response = UserGroupExpanded.class, responseContainer = "List")
 	@ApiResponses(value = {
 			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups list", response = String.class) })
 
@@ -1092,8 +1092,7 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.MEMBER + "/list")
-	@Consumes(MediaType.TEXT_PLAIN)
+	@Path(ApiConstants.MEMBER + ApiConstants.LIST)
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ValidateUser
