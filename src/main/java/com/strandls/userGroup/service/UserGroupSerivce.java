@@ -24,6 +24,7 @@ import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
+import com.strandls.userGroup.pojo.UserGroupExpanded;
 import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupInvitationData;
@@ -55,6 +56,8 @@ public interface UserGroupSerivce {
 			UserGroupMappingCreateData userGorups);
 
 	public List<UserGroupIbp> fetchAllUserGroup();
+
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded();
 
 	public List<Featured> fetchFeatured(String objectType, Long id);
 

@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package com.strandls.userGroup.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
+import com.strandls.userGroup.pojo.UserGroupExpanded;
 import com.strandls.userGroup.pojo.UserGroupFilterEnable;
 import com.strandls.userGroup.pojo.UserGroupFilterRemove;
 import com.strandls.userGroup.pojo.UserGroupFilterRuleInputData;
@@ -250,6 +252,23 @@ public class UserGroupController {
 	public Response getAllUserGroup() {
 		try {
 			List<UserGroupIbp> result = ugServices.fetchAllUserGroup();
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path(ApiConstants.LIST)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Find all the UserGroups for list page", notes = "Returns all the UserGroups for list page", response = UserGroupExpanded.class, responseContainer = "List")
+	@ApiResponses(value = {
+			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups list", response = String.class) })
+
+	public Response getAllUserGroupList() {
+		try {
+			List<UserGroupExpanded> result = ugServices.fetchAllUserGroupExpanded();
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -1068,6 +1087,34 @@ public class UserGroupController {
 			return Response.status(Status.NOT_FOUND).build();
 
 		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path(ApiConstants.MEMBER + ApiConstants.LIST)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "list all groups by membership status", notes = "returns true and false", response = Boolean.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to fetch the data", response = String.class) })
+
+	public Response userGroupMemberList(@Context HttpServletRequest request) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long userId = Long.parseLong(profile.getId());
+
+			List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup();
+			Map<Long, Boolean> result = new HashMap<Long, Boolean>();
+
+			for (UserGroupIbp userGroup : userGroupList) {
+				Boolean isMember = ugMemberService.checkUserGroupMember(userId, userGroup.getId());
+				result.put(userGroup.getId(), isMember);
+			}
+
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
