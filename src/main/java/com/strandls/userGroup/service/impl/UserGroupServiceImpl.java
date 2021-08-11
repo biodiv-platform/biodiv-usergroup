@@ -65,6 +65,7 @@ import com.strandls.userGroup.pojo.UserGroupDataTable;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocument;
 import com.strandls.userGroup.pojo.UserGroupEditData;
+import com.strandls.userGroup.pojo.UserGroupExpanded;
 import com.strandls.userGroup.pojo.UserGroupHabitat;
 import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
@@ -386,6 +387,59 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
+		return result;
+	}
+
+	@Override
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded() {
+		List<UserGroupExpanded> result = new ArrayList<UserGroupExpanded>();
+
+		try {
+			List<UserGroup> userGroupList = userGroupDao.findAll();
+			List<UserGroupMembersCount> count = ugMemberService.getUserGroupMemberCount();
+			Map<Long, UserGroupExpanded> ugMap = new HashMap<Long, UserGroupExpanded>();
+			UserGroupExpanded ibp = null;
+			for (UserGroup userGroup : userGroupList) {
+
+				List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroup.getId());
+				List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroup.getId());
+				List<Long> speciesGroupIds = new ArrayList<Long>();
+				List<Long> habitatIds = new ArrayList<Long>();
+				for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
+					speciesGroupIds.add(ugSpeciesGroup.getSpeciesGroupId());
+				}
+				for (UserGroupHabitat ugHabitat : ugHabitats) {
+					habitatIds.add(ugHabitat.getHabitatId());
+				}
+
+				String webAddress = userGroup.getDomianName();
+
+				if (webAddress == null) {
+					webAddress = "/group/" + userGroup.getWebAddress();
+				}
+
+				ibp = new UserGroupExpanded(userGroup.getId(), userGroup.getName(), userGroup.getIcon(),
+						webAddress, userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(), speciesGroupIds, habitatIds);
+
+				ugMap.put(userGroup.getId(), ibp);
+			}
+
+			// Iterate through member count and assign it to expanded modal
+			for (UserGroupMembersCount ugm : count) {
+				UserGroupExpanded ugx = ugMap.get(ugm.getUserGroupId());
+				ugx.setMemberCount(ugm.getCount());
+				result.add(ugx);
+				ugMap.remove(ugm.getUserGroupId());
+			}
+
+			for (Entry<Long, UserGroupExpanded> entry : ugMap.entrySet()) {
+				result.add(entry.getValue());
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
 		return result;
 	}
 
