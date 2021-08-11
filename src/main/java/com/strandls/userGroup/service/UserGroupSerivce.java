@@ -131,6 +131,8 @@ public interface UserGroupSerivce {
 
 	public Boolean enableEdit(HttpServletRequest request, Long userGroupId);
 
+	public List<UserGroupIbp> fetchByDataTableId(Long id);
+
 	public List<UserGroupIbp> fetchBySpeciesId(Long speciesId);
 
 	public List<UserGroupIbp> createUGSpeciesMapping(HttpServletRequest request, Long speciesId,
