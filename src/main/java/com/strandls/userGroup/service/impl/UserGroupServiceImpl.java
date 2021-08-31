@@ -35,6 +35,7 @@ import com.strandls.userGroup.dao.FeaturedDao;
 import com.strandls.userGroup.dao.GroupGallerySliderDao;
 import com.strandls.userGroup.dao.StatsDao;
 import com.strandls.userGroup.dao.UserGroupDao;
+import com.strandls.userGroup.dao.UserGroupDataTableDao;
 import com.strandls.userGroup.dao.UserGroupDocumentDao;
 import com.strandls.userGroup.dao.UserGroupHabitatDao;
 import com.strandls.userGroup.dao.UserGroupInvitaionDao;
@@ -60,9 +61,11 @@ import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
+import com.strandls.userGroup.pojo.UserGroupDataTable;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocument;
 import com.strandls.userGroup.pojo.UserGroupEditData;
+import com.strandls.userGroup.pojo.UserGroupExpanded;
 import com.strandls.userGroup.pojo.UserGroupHabitat;
 import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
@@ -152,6 +155,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
+
+	@Inject
+	private UserGroupDataTableDao userGroupDataTableDao;
 
 	@Inject
 	private UserGroupSpeciesDao ugSpeciesDao;
@@ -352,6 +358,59 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
+		return result;
+	}
+
+	@Override
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded() {
+		List<UserGroupExpanded> result = new ArrayList<UserGroupExpanded>();
+
+		try {
+			List<UserGroup> userGroupList = userGroupDao.findAll();
+			List<UserGroupMembersCount> count = ugMemberService.getUserGroupMemberCount();
+			Map<Long, UserGroupExpanded> ugMap = new HashMap<Long, UserGroupExpanded>();
+			UserGroupExpanded ibp = null;
+			for (UserGroup userGroup : userGroupList) {
+
+				List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroup.getId());
+				List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroup.getId());
+				List<Long> speciesGroupIds = new ArrayList<Long>();
+				List<Long> habitatIds = new ArrayList<Long>();
+				for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
+					speciesGroupIds.add(ugSpeciesGroup.getSpeciesGroupId());
+				}
+				for (UserGroupHabitat ugHabitat : ugHabitats) {
+					habitatIds.add(ugHabitat.getHabitatId());
+				}
+
+				String webAddress = userGroup.getDomianName();
+
+				if (webAddress == null) {
+					webAddress = "/group/" + userGroup.getWebAddress();
+				}
+
+				ibp = new UserGroupExpanded(userGroup.getId(), userGroup.getName(), userGroup.getIcon(),
+						webAddress, userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(), speciesGroupIds, habitatIds);
+
+				ugMap.put(userGroup.getId(), ibp);
+			}
+
+			// Iterate through member count and assign it to expanded modal
+			for (UserGroupMembersCount ugm : count) {
+				UserGroupExpanded ugx = ugMap.get(ugm.getUserGroupId());
+				ugx.setMemberCount(ugm.getCount());
+				result.add(ugx);
+				ugMap.remove(ugm.getUserGroupId());
+			}
+
+			for (Entry<Long, UserGroupExpanded> entry : ugMap.entrySet()) {
+				result.add(entry.getValue());
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
 		return result;
 	}
 
@@ -1806,6 +1865,24 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
+	public List<UserGroupIbp> fetchByDataTableId(Long id) {
+		try {
+			List<UserGroupDataTable> userGroupDataTable = userGroupDataTableDao.findByDataTableId(id);
+			List<UserGroupIbp> userGroup = new ArrayList<UserGroupIbp>();
+			if (userGroupDataTable != null && !userGroupDataTable.isEmpty()) {
+				for (UserGroupDataTable ugObv : userGroupDataTable) {
+					userGroup.add(fetchByGroupIdIbp(ugObv.getUserGroupId()));
+				}
+			}
+			if (!userGroup.isEmpty())
+				return userGroup;
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
+	}
+
 	public List<UserGroupIbp> fetchBySpeciesId(Long speciesId) {
 
 		List<UserGroupSpecies> ugSpeciesList = ugSpeciesDao.findBySpeciesId(speciesId);
