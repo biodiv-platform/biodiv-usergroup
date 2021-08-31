@@ -76,6 +76,7 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 
 	@SuppressWarnings("unchecked")
 	public List<UserGroupMemberRole> fetchByUserGroupIdRole(Long userGroupId) {
+		Session session = sessionFactory.openSession();
 		try {
 			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties");
 			Properties properties = new Properties();
@@ -89,7 +90,7 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 
 			String qry = "from UserGroupMemberRole where userGroupId = :ugId and roleId = :roleId";
 			List<UserGroupMemberRole> result = new ArrayList<UserGroupMemberRole>();
-			Session session = sessionFactory.openSession();
+
 			try {
 				Query<UserGroupMemberRole> query = session.createQuery(qry);
 				query.setParameter("ugId", userGroupId);
@@ -97,13 +98,13 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 				result = query.getResultList();
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-			} finally {
-				session.close();
 			}
 			return result;
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+		} finally {
+			session.close();
 		}
 		return null;
 
@@ -140,12 +141,13 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 		String expert = properties.getProperty("userGroupExpert");
 		String founder = properties.getProperty("userGroupFounder");
 
-		String qry = "from UserGroupMemberRole where sUserId = :userId and roleId in ( " + founder + " , " + expert
-				+ ")";
+		String qry = "from UserGroupMemberRole where sUserId = :userId and roleId in (:founder,:expert)";
 		Session session = sessionFactory.openSession();
 		List<UserGroupMemberRole> result = null;
 		try {
 			Query<UserGroupMemberRole> query = session.createQuery(qry);
+			query.setParameter("founder", founder);
+			query.setParameter("expert", expert);
 			query.setParameter("userId", userId);
 
 			result = query.getResultList();
@@ -236,10 +238,11 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 
 		List<UserGroupMemberRole> result = null;
 		Session session = sessionFactory.openSession();
-		String qry = "from UserGroupMemberRole where userGroupId = :ugId and roleId in ( " + founder + " , " + expert
-				+ ")";
+		String qry = "from UserGroupMemberRole where userGroupId = :ugId and roleId in ( :founder,:expert)";
 		try {
 			Query<UserGroupMemberRole> query = session.createQuery(qry);
+			query.setParameter("founder", founder);
+			query.setParameter("expert", expert);
 			query.setParameter("ugId", userGroupId);
 			result = query.getResultList();
 

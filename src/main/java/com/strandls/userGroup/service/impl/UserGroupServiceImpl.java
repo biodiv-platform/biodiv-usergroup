@@ -249,18 +249,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				UserGroupObservation result = userGroupObvDao.save(userGroupObs);
 				if (result != null) {
 					resultList.add(result.getUserGroupId());
-					UserGroupActivity ugActivity = new UserGroupActivity();
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroup);
-					String description = null;
-					ugActivity.setFeatured(null);
-					ugActivity.setUserGroupId(ugIbp.getId());
-					ugActivity.setUserGroupName(ugIbp.getName());
-					ugActivity.setWebAddress(ugIbp.getWebAddress());
-					try {
-						description = objectMapper.writeValueAsString(ugActivity);
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-					}
+					String description = createUgDescription(ugIbp);
 					MailData mailData = null;
 					if (userGroups.getMailData() != null) {
 						mailData = updateMailData(observationId, userGroups.getMailData());
@@ -290,18 +280,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				if (eligible) {
 					userGroupObvDao.delete(ug);
 
-					UserGroupActivity ugActivity = new UserGroupActivity();
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
-					String description = null;
-					ugActivity.setFeatured(null);
-					ugActivity.setUserGroupId(ugIbp.getId());
-					ugActivity.setUserGroupName(ugIbp.getName());
-					ugActivity.setWebAddress(ugIbp.getWebAddress());
-					try {
-						description = objectMapper.writeValueAsString(ugActivity);
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-					}
+
+					String description = createUgDescription(ugIbp);
 
 					MailData mailData = updateMailData(observationId, userGorups.getMailData());
 					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
@@ -321,18 +302,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					UserGroupObservation userGroupMapping = new UserGroupObservation(userGroupId, observationId);
 					userGroupObvDao.save(userGroupMapping);
 
-					UserGroupActivity ugActivity = new UserGroupActivity();
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
-					String description = null;
-					ugActivity.setFeatured(null);
-					ugActivity.setUserGroupId(ugIbp.getId());
-					ugActivity.setUserGroupName(ugIbp.getName());
-					ugActivity.setWebAddress(ugIbp.getWebAddress());
-					try {
-						description = objectMapper.writeValueAsString(ugActivity);
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-					}
+					String description = createUgDescription(ugIbp);
 
 					MailData mailData = updateMailData(observationId, userGorups.getMailData());
 					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
@@ -415,7 +386,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 				int flag = 0;
 				for (Featured alreadyFeatured : featuredList) {
-					if (alreadyFeatured.getUserGroup() == userGroupId) {
+					if (alreadyFeatured.getUserGroup().equals(userGroupId)) {
 						alreadyFeatured.setCreatedOn(new Date());
 						alreadyFeatured.setNotes(featuredCreate.getNotes());
 						alreadyFeatured.setAuthorId(userId);
@@ -427,7 +398,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				if (flag == 0) {
 					featured = new Featured(null, 0L, userId, new Date(), featuredCreate.getNotes(),
 							featuredCreate.getObjectId(), featuredCreate.getObjectType(), userGroupId,
-							defaultLanguageId, null);
+							featuredCreate.getLanguageId() != null ? featuredCreate.getLanguageId() : defaultLanguageId,
+							null);
 					featured = featuredDao.save(featured);
 
 				}
@@ -524,7 +496,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			for (Long userGroupId : userGroupList.getUserGroups()) {
 
 				for (Featured featured : featuredList) {
-					if (featured.getUserGroup() == userGroupId) {
+					if (featured.getUserGroup().equals(userGroupId)) {
 						featuredDao.delete(featured);
 						Long activityId = userGroupId;
 						if (userGroupId == null)
@@ -646,7 +618,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			String serverUrl = properties.getProperty("serverUrl");
@@ -723,7 +695,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 			if (ugInvite != null) {
 				String desc = "Sent invitation for Role: " + role;
-				if (inviteeId == null) {
+				if (inviteeId == null && email != null) {
 					String emailsplit[] = email.split("@");
 					desc = "Sent Invitaion to a NON-registred user : " + emailsplit[0] + " for role : " + role;
 				}
@@ -764,7 +736,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			Long founderId = Long.parseLong(properties.getProperty("userGroupFounder"));
@@ -897,7 +869,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				try {
 					properties.load(in);
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 				String serverUrl = properties.getProperty("serverUrl");
 				in.close();
@@ -937,7 +909,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			Long memberId = Long.parseLong(properties.getProperty("userGroupMember"));
 			in.close();
@@ -990,7 +962,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			Long memberId = Long.parseLong(properties.getProperty("userGroupMember"));
 			String serverUrl = properties.getProperty("serverUrl");
@@ -1063,7 +1035,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains("ROLE_ADMIN") || isFounder || isModerator) {
+				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
 					UserGroupObservation result;
@@ -1137,7 +1109,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains("ROLE_ADMIN") || isFounder || isModerator) {
+				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
 					UserGroupObservation result;
 					for (Long obvId : observationList) {
@@ -1190,7 +1162,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					ugCreateData.getDescription(), ugCreateData.getDomainName(), new Date(), ugCreateData.getHomePage(),
 					ugCreateData.getIcon(), false, ugCreateData.getName(), ugCreateData.getNeLatitude(),
 					ugCreateData.getNeLongitude(), ugCreateData.getSwLatitude(), ugCreateData.getSwLongitude(),
-					ugCreateData.getTheme(), 1L, webAddress, ugCreateData.getLanguageId(),
+					ugCreateData.getTheme(), 1L, webAddress,
+					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId,
 					ugCreateData.getSendDigestMail(), new Date(), null, ugCreateData.getNewFilterRule(), true, true,
 					true, true, true, true);
 
@@ -1360,7 +1333,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				try {
 					properties.load(in);
 				} catch (IOException e) {
-					e.printStackTrace();
+				logger.error(e.getMessage());
 				}
 				Long founderId = Long.parseLong(properties.getProperty("userGroupFounder"));
 				Long moderatorId = Long.parseLong(properties.getProperty("userGroupExpert"));
@@ -1610,7 +1583,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 		return userData;
@@ -1664,7 +1636,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 		return userData;
@@ -1814,9 +1785,24 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 		Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
-		if (roles.contains("ROLE_ADMIN") || isFounder || isModerator)
+		if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator))
 			return true;
 		return false;
+	}
+	
+	private String createUgDescription(	UserGroupIbp ugIbp) {
+		UserGroupActivity ugActivity = new UserGroupActivity();
+		String description = null;
+		ugActivity.setFeatured(null);
+		ugActivity.setUserGroupId(ugIbp.getId());
+		ugActivity.setUserGroupName(ugIbp.getName());
+		ugActivity.setWebAddress(ugIbp.getWebAddress());
+		try {
+			 description = objectMapper.writeValueAsString(ugActivity);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return description;
 	}
 
 	@Override

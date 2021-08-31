@@ -878,7 +878,7 @@ public class UserGroupController {
 			if (Boolean.parseBoolean(data.get("status").toString())
 					&& !Boolean.parseBoolean(data.get("verificationRequired").toString())) {
 				NewCookie accessToken = new NewCookie("BAToken", data.get("access_token").toString(), "/",
-						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
+						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60,false);
 				NewCookie refreshToken = new NewCookie("BRToken", data.get("refresh_token").toString(), "/",
 						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
 				response.cookie(accessToken).cookie(refreshToken);
@@ -901,7 +901,7 @@ public class UserGroupController {
 			if (Boolean.parseBoolean(data.get("status").toString())
 					&& !Boolean.parseBoolean(data.get("verificationRequired").toString())) {
 				NewCookie accessToken = new NewCookie("BAToken", data.get("access_token").toString(), "/",
-						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
+						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60,false);
 				NewCookie refreshToken = new NewCookie("BRToken", data.get("refresh_token").toString(), "/",
 						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
 				response.cookie(accessToken).cookie(refreshToken);
