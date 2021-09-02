@@ -138,8 +138,8 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		String expert = properties.getProperty("userGroupExpert");
-		String founder = properties.getProperty("userGroupFounder");
+		Long expert = Long.parseLong(properties.getProperty("userGroupExpert"));
+		Long founder = Long.parseLong(properties.getProperty("userGroupFounder"));
 
 		String qry = "from UserGroupMemberRole where sUserId = :userId and roleId in (:founder,:expert)";
 		Session session = sessionFactory.openSession();

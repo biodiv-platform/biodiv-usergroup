@@ -84,11 +84,11 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 
 	@SuppressWarnings("unchecked")
 	public Long getObservationAuthor(String observationId) {
-		String qry = "SELECT author_id from observation where id = :observationId";
+		String qry = "SELECT author_id from observation where id = observationId";
 		Session session = sessionFactory.openSession();
 		try {
+			qry = qry.replace("observationId", observationId);
 			Query<Object> query = session.createNativeQuery(qry);
-			query.setParameter("observationId", observationId);
 			Object resultObject = query.getSingleResult();
 			Long authorId = Long.parseLong(resultObject.toString());
 			return authorId;
