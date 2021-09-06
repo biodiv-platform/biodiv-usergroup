@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -19,6 +20,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletContextEvent;
 
@@ -37,7 +39,7 @@ import com.google.inject.servlet.ServletModule;
 import com.rabbitmq.client.Channel;
 import com.strandls.activity.controller.ActivitySerivceApi;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
-import com.strandls.taxonomy.controllers.TaxonomyServicesApi;
+import com.strandls.taxonomy.controllers.TaxonomyTreeServicesApi;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.userGroup.controller.UserGroupControllerModule;
 import com.strandls.userGroup.dao.UserGroupDaoModule;
@@ -65,7 +67,6 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 						configuration.addAnnotatedClass(cls);
 					}
 				} catch (ClassNotFoundException | IOException | URISyntaxException e) {
-					e.printStackTrace();
 					logger.error(e.getMessage());
 				}
 
@@ -96,7 +97,7 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 				bind(SessionFactory.class).toInstance(sessionFactory);
 				bind(ActivitySerivceApi.class).in(Scopes.SINGLETON);
 				bind(UserServiceApi.class).in(Scopes.SINGLETON);
-				bind(TaxonomyServicesApi.class).in(Scopes.SINGLETON);
+				bind(TaxonomyTreeServicesApi.class).in(Scopes.SINGLETON);
 				bind(Headers.class).in(Scopes.SINGLETON);
 				bind(TokenGenerator.class).in(Scopes.SINGLETON);
 				bind(ServletContainer.class).in(Scopes.SINGLETON);
@@ -139,14 +140,18 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 		URI uri = new URI(packageURL.toString());
 		File folder = new File(uri.getPath());
 
-		Files.find(Paths.get(folder.getAbsolutePath()), 999, (p, bfa) -> bfa.isRegularFile()).forEach(file -> {
-			String name = file.toFile().getAbsolutePath().replaceAll(folder.getAbsolutePath() + File.separatorChar, "")
-					.replace(File.separatorChar, '.');
-			if (name.indexOf('.') != -1) {
-				name = packageName + '.' + name.substring(0, name.lastIndexOf('.'));
-				names.add(name);
-			}
-		});
+		try (Stream<Path> files = Files.find(Paths.get(folder.getAbsolutePath()), 999,
+				(p, bfa) -> bfa.isRegularFile())) {
+
+			files.forEach(file -> {
+				String name = file.toFile().getAbsolutePath()
+						.replaceAll(folder.getAbsolutePath() + File.separatorChar, "").replace(File.separatorChar, '.');
+				if (name.indexOf('.') != -1) {
+					name = packageName + '.' + name.substring(0, name.lastIndexOf('.'));
+					names.add(name);
+				}
+			});
+		}
 
 		return names;
 	}
@@ -163,8 +168,7 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 		try {
 			channel.getConnection().close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		super.contextDestroyed(servletContextEvent);

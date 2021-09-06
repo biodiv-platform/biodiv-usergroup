@@ -22,11 +22,14 @@ import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
+import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
+import com.strandls.userGroup.pojo.UserGroupExpanded;
 import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupInvitationData;
 import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
+import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupWKT;
 
@@ -53,6 +56,8 @@ public interface UserGroupSerivce {
 			UserGroupMappingCreateData userGorups);
 
 	public List<UserGroupIbp> fetchAllUserGroup();
+
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded();
 
 	public List<Featured> fetchFeatured(String objectType, Long id);
 
@@ -106,6 +111,12 @@ public interface UserGroupSerivce {
 
 	public Map<String, Object> verifyOTPProxy(HttpServletRequest request, Long id, String otp);
 
+	public List<UserGroupIbp> fetchByDocumentId(Long documentId);
+
+	public List<UserGroupIbp> createUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate);
+
+	public List<UserGroupIbp> updateUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate);
+
 	public UserGroupHomePageEditData getGroupHomePageEditData(HttpServletRequest request, Long userGroupId);
 
 	public GroupHomePageData getGroupHomePageData(Long userGroupId);
@@ -119,5 +130,15 @@ public interface UserGroupSerivce {
 			List<ReorderingHomePage> reorderingHomePage);
 
 	public Boolean enableEdit(HttpServletRequest request, Long userGroupId);
+
+	public List<UserGroupIbp> fetchByDataTableId(Long id);
+
+	public List<UserGroupIbp> fetchBySpeciesId(Long speciesId);
+
+	public List<UserGroupIbp> createUGSpeciesMapping(HttpServletRequest request, Long speciesId,
+			UserGroupSpeciesCreateData ugSpeciesCreateData);
+
+	public List<UserGroupIbp> updateUGSpeciesMapping(HttpServletRequest request, Long speciesId,
+			UserGroupSpeciesCreateData ugSpeciesCreateData);
 
 }

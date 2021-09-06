@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -18,9 +21,10 @@ import com.rabbitmq.client.ConnectionFactory;
  */
 public class RabbitMqConnection {
 
+	private static final Logger logger = LoggerFactory.getLogger(RabbitMqConnection.class);
 	public final static String EXCHANGE_BIODIV = "biodiv";
-	private final static String QUEUE_ELASTIC = "elastic";
-	private final static String ROUTING_ELASTIC = "esmodule";
+	private final static String OBSERVATION_QUEUE = "observationQueue";
+	private final static String ROUTING_OBSERVATION = "observation";
 
 	public final static String MAILING_QUEUE;
 	public final static String MAILING_ROUTINGKEY;
@@ -37,7 +41,7 @@ public class RabbitMqConnection {
 		try {
 			properties.load(in);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		RABBITMQ_HOST = properties.getProperty("rabbitmq_host");
@@ -50,7 +54,7 @@ public class RabbitMqConnection {
 		try {
 			in.close();
 		} catch (IOException e) {
-
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -64,8 +68,8 @@ public class RabbitMqConnection {
 		Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		channel.exchangeDeclare(EXCHANGE_BIODIV, "direct");
-		channel.queueDeclare(QUEUE_ELASTIC, false, false, false, null);
-		channel.queueBind(QUEUE_ELASTIC, EXCHANGE_BIODIV, ROUTING_ELASTIC);
+		channel.queueDeclare(OBSERVATION_QUEUE, false, false, false, null);
+		channel.queueBind(OBSERVATION_QUEUE, EXCHANGE_BIODIV, ROUTING_OBSERVATION);
 		channel.queueDeclare(MAILING_QUEUE, false, false, false, null);
 		channel.queueBind(MAILING_QUEUE, EXCHANGE_BIODIV, MAILING_ROUTINGKEY);
 

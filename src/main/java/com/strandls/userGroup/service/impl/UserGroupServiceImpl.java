@@ -35,10 +35,13 @@ import com.strandls.userGroup.dao.FeaturedDao;
 import com.strandls.userGroup.dao.GroupGallerySliderDao;
 import com.strandls.userGroup.dao.StatsDao;
 import com.strandls.userGroup.dao.UserGroupDao;
+import com.strandls.userGroup.dao.UserGroupDataTableDao;
+import com.strandls.userGroup.dao.UserGroupDocumentDao;
 import com.strandls.userGroup.dao.UserGroupHabitatDao;
 import com.strandls.userGroup.dao.UserGroupInvitaionDao;
 import com.strandls.userGroup.dao.UserGroupJoinRequestDao;
 import com.strandls.userGroup.dao.UserGroupObservationDao;
+import com.strandls.userGroup.dao.UserGroupSpeciesDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesGroupDao;
 import com.strandls.userGroup.dao.UserGroupUserRequestDAO;
 import com.strandls.userGroup.dto.AuthenticationDTO;
@@ -58,7 +61,11 @@ import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
+import com.strandls.userGroup.pojo.UserGroupDataTable;
+import com.strandls.userGroup.pojo.UserGroupDocCreateData;
+import com.strandls.userGroup.pojo.UserGroupDocument;
 import com.strandls.userGroup.pojo.UserGroupEditData;
+import com.strandls.userGroup.pojo.UserGroupExpanded;
 import com.strandls.userGroup.pojo.UserGroupHabitat;
 import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
@@ -69,6 +76,8 @@ import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
 import com.strandls.userGroup.pojo.UserGroupMembersCount;
 import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupObvFilterData;
+import com.strandls.userGroup.pojo.UserGroupSpecies;
+import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupUserJoinRequest;
 import com.strandls.userGroup.pojo.UserGroupWKT;
@@ -133,6 +142,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	private UserGroupJoinRequestDao ugJoinRequestDao;
 
 	@Inject
+	private UserGroupDocumentDao ugDocumentDao;
+
+	@Inject
 	private UserGroupUserRequestDAO userGroupUserRequestDao;
 
 	@Inject
@@ -143,6 +155,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
+
+	@Inject
+	private UserGroupDataTableDao userGroupDataTableDao;
+
+	@Inject
+	private UserGroupSpeciesDao ugSpeciesDao;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -237,18 +255,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				UserGroupObservation result = userGroupObvDao.save(userGroupObs);
 				if (result != null) {
 					resultList.add(result.getUserGroupId());
-					UserGroupActivity ugActivity = new UserGroupActivity();
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroup);
-					String description = null;
-					ugActivity.setFeatured(null);
-					ugActivity.setUserGroupId(ugIbp.getId());
-					ugActivity.setUserGroupName(ugIbp.getName());
-					ugActivity.setWebAddress(ugIbp.getWebAddress());
-					try {
-						description = objectMapper.writeValueAsString(ugActivity);
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-					}
+					String description = createUgDescription(ugIbp);
 					MailData mailData = null;
 					if (userGroups.getMailData() != null) {
 						mailData = updateMailData(observationId, userGroups.getMailData());
@@ -273,24 +281,20 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		List<UserGroupObservation> previousMapping = userGroupObvDao.findByObservationId(observationId);
 		for (UserGroupObservation ug : previousMapping) {
 			if (!(userGorups.getUserGroups().contains(ug.getUserGroupId()))) {
-				userGroupObvDao.delete(ug);
+				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ug.getUserGroupId());
 
-				UserGroupActivity ugActivity = new UserGroupActivity();
-				UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
-				String description = null;
-				ugActivity.setFeatured(null);
-				ugActivity.setUserGroupId(ugIbp.getId());
-				ugActivity.setUserGroupName(ugIbp.getName());
-				ugActivity.setWebAddress(ugIbp.getWebAddress());
-				try {
-					description = objectMapper.writeValueAsString(ugActivity);
-				} catch (Exception e) {
-					logger.error(e.getMessage());
+				if (eligible) {
+					userGroupObvDao.delete(ug);
+
+					UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
+
+					String description = createUgDescription(ugIbp);
+
+					MailData mailData = updateMailData(observationId, userGorups.getMailData());
+					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
+							observationId, "observation", ug.getUserGroupId(), "Removed resoruce", mailData);
 				}
 
-				MailData mailData = updateMailData(observationId, userGorups.getMailData());
-				logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
-						observationId, "observation", ug.getUserGroupId(), "Removed resoruce", mailData);
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
@@ -304,18 +308,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					UserGroupObservation userGroupMapping = new UserGroupObservation(userGroupId, observationId);
 					userGroupObvDao.save(userGroupMapping);
 
-					UserGroupActivity ugActivity = new UserGroupActivity();
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
-					String description = null;
-					ugActivity.setFeatured(null);
-					ugActivity.setUserGroupId(ugIbp.getId());
-					ugActivity.setUserGroupName(ugIbp.getName());
-					ugActivity.setWebAddress(ugIbp.getWebAddress());
-					try {
-						description = objectMapper.writeValueAsString(ugActivity);
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-					}
+					String description = createUgDescription(ugIbp);
 
 					MailData mailData = updateMailData(observationId, userGorups.getMailData());
 					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
@@ -324,7 +318,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			}
 		}
 		try {
-			produce.setMessage("esmodule", observationId.toString(), "User Groups");
+			produce.setMessage("observation", observationId.toString(), "User Groups");
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -368,6 +362,59 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded() {
+		List<UserGroupExpanded> result = new ArrayList<UserGroupExpanded>();
+
+		try {
+			List<UserGroup> userGroupList = userGroupDao.findAll();
+			List<UserGroupMembersCount> count = ugMemberService.getUserGroupMemberCount();
+			Map<Long, UserGroupExpanded> ugMap = new HashMap<Long, UserGroupExpanded>();
+			UserGroupExpanded ibp = null;
+			for (UserGroup userGroup : userGroupList) {
+
+				List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroup.getId());
+				List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroup.getId());
+				List<Long> speciesGroupIds = new ArrayList<Long>();
+				List<Long> habitatIds = new ArrayList<Long>();
+				for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
+					speciesGroupIds.add(ugSpeciesGroup.getSpeciesGroupId());
+				}
+				for (UserGroupHabitat ugHabitat : ugHabitats) {
+					habitatIds.add(ugHabitat.getHabitatId());
+				}
+
+				String webAddress = userGroup.getDomianName();
+
+				if (webAddress == null) {
+					webAddress = "/group/" + userGroup.getWebAddress();
+				}
+
+				ibp = new UserGroupExpanded(userGroup.getId(), userGroup.getName(), userGroup.getIcon(),
+						webAddress, userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(), speciesGroupIds, habitatIds);
+
+				ugMap.put(userGroup.getId(), ibp);
+			}
+
+			// Iterate through member count and assign it to expanded modal
+			for (UserGroupMembersCount ugm : count) {
+				UserGroupExpanded ugx = ugMap.get(ugm.getUserGroupId());
+				ugx.setMemberCount(ugm.getCount());
+				result.add(ugx);
+				ugMap.remove(ugm.getUserGroupId());
+			}
+
+			for (Entry<Long, UserGroupExpanded> entry : ugMap.entrySet()) {
+				result.add(entry.getValue());
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return result;
+	}
+
+	@Override
 	public List<Featured> fetchFeatured(String objectType, Long id) {
 		List<Featured> featuredList = featuredDao.fetchAllFeatured(objectType, id);
 		return featuredList;
@@ -385,6 +432,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (featuredCreate.getObjectType().equalsIgnoreCase("observation"))
 				featuredCreate.setObjectType("species.participation.Observation");
 
+			else if (featuredCreate.getObjectType().equalsIgnoreCase("document"))
+				featuredCreate.setObjectType("content.eml.Document");
+
+			else if (featuredCreate.getObjectType().equalsIgnoreCase("species"))
+				featuredCreate.setObjectType("species.Species");
+
 			List<Featured> featuredList = featuredDao.fetchAllFeatured(featuredCreate.getObjectType(),
 					featuredCreate.getObjectId());
 
@@ -392,7 +445,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 				int flag = 0;
 				for (Featured alreadyFeatured : featuredList) {
-					if (alreadyFeatured.getUserGroup() == userGroupId) {
+					if (alreadyFeatured.getUserGroup().equals(userGroupId)) {
 						alreadyFeatured.setCreatedOn(new Date());
 						alreadyFeatured.setNotes(featuredCreate.getNotes());
 						alreadyFeatured.setAuthorId(userId);
@@ -404,7 +457,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				if (flag == 0) {
 					featured = new Featured(null, 0L, userId, new Date(), featuredCreate.getNotes(),
 							featuredCreate.getObjectId(), featuredCreate.getObjectType(), userGroupId,
-							defaultLanguageId, null);
+							featuredCreate.getLanguageId() != null ? featuredCreate.getLanguageId() : defaultLanguageId,
+							null);
 					featured = featuredDao.save(featured);
 
 				}
@@ -448,10 +502,27 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					logger.error(e.getMessage());
 				}
 
-				MailData mailData = updateMailData(featuredCreate.getObjectId(), featuredCreateData.getMailData());
-				logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						featuredCreate.getObjectId(), featuredCreate.getObjectId(), "observation", activityId,
-						"Featured", mailData);
+				if (featuredCreate.getObjectType().equalsIgnoreCase("species.participation.Observation")) {
+
+					MailData mailData = updateMailData(featuredCreate.getObjectId(), featuredCreateData.getMailData());
+					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							featuredCreate.getObjectId(), featuredCreate.getObjectId(), "observation", activityId,
+							"Featured", mailData);
+
+				} else if (featuredCreate.getObjectType().equalsIgnoreCase("content.eml.Document")) {
+					MailData mailData = updateDocumentMailData(featuredCreate.getObjectId(),
+							featuredCreateData.getMailData());
+					logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							featuredCreate.getObjectId(), featuredCreate.getObjectId(), "document", activityId,
+							"Featured", mailData);
+
+				} else if (featuredCreate.getObjectType().equals("species.Species")) {
+					MailData mailData = null;
+//					TODO mailData
+					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							featuredCreate.getObjectId(), featuredCreate.getObjectId(), "species", activityId,
+							"Featured", mailData);
+				}
 
 			}
 
@@ -472,12 +543,19 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		try {
 			if (objectType.equalsIgnoreCase("observation"))
 				objectType = "species.participation.Observation";
+
+			else if (objectType.equalsIgnoreCase("document"))
+				objectType = "content.eml.Document";
+
+			else if (objectType.equalsIgnoreCase("species"))
+				objectType = "species.Species";
+
 			List<Featured> featuredList = featuredDao.fetchAllFeatured(objectType, objectId);
 
 			for (Long userGroupId : userGroupList.getUserGroups()) {
 
 				for (Featured featured : featuredList) {
-					if (featured.getUserGroup() == userGroupId) {
+					if (featured.getUserGroup().equals(userGroupId)) {
 						featuredDao.delete(featured);
 						Long activityId = userGroupId;
 						if (userGroupId == null)
@@ -517,9 +595,22 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							logger.error(e.getMessage());
 						}
 
-						MailData mailData = updateMailData(objectId, userGroupList.getMailData());
-						logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, objectId,
-								objectId, "observation", activityId, "UnFeatured", mailData);
+						if (objectType.equalsIgnoreCase("species.participation.Observation")) {
+
+							MailData mailData = updateMailData(objectId, userGroupList.getMailData());
+							logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, objectId,
+									objectId, "observation", activityId, "UnFeatured", mailData);
+						} else if (objectType.equalsIgnoreCase("content.eml.Documen")) {
+							MailData mailData = updateDocumentMailData(objectId, userGroupList.getMailData());
+							logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+									objectId, objectId, objectType, activityId, "UnFeatured", mailData);
+						} else if (objectType.equalsIgnoreCase("species.Species")) {
+							MailData mailData = null;
+//							TODO mailData
+							logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+									objectId, objectId, "species", activityId, "UnFeatured", mailData);
+
+						}
 
 						break;
 					}
@@ -586,7 +677,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			String serverUrl = properties.getProperty("serverUrl");
@@ -663,7 +754,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 			if (ugInvite != null) {
 				String desc = "Sent invitation for Role: " + role;
-				if (inviteeId == null) {
+				if (inviteeId == null && email != null) {
 					String emailsplit[] = email.split("@");
 					desc = "Sent Invitaion to a NON-registred user : " + emailsplit[0] + " for role : " + role;
 				}
@@ -704,7 +795,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 			Long founderId = Long.parseLong(properties.getProperty("userGroupFounder"));
@@ -837,7 +928,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				try {
 					properties.load(in);
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 				String serverUrl = properties.getProperty("serverUrl");
 				in.close();
@@ -877,7 +968,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			Long memberId = Long.parseLong(properties.getProperty("userGroupMember"));
 			in.close();
@@ -930,7 +1021,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				properties.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 			Long memberId = Long.parseLong(properties.getProperty("userGroupMember"));
 			String serverUrl = properties.getProperty("serverUrl");
@@ -1003,7 +1094,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains("ROLE_ADMIN") || isFounder || isModerator) {
+				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
 					UserGroupObservation result;
@@ -1077,7 +1168,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains("ROLE_ADMIN") || isFounder || isModerator) {
+				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
 					UserGroupObservation result;
 					for (Long obvId : observationList) {
@@ -1130,7 +1221,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					ugCreateData.getDescription(), ugCreateData.getDomainName(), new Date(), ugCreateData.getHomePage(),
 					ugCreateData.getIcon(), false, ugCreateData.getName(), ugCreateData.getNeLatitude(),
 					ugCreateData.getNeLongitude(), ugCreateData.getSwLatitude(), ugCreateData.getSwLongitude(),
-					ugCreateData.getTheme(), 1L, webAddress, ugCreateData.getLanguageId(),
+					ugCreateData.getTheme(), 1L, webAddress,
+					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId,
 					ugCreateData.getSendDigestMail(), new Date(), null, ugCreateData.getNewFilterRule(), true, true,
 					true, true, true, true);
 
@@ -1300,7 +1392,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				try {
 					properties.load(in);
 				} catch (IOException e) {
-					e.printStackTrace();
+				logger.error(e.getMessage());
 				}
 				Long founderId = Long.parseLong(properties.getProperty("userGroupFounder"));
 				Long moderatorId = Long.parseLong(properties.getProperty("userGroupExpert"));
@@ -1384,6 +1476,136 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return null;
 	}
 
+	@Override
+	public List<UserGroupIbp> fetchByDocumentId(Long documentId) {
+		try {
+			List<UserGroupDocument> UserGroupDocuments = ugDocumentDao.findByDocumentId(documentId);
+			List<UserGroupIbp> userGroupIbp = new ArrayList<UserGroupIbp>();
+			for (UserGroupDocument ugDoc : UserGroupDocuments) {
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(ugDoc.getUserGroupId());
+				if (ugIbp != null)
+					userGroupIbp.add(ugIbp);
+			}
+			return userGroupIbp;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
+
+	}
+
+	@Override
+	public List<UserGroupIbp> createUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate) {
+		List<Long> resultList = new ArrayList<Long>();
+		for (Long ugId : ugDocCreate.getUserGroupIds()) {
+			UserGroupDocument ugDoc = new UserGroupDocument(ugId, ugDocCreate.getDocumentId());
+			ugDoc = ugDocumentDao.save(ugDoc);
+			if (ugDoc != null) {
+				resultList.add(ugDoc.getUserGroupId());
+				UserGroupActivity ugActivity = new UserGroupActivity();
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(ugId);
+				String description = null;
+				ugActivity.setFeatured(null);
+				ugActivity.setUserGroupId(ugIbp.getId());
+				ugActivity.setUserGroupName(ugIbp.getName());
+				ugActivity.setWebAddress(ugIbp.getWebAddress());
+				try {
+					description = objectMapper.writeValueAsString(ugActivity);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+				}
+				MailData mailData = null;
+				if (ugDocCreate.getMailData() != null) {
+					mailData = updateDocumentMailData(ugDocCreate.getDocumentId(), ugDocCreate.getMailData());
+				}
+				logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+						ugDocCreate.getDocumentId(), ugDocCreate.getDocumentId(), "document", ugDoc.getUserGroupId(),
+						"Posted resource", mailData);
+			}
+		}
+
+		return fetchByDocumentId(ugDocCreate.getDocumentId());
+	}
+
+	@Override
+	public List<UserGroupIbp> updateUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate) {
+
+		List<Long> previousUserGroup = new ArrayList<Long>();
+		List<UserGroupDocument> previousMapping = ugDocumentDao.findByDocumentId(ugDocCreate.getDocumentId());
+		for (UserGroupDocument ug : previousMapping) {
+			if (!(ugDocCreate.getUserGroupIds().contains(ug.getUserGroupId()))) {
+				ugDocumentDao.delete(ug);
+
+				UserGroupActivity ugActivity = new UserGroupActivity();
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
+				String description = null;
+				ugActivity.setFeatured(null);
+				ugActivity.setUserGroupId(ugIbp.getId());
+				ugActivity.setUserGroupName(ugIbp.getName());
+				ugActivity.setWebAddress(ugIbp.getWebAddress());
+				try {
+					description = objectMapper.writeValueAsString(ugActivity);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+				}
+
+				MailData mailData = updateDocumentMailData(ugDocCreate.getDocumentId(), ugDocCreate.getMailData());
+
+				logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+						ugDocCreate.getDocumentId(), ugDocCreate.getDocumentId(), "document", ug.getUserGroupId(),
+						"Removed resoruce", mailData);
+			}
+			previousUserGroup.add(ug.getUserGroupId());
+		}
+
+		for (Long userGroupId : ugDocCreate.getUserGroupIds()) {
+			if (!(previousUserGroup.contains(userGroupId))) {
+
+				UserGroupDocument ugDoc = new UserGroupDocument(userGroupId, ugDocCreate.getDocumentId());
+				ugDoc = ugDocumentDao.save(ugDoc);
+
+				UserGroupActivity ugActivity = new UserGroupActivity();
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
+				String description = null;
+				ugActivity.setFeatured(null);
+				ugActivity.setUserGroupId(ugIbp.getId());
+				ugActivity.setUserGroupName(ugIbp.getName());
+				ugActivity.setWebAddress(ugIbp.getWebAddress());
+				try {
+					description = objectMapper.writeValueAsString(ugActivity);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+				}
+
+				MailData mailData = updateDocumentMailData(ugDocCreate.getDocumentId(), ugDocCreate.getMailData());
+				logActivity.LogDocumentActivities((request.getHeader(HttpHeaders.AUTHORIZATION)), description,
+						ugDocCreate.getDocumentId(), ugDocCreate.getDocumentId(), "document", userGroupId,
+						"Posted resource", mailData);
+
+			}
+		}
+
+		return fetchByDocumentId(ugDocCreate.getDocumentId());
+
+	}
+
+	private MailData updateDocumentMailData(Long documentId, MailData mailData) {
+		List<UserGroupMailData> userGroup = new ArrayList<UserGroupMailData>();
+		List<UserGroupIbp> updatedUG = fetchByDocumentId(documentId);
+
+		for (UserGroupIbp ug : updatedUG) {
+			UserGroupMailData ugMail = new UserGroupMailData();
+			ugMail.setIcon(ug.getIcon());
+			ugMail.setId(ug.getId());
+			ugMail.setName(ug.getName());
+			ugMail.setWebAddress(ug.getWebAddress());
+
+			userGroup.add(ugMail);
+		}
+		mailData.setUserGroupData(userGroup);
+		return mailData;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> registerUserProxy(HttpServletRequest request, AuthenticationDTO authDTO) {
@@ -1420,7 +1642,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 		return userData;
@@ -1474,7 +1695,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 		return userData;
@@ -1624,9 +1844,173 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 		Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
-		if (roles.contains("ROLE_ADMIN") || isFounder || isModerator)
+		if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator))
 			return true;
 		return false;
+	}
+	
+	private String createUgDescription(	UserGroupIbp ugIbp) {
+		UserGroupActivity ugActivity = new UserGroupActivity();
+		String description = null;
+		ugActivity.setFeatured(null);
+		ugActivity.setUserGroupId(ugIbp.getId());
+		ugActivity.setUserGroupName(ugIbp.getName());
+		ugActivity.setWebAddress(ugIbp.getWebAddress());
+		try {
+			 description = objectMapper.writeValueAsString(ugActivity);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return description;
+	}
+
+	@Override
+	public List<UserGroupIbp> fetchByDataTableId(Long id) {
+		try {
+			List<UserGroupDataTable> userGroupDataTable = userGroupDataTableDao.findByDataTableId(id);
+			List<UserGroupIbp> userGroup = new ArrayList<UserGroupIbp>();
+			if (userGroupDataTable != null && !userGroupDataTable.isEmpty()) {
+				for (UserGroupDataTable ugObv : userGroupDataTable) {
+					userGroup.add(fetchByGroupIdIbp(ugObv.getUserGroupId()));
+				}
+			}
+			if (!userGroup.isEmpty())
+				return userGroup;
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
+	}
+
+	public List<UserGroupIbp> fetchBySpeciesId(Long speciesId) {
+
+		List<UserGroupSpecies> ugSpeciesList = ugSpeciesDao.findBySpeciesId(speciesId);
+
+		List<UserGroupIbp> userGroup = new ArrayList<UserGroupIbp>();
+		if (ugSpeciesList != null && !ugSpeciesList.isEmpty()) {
+			for (UserGroupSpecies ugSpecies : ugSpeciesList) {
+				userGroup.add(fetchByGroupIdIbp(ugSpecies.getUserGroupId()));
+			}
+		}
+
+		return userGroup;
+
+	}
+
+	@Override
+	public List<UserGroupIbp> createUGSpeciesMapping(HttpServletRequest request, Long speciesId,
+			UserGroupSpeciesCreateData ugSpeciesCreateData) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		Long userId = Long.parseLong(profile.getId());
+		for (Long userGroupId : ugSpeciesCreateData.getUserGroupIds()) {
+			Boolean eligible = ugMemberService.checkUserGroupMember(userId, userGroupId);
+			if (eligible) {
+				UserGroupSpecies ugSpecies = new UserGroupSpecies(userGroupId, speciesId);
+				ugSpecies = ugSpeciesDao.save(ugSpecies);
+				if (ugSpecies != null) {
+					UserGroupActivity ugActivity = new UserGroupActivity();
+					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
+					String description = null;
+					ugActivity.setFeatured(null);
+					ugActivity.setUserGroupId(ugIbp.getId());
+					ugActivity.setUserGroupName(ugIbp.getName());
+					ugActivity.setWebAddress(ugIbp.getWebAddress());
+					try {
+						description = objectMapper.writeValueAsString(ugActivity);
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+					}
+					MailData mailData = null;
+//					TODO mailData
+//					if (userGroups.getMailData() != null) {
+//						mailData = updateMailData(observationId, userGroups.getMailData());
+//					}
+					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							speciesId, speciesId, "species", ugSpecies.getUserGroupId(), "Posted resource", mailData);
+
+				}
+			}
+		}
+
+		return fetchBySpeciesId(speciesId);
+	}
+
+	@Override
+	public List<UserGroupIbp> updateUGSpeciesMapping(HttpServletRequest request, Long speciesId,
+			UserGroupSpeciesCreateData ugSpeciesCreateData) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		Long userId = Long.parseLong(profile.getId());
+
+		List<UserGroupSpecies> ugSpeciesList = ugSpeciesDao.findBySpeciesId(speciesId);
+		List<Long> userGroupIds = ugSpeciesCreateData.getUserGroupIds();
+		List<Long> existingGroup = new ArrayList<Long>();
+
+//		remove the existing groups
+		for (UserGroupSpecies ugSpecies : ugSpeciesList) {
+			if (!userGroupIds.contains(ugSpecies.getUserGroupId())) {
+				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugSpecies.getUserGroupId());
+				if (eligible) {
+					ugSpeciesDao.delete(ugSpecies);
+					UserGroupActivity ugActivity = new UserGroupActivity();
+					UserGroupIbp ugIbp = fetchByGroupIdIbp(ugSpecies.getUserGroupId());
+					String description = null;
+					ugActivity.setFeatured(null);
+					ugActivity.setUserGroupId(ugIbp.getId());
+					ugActivity.setUserGroupName(ugIbp.getName());
+					ugActivity.setWebAddress(ugIbp.getWebAddress());
+					try {
+						description = objectMapper.writeValueAsString(ugActivity);
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+					}
+
+//					TODO mail Data
+					MailData mailData = null;
+//					MailData mailData = updateMailData(observationId, userGorups.getMailData());
+
+					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							speciesId, speciesId, "species", ugSpecies.getUserGroupId(), "Removed resoruce", mailData);
+
+				}
+
+			} else {
+				existingGroup.add(ugSpecies.getUserGroupId());
+			}
+
+		}
+//		add new groups
+		for (Long ugId : userGroupIds) {
+			if (!existingGroup.contains(ugId)) {
+				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
+				if (eligible) {
+					UserGroupSpecies ugSpecies = new UserGroupSpecies(ugId, speciesId);
+					ugSpecies = ugSpeciesDao.save(ugSpecies);
+					if (ugSpecies != null) {
+						UserGroupActivity ugActivity = new UserGroupActivity();
+						UserGroupIbp ugIbp = fetchByGroupIdIbp(ugId);
+						String description = null;
+						ugActivity.setFeatured(null);
+						ugActivity.setUserGroupId(ugIbp.getId());
+						ugActivity.setUserGroupName(ugIbp.getName());
+						ugActivity.setWebAddress(ugIbp.getWebAddress());
+						try {
+							description = objectMapper.writeValueAsString(ugActivity);
+						} catch (Exception e) {
+							logger.error(e.getMessage());
+						}
+						MailData mailData = null;
+//						TODO mailData
+//						mailData = updateMailData(observationId, userGroups.getMailData());
+						logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+								speciesId, speciesId, "species", ugSpecies.getUserGroupId(), "Posted resource",
+								mailData);
+					}
+				}
+			}
+		}
+
+		return fetchBySpeciesId(speciesId);
 	}
 
 }
