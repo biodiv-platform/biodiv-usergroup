@@ -6,7 +6,9 @@ package com.strandls.userGroup.service.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -19,10 +21,12 @@ import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 import com.strandls.userGroup.dao.UserGroupMemberRoleDao;
 import com.strandls.userGroup.pojo.GroupAddMember;
+import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupMemberRole;
 import com.strandls.userGroup.pojo.UserGroupMembersCount;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.service.UserGroupMemberService;
+import com.strandls.userGroup.service.UserGroupSerivce;
 
 /**
  * @author Abhishek Rudra
@@ -37,6 +41,9 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	@Inject
 	private UserServiceApi userService;
+	
+	@Inject   
+	private UserGroupSerivce ugServices;
 
 	@Override
 	public Boolean checkUserGroupMember(Long userId, Long userGroupId) {
@@ -267,5 +274,17 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 		List<UserGroupMemberRole> userFeatureRole = userGroupMemberDao.findUserGroupbyUserIdRole(userId);
 		UserGroupPermissions ugPermission = new UserGroupPermissions(userMemberRole, userFeatureRole);
 		return ugPermission;
+	}
+
+	@Override
+	public Map<Long, Boolean> groupListByUserId(Long userId) {
+		List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup();
+		Map<Long, Boolean> result = new HashMap<Long, Boolean>();
+
+		for (UserGroupIbp userGroup : userGroupList) {
+			Boolean isMember = checkUserGroupMember(userId, userGroup.getId());
+			result.put(userGroup.getId(), isMember);
+		}
+		return result;
 	}
 }
