@@ -897,7 +897,7 @@ public class UserGroupController {
 			if (Boolean.parseBoolean(data.get("status").toString())
 					&& !Boolean.parseBoolean(data.get("verificationRequired").toString())) {
 				NewCookie accessToken = new NewCookie("BAToken", data.get("access_token").toString(), "/",
-						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60,false);
+						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
 				NewCookie refreshToken = new NewCookie("BRToken", data.get("refresh_token").toString(), "/",
 						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
 				response.cookie(accessToken).cookie(refreshToken);
@@ -920,7 +920,7 @@ public class UserGroupController {
 			if (Boolean.parseBoolean(data.get("status").toString())
 					&& !Boolean.parseBoolean(data.get("verificationRequired").toString())) {
 				NewCookie accessToken = new NewCookie("BAToken", data.get("access_token").toString(), "/",
-						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60,false);
+						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
 				NewCookie refreshToken = new NewCookie("BRToken", data.get("refresh_token").toString(), "/",
 						AppUtil.getDomain(request), "", 10 * 24 * 60 * 60, false);
 				response.cookie(accessToken).cookie(refreshToken);
@@ -1104,15 +1104,28 @@ public class UserGroupController {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
 
-			List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup();
-			Map<Long, Boolean> result = new HashMap<Long, Boolean>();
+			return Response.status(Status.OK).entity(ugMemberService.groupListByUserId(userId)).build();
+		} catch (Exception e) {
 
-			for (UserGroupIbp userGroup : userGroupList) {
-				Boolean isMember = ugMemberService.checkUserGroupMember(userId, userGroup.getId());
-				result.put(userGroup.getId(), isMember);
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path(ApiConstants.MEMBER + ApiConstants.LIST + "/{userId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "list all groups by membership status", notes = "returns true and false", response = Boolean.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to fetch the data", response = String.class) })
+
+	public Response userGroupMemberListByUserId(@PathParam("userId") String userId) {
+		try {
+			if (userId.isEmpty()) {
+				throw new Exception("User Id not provided");
 			}
-
-			return Response.status(Status.OK).entity(result).build();
+			Long user = Long.parseLong(userId);
+			return Response.status(Status.OK).entity(ugMemberService.groupListByUserId(user)).build();
 		} catch (Exception e) {
 
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
