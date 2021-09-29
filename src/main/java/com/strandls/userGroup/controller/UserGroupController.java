@@ -95,7 +95,6 @@ public class UserGroupController {
 	@Produces(MediaType.TEXT_PLAIN)
 
 	public Response pong() {
-//		ugFilterService.checkUserRule(1L, 1L);
 		return Response.status(Status.OK).entity("PONG").build();
 	}
 
