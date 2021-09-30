@@ -484,8 +484,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					} catch (IOException e) {
 						logger.error(e.getMessage());
 					}
-					String portalName = properties.getProperty("portalName");
-					String portalWebAddress = properties.getProperty("portalAddress");
+					String portalName = properties.getProperty("siteName");
+					String portalWebAddress = properties.getProperty("serverUrl");
 					in.close();
 					ugActivity.setUserGroupId(null);
 					ugActivity.setUserGroupName(portalName);
@@ -578,8 +578,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							} catch (IOException e) {
 								logger.error(e.getMessage());
 							}
-							String portalName = properties.getProperty("portalName");
-							String portalWebAddress = properties.getProperty("portalAddress");
+							String portalName = properties.getProperty("siteName");
+							String portalWebAddress = properties.getProperty("serverUrl");
 							in.close();
 							ugActivity.setUserGroupId(null);
 							ugActivity.setUserGroupName(portalName);
