@@ -213,6 +213,12 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 			Long userId = Long.parseLong(profile.getId());
 			JSONArray userRoles = (JSONArray) profile.getAttribute("roles");
 			UserGroup userGroup = userGroupDao.findById(userGroupId);
+
+			UserGroupObservation ugObvMapping = userGroupObvDao.checkObservationUGMApping(Long.parseLong(observationId),
+					userGroupId);
+			if (ugObvMapping == null)
+				return false;
+
 			UserGroupCustomFieldMapping ugCFMapping = ugCFMappingDao.findByUserGroupCustomFieldId(userGroupId,
 					customFieldId);
 			if (userRoles.contains("ROLE_ADMIN"))
