@@ -228,7 +228,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 			List<UserGroupMemberRole> list = userGroupMemberDao.findGroupListByRoleAndUser(userId, item.getId());
 			List<Long> groupList = list.stream().map(x -> x.getUserGroupId()).collect(Collectors.toList());
 			UserUgRoleMapping groupRoleMapping = new UserUgRoleMapping(userId, item.getId(), item.getAuthority(),
-					groupList.stream().toArray(Long[]::new));
+					groupList);
 			if (!groupList.isEmpty()) {
 				ugRoleMapping.add(groupRoleMapping);
 			}
