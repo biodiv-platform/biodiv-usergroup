@@ -10,13 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.strandls.esmodule.controllers.EsServicesApi;
+import com.strandls.user.ApiException;
+import com.strandls.user.controller.RoleServiceApi;
 import com.strandls.user.controller.UserServiceApi;
+import com.strandls.user.pojo.Role;
 import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 import com.strandls.userGroup.dao.UserGroupMemberRoleDao;
@@ -25,6 +30,7 @@ import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupMemberRole;
 import com.strandls.userGroup.pojo.UserGroupMembersCount;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
+import com.strandls.userGroup.pojo.UserUgRoleMapping;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 
@@ -35,15 +41,24 @@ import com.strandls.userGroup.service.UserGroupSerivce;
 public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	private final Logger logger = LoggerFactory.getLogger(UserGroupMemberServiceImpl.class);
+	
+	private static final String INDEX = "extended_user";
+	private static final String TYPE = "_doc";
 
 	@Inject
 	private UserGroupMemberRoleDao userGroupMemberDao;
 
 	@Inject
 	private UserServiceApi userService;
-	
-	@Inject   
+
+	@Inject
 	private UserGroupSerivce ugServices;
+
+	@Inject
+	private RoleServiceApi roleService;
+
+	@Inject
+	private EsServicesApi esService;
 
 	@Override
 	public Boolean checkUserGroupMember(Long userId, Long userGroupId) {
@@ -111,7 +126,12 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 	@Override
 	public UserGroupMemberRole addMemberUG(Long userId, Long roleId, Long userGroupId) {
 		UserGroupMemberRole ugMemberRole = new UserGroupMemberRole(userGroupId, roleId, userId);
-		ugMemberRole = userGroupMemberDao.save(ugMemberRole);
+		try {
+			ugMemberRole = userGroupMemberDao.save(ugMemberRole);
+			groupUserEsUpdate(userId);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 		return ugMemberRole;
 	}
 
@@ -136,6 +156,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 					in.close();
 					ugMember = new UserGroupMemberRole(userGroupId, founderId, portalAmdinId);
 					userGroupMemberDao.save(ugMember);
+					groupUserEsUpdate(userId);
 				}
 				return true;
 			}
@@ -166,6 +187,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 				if (!alreadyMember) {
 					UserGroupMemberRole ugMember = new UserGroupMemberRole(userGroupId, memberId, userId);
 					userGroupMemberDao.save(ugMember);
+					groupUserEsUpdate(userId);
 					return true;
 				}
 			}
@@ -187,6 +209,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 					UserGroupMemberRole ugMemberRole = new UserGroupMemberRole(addMember.getUserGroupId(),
 							addMember.getRoleId(), userId);
 					userGroupMemberDao.save(ugMemberRole);
+					groupUserEsUpdate(userId);
 					mappedUser.add(userId);
 				}
 
@@ -196,6 +219,29 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 			logger.error(e.getMessage());
 		}
 		return null;
+	}
+
+	private void groupUserEsUpdate(Long userId) throws ApiException {
+		List<UserUgRoleMapping> ugRoleMapping = new ArrayList<UserUgRoleMapping>();
+		List<Role> roles = roleService.getAllRoles();
+		roles.forEach(item -> {
+			List<UserGroupMemberRole> list = userGroupMemberDao.findGroupListByRoleAndUser(userId, item.getId());
+			List<Long> groupList = list.stream().map(x -> x.getUserGroupId()).collect(Collectors.toList());
+			UserUgRoleMapping groupRoleMapping = new UserUgRoleMapping(userId, item.getId(), item.getAuthority(),
+					groupList);
+			if (!groupList.isEmpty()) {
+				ugRoleMapping.add(groupRoleMapping);
+			}
+
+		});
+		Map<String, Object> doc = new HashMap<String, Object>();
+		doc.put("userGroup", ugRoleMapping);
+		try {
+			esService.update(INDEX, TYPE, userId.toString(), doc);
+		} catch (com.strandls.esmodule.ApiException e) {
+			logger.error("Unable to update Es User Details " + e.getMessage());
+		}
+
 	}
 
 	@Override

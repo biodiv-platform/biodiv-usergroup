@@ -280,5 +280,26 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserGroupMemberRole> findGroupListByRoleAndUser(Long userId, Long roleId) {
+
+		List<UserGroupMemberRole> result = null;
+
+		Session session = sessionFactory.openSession();
+		String qry = "from UserGroupMemberRole where sUserId = :userId and roleId = :roleId";
+		try {
+			Query<UserGroupMemberRole> query = session.createQuery(qry);
+			query.setParameter("userId", userId);
+			query.setParameter("roleId", roleId);
+			result = query.getResultList();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+
+		return result;
+	}
 
 }
