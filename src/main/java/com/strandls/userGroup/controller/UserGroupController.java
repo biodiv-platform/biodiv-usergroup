@@ -4,7 +4,6 @@
 package com.strandls.userGroup.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +44,7 @@ import com.strandls.userGroup.pojo.ShowFilterRule;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
+import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
 import com.strandls.userGroup.pojo.UserGroupExpanded;
@@ -60,6 +60,7 @@ import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupWKT;
+import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupFilterService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
@@ -83,6 +84,9 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupSerivce ugServices;
+
+	@Inject
+	private UserGroupDatatableService udDatatableService;
 
 	@Inject
 	private UserGroupFilterService ugFilterService;
@@ -1209,7 +1213,7 @@ public class UserGroupController {
 	public Response getDataTableUserGroup(@PathParam("dataTableId") String dataTableId) {
 		try {
 			Long id = Long.parseLong(dataTableId);
-			List<UserGroupIbp> userGroup = ugServices.fetchByDataTableId(id);
+			List<UserGroupIbp> userGroup = udDatatableService.fetchByDataTableId(id);
 			return Response.status(Status.OK).entity(userGroup).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -1342,6 +1346,55 @@ public class UserGroupController {
 		try {
 			Long spId = Long.parseLong(speciesId);
 			List<UserGroupIbp> result = ugServices.updateUGSpeciesMapping(request, spId, ugSpeciesCreateData);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.CREATE + ApiConstants.DATATABLE + "/{datatableId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Create Datatable UserGroup Mapping", notes = "Returns List of UserGroup", response = Long.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
+
+	public Response createDatatableUserGroupMapping(@Context HttpServletRequest request,
+			@PathParam("datatableId") String dataTableId,
+			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupData) {
+		try {
+			Long datatableId = Long.parseLong(dataTableId);
+			List<Long> result = udDatatableService.createUserGroupDatatableMapping(request, datatableId,
+					userGroupData.getUserGroupIds());
+			if (result == null)
+				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+			return Response.status(Status.CREATED).entity(result).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@PUT
+	@Path(ApiConstants.UPDATE + ApiConstants.DATATABLE + "/{datatableId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Update the UserGroup Datatable Mapping", notes = "Returns the List of UserGroup Linked", response = UserGroupIbp.class, responseContainer = "List")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Datatable Mapping", response = String.class) })
+
+	public Response updateDatatableUserGroupMapping(@Context HttpServletRequest request,
+			@PathParam("datatableId") String dataTableId,
+			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupData) {
+		try {
+			Long datatableId = Long.parseLong(dataTableId);
+			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,
+					userGroupData.getUserGroupIds());
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

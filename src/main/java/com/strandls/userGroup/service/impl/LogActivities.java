@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.activity.controller.ActivitySerivceApi;
 import com.strandls.activity.pojo.ActivityLoggingData;
+import com.strandls.activity.pojo.DatatableActivityLogging;
 import com.strandls.activity.pojo.DocumentActivityLogging;
 import com.strandls.activity.pojo.MailData;
 import com.strandls.activity.pojo.SpeciesActivityLogging;
@@ -106,6 +107,26 @@ public class LogActivities {
 
 			activityService = headers.addActivityHeader(activityService, authHeader);
 			activityService.logSpeciesActivities(speciesActivity);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+	}
+	
+	public void logDatatableActivities(String authHeader, String activityDescription, Long rootObjectId,
+			Long subRootObjectId, String rootObjectType, Long activityId, String activityType, MailData mailData) {
+		try {
+			DatatableActivityLogging datatableAcitvity = new DatatableActivityLogging();
+			datatableAcitvity.setActivityDescription(activityDescription);
+			datatableAcitvity.setActivityId(activityId);
+			datatableAcitvity.setActivityType(activityType);
+			datatableAcitvity.setMailData(mailData);
+			datatableAcitvity.setRootObjectId(rootObjectId);
+			datatableAcitvity.setRootObjectType(rootObjectType);
+			datatableAcitvity.setSubRootObjectId(subRootObjectId);
+
+			activityService = headers.addActivityHeader(activityService, authHeader);
+			activityService.logDatatableActivities(datatableAcitvity);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
