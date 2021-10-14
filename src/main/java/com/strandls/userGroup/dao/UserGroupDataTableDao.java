@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.pojo.UserGroupDataTable;
+import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.util.AbstractDAO;
 
 public class UserGroupDataTableDao   extends AbstractDAO<UserGroupDataTable, Long> {
@@ -49,6 +50,41 @@ public class UserGroupDataTableDao   extends AbstractDAO<UserGroupDataTable, Lon
 			Query<UserGroupDataTable> query = session.createQuery(qry);
 			query.setParameter("dtId", dataTableId);
 			result = query.getResultList();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<UserGroupDataTable> findDatatableByUserGroupId(Long userGroupId) {
+		String qry = "from UserGroupDataTable where userGroupId = :ugId ";
+		List<UserGroupDataTable> result = null;
+		Session session = sessionFactory.openSession();
+		try {
+			Query<UserGroupDataTable> query = session.createQuery(qry);
+			query.setParameter("ugId", userGroupId);
+			result = query.getResultList();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public UserGroupDataTable checkDatatableUGMApping(Long datatableId, Long userGroupId) {
+		String qry = "from UserGroupDataTable where dataTableId = :datatableId and userGroupId = :ugId";
+		UserGroupDataTable result = null;
+		Session session = sessionFactory.openSession();
+		try {
+			Query<UserGroupDataTable> query = session.createQuery(qry);
+			query.setParameter("datatableId", datatableId);
+			query.setParameter("ugId", userGroupId);
+			result = query.getSingleResult();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
