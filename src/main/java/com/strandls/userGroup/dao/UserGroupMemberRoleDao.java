@@ -233,8 +233,8 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-		String expert = properties.getProperty("userGroupExpert");
-		String founder = properties.getProperty("userGroupFounder");
+		Long expert = Long.parseLong(properties.getProperty("userGroupExpert"));
+		Long founder = Long.parseLong(properties.getProperty("userGroupFounder"));
 
 		List<UserGroupMemberRole> result = null;
 		Session session = sessionFactory.openSession();
@@ -280,7 +280,7 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<UserGroupMemberRole> findGroupListByRoleAndUser(Long userId, Long roleId) {
 
