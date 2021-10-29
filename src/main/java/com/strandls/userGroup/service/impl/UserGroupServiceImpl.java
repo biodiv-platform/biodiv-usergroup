@@ -384,8 +384,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					webAddress = "/group/" + userGroup.getWebAddress();
 				}
 
-				ibp = new UserGroupExpanded(userGroup.getId(), userGroup.getName(), userGroup.getIcon(),
-						webAddress, userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(), speciesGroupIds, habitatIds);
+				ibp = new UserGroupExpanded(userGroup.getId(), userGroup.getName(), userGroup.getIcon(), webAddress,
+						userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(),
+						speciesGroupIds, habitatIds);
 
 				ugMap.put(userGroup.getId(), ibp);
 			}
@@ -936,16 +937,16 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					logActivity.logUserGroupActivities(request.getHeader(HttpHeaders.AUTHORIZATION), desc,
 							Long.parseLong(userGroupId), Long.parseLong(userGroupId), "userGroup", userId,
 							"Requested Join");
-
-					UserIbp userIbp = userService.getUserIbp(userId.toString());
-					String ugJoinStr = objectMapper.writeValueAsString(ugJoin);
-					String encrptyedKey = encryptionUtils.encrypt(ugJoinStr);
-					List<User> userList = ugMemberService.getFounderModerator(Long.parseLong(userGroupId));
-					UserGroupIbp userGroupIbp = fetchByGroupIdIbp(Long.parseLong(userGroupId));
-
-					mailUtils.sendRequest(userList, userIbp, userGroupIbp, encrptyedKey, serverUrl);
-					return true;
 				}
+				UserIbp userIbp = userService.getUserIbp(userId.toString());
+				String ugJoinStr = objectMapper.writeValueAsString(ugJoin);
+				String encrptyedKey = encryptionUtils.encrypt(ugJoinStr);
+				List<User> userList = ugMemberService.getFounderModerator(Long.parseLong(userGroupId));
+				UserGroupIbp userGroupIbp = fetchByGroupIdIbp(Long.parseLong(userGroupId));
+
+				mailUtils.sendRequest(userList, userIbp, userGroupIbp, encrptyedKey, serverUrl);
+				return true;
+
 			}
 
 		} catch (Exception e) {
@@ -1089,7 +1090,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
+				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder)
+						|| Boolean.TRUE.equals(isModerator)) {
 
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
 					UserGroupObservation result;
@@ -1163,7 +1165,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
+				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder)
+						|| Boolean.TRUE.equals(isModerator)) {
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
 					UserGroupObservation result;
 					for (Long obvId : observationList) {
@@ -1387,7 +1390,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				try {
 					properties.load(in);
 				} catch (IOException e) {
-				logger.error(e.getMessage());
+					logger.error(e.getMessage());
 				}
 				Long founderId = Long.parseLong(properties.getProperty("userGroupFounder"));
 				Long moderatorId = Long.parseLong(properties.getProperty("userGroupExpert"));
@@ -1843,9 +1846,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			return true;
 		return false;
 	}
-	
+
 	@Override
-	public String createUgDescription(	UserGroupIbp ugIbp) {
+	public String createUgDescription(UserGroupIbp ugIbp) {
 		UserGroupActivity ugActivity = new UserGroupActivity();
 		String description = null;
 		ugActivity.setFeatured(null);
@@ -1853,7 +1856,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		ugActivity.setUserGroupName(ugIbp.getName());
 		ugActivity.setWebAddress(ugIbp.getWebAddress());
 		try {
-			 description = objectMapper.writeValueAsString(ugActivity);
+			description = objectMapper.writeValueAsString(ugActivity);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
