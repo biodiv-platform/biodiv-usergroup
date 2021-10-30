@@ -362,8 +362,9 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 
 						String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName() + " : "
 								+ cfValue.getValues();
-						MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-								factsInsertData.getMailData());
+
+						MailData mailData = factsInsertData.getMailData() != null ? ugService.updateMailData(
+								factsCreateData.getObservationId(), factsInsertData.getMailData()) : null;
 						logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 								factsCreateData.getObservationId(), factsCreateData.getObservationId(), "observation",
 								factsCreateData.getObservationId(), "Custom field edited", mailData);
@@ -392,9 +393,8 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 								String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName()
 										+ " : " + cfValueDao.findById(valueId).getValues();
 
-								MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-										factsInsertData.getMailData());
-
+								MailData mailData = factsInsertData.getMailData() != null ? ugService.updateMailData(
+										factsCreateData.getObservationId(), factsInsertData.getMailData()) : null;
 								logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 										factsCreateData.getObservationId(), factsCreateData.getObservationId(),
 										"observation", factsCreateData.getObservationId(), "Custom field edited",
@@ -435,8 +435,11 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 							String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName()
 									+ " (Range) : " + factsCreateData.getMinValue() + " - "
 									+ factsCreateData.getMaxValue();
-							MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-									factsInsertData.getMailData());
+
+							MailData mailData = factsInsertData.getMailData() != null
+									? ugService.updateMailData(factsCreateData.getObservationId(),
+											factsInsertData.getMailData())
+									: null;
 
 							logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 									factsCreateData.getObservationId(), factsCreateData.getObservationId(),
@@ -466,8 +469,8 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						CustomFieldValues cfValue = cfValueDao.findById(factsCreateData.getSingleCategorical());
 						String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName() + " : "
 								+ cfValue.getValues();
-						MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-								factsInsertData.getMailData());
+						MailData mailData = factsInsertData.getMailData() != null ? ugService.updateMailData(
+								factsCreateData.getObservationId(), factsInsertData.getMailData()) : null;
 						logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 								factsCreateData.getObservationId(), factsCreateData.getObservationId(), "observation",
 								factsCreateData.getObservationId(), "Custom field edited", mailData);
@@ -480,8 +483,10 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 //							loggig activity for multiple categorical
 							String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName() + " : "
 									+ cfValueDao.findById(cfValuesId).getValues();
-							MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-									factsInsertData.getMailData());
+							MailData mailData = factsInsertData.getMailData() != null
+									? ugService.updateMailData(factsCreateData.getObservationId(),
+											factsInsertData.getMailData())
+									: null;
 							logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 									factsCreateData.getObservationId(), factsCreateData.getObservationId(),
 									"observation", factsCreateData.getObservationId(), "Custom field edited", mailData);
@@ -500,8 +505,10 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 							String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName()
 									+ " (Range) : " + factsCreateData.getMinValue() + " - "
 									+ factsCreateData.getMaxValue();
-							MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-									factsInsertData.getMailData());
+							MailData mailData = factsInsertData.getMailData() != null
+									? ugService.updateMailData(factsCreateData.getObservationId(),
+											factsInsertData.getMailData())
+									: null;
 							logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 									factsCreateData.getObservationId(), factsCreateData.getObservationId(),
 									"observation", factsCreateData.getObservationId(), "Custom field edited", mailData);
@@ -546,12 +553,14 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 //			logging activity for Text box type
 			String description = cfsDao.findById(factsCreateData.getCustomFieldId()).getName() + " : "
 					+ factsCreateData.getTextBoxValue();
-			MailData mailData = ugService.updateMailData(factsCreateData.getObservationId(),
-					factsInsertData.getMailData());
+
+			MailData mailData = factsInsertData.getMailData() != null
+					? ugService.updateMailData(factsCreateData.getObservationId(), factsInsertData.getMailData())
+					: null;
+
 			logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 					factsCreateData.getObservationId(), factsCreateData.getObservationId(), "observation",
 					factsCreateData.getObservationId(), "Custom field edited", mailData);
-
 			return obvCF;
 		} catch (Exception e) {
 			logger.error("Error inside populate Field TextBox");
