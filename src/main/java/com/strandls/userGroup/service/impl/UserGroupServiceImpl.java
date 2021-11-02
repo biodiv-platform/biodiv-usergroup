@@ -78,7 +78,6 @@ import com.strandls.userGroup.pojo.UserGroupSpecies;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupUserJoinRequest;
-import com.strandls.userGroup.pojo.UserGroupWKT;
 import com.strandls.userGroup.service.UserGroupFilterService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
@@ -451,10 +450,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				}
 
 				if (flag == 0) {
-					featured = new Featured(null, 0L, userId, new Date(), featuredCreate.getNotes(),
+					featured = new Featured(null, userId, new Date(), featuredCreate.getNotes(),
 							featuredCreate.getObjectId(), featuredCreate.getObjectType(), userGroupId,
-							featuredCreate.getLanguageId() != null ? featuredCreate.getLanguageId() : defaultLanguageId,
-							null);
+							featuredCreate.getLanguageId() != null ? featuredCreate.getLanguageId()
+									: defaultLanguageId);
 					featured = featuredDao.save(featured);
 
 				}
@@ -618,21 +617,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			logger.error(e.getMessage());
 		}
 		return resultList;
-	}
-
-	@Override
-	public String updateUserGroupFilter(Long userGroupId, UserGroupWKT userGroupWKT) {
-		try {
-			UserGroup userGroup = userGroupDao.findById(userGroupId);
-			String filterRule = objectMapper.writeValueAsString(userGroupWKT);
-			userGroup.setNewFilterRule(filterRule);
-			userGroupDao.update(userGroup);
-			return "User Group Updated with WKT filter";
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return null;
-
 	}
 
 	@Override
@@ -1220,9 +1204,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					ugCreateData.getIcon(), false, ugCreateData.getName(), ugCreateData.getNeLatitude(),
 					ugCreateData.getNeLongitude(), ugCreateData.getSwLatitude(), ugCreateData.getSwLongitude(),
 					ugCreateData.getTheme(), 1L, webAddress,
-					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId,
-					ugCreateData.getSendDigestMail(), new Date(), null, ugCreateData.getNewFilterRule(), true, true,
-					true, true, true, true);
+					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId, new Date(),
+					true, true, true, true, true, true);
 
 			userGroup = userGroupDao.save(userGroup);
 
@@ -1284,8 +1267,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							userGroup.getDescription(), userGroup.getHomePage(), userGroup.getIcon(),
 							userGroup.getDomianName(), userGroup.getName(), userGroup.getNeLatitude(),
 							userGroup.getNeLongitude(), userGroup.getSwLatitude(), userGroup.getSwLongitude(),
-							userGroup.getTheme(), userGroup.getLanguageId(), userGroup.getSendDigestMail(),
-							userGroup.getNewFilterRule(), speciesGroupId, habitatId);
+							userGroup.getTheme(), userGroup.getLanguageId(), speciesGroupId, habitatId);
 					return ugEditData;
 				}
 			}
@@ -1314,9 +1296,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						ugEditData.getDescription(), ugEditData.getDomainName(), new Date(), ugEditData.getHomePage(),
 						ugEditData.getIcon(), false, ugEditData.getName(), ugEditData.getNeLatitude(),
 						ugEditData.getNeLongitude(), ugEditData.getSwLatitude(), ugEditData.getSwLongitude(),
-						ugEditData.getTheme(), ug.getVisitCount(), webAddress, ugEditData.getLanguageId(),
-						ugEditData.getSendDigestMail(), new Date(), null, ugEditData.getNewFilterRule(), true, true,
-						true, true, true, true);
+						ugEditData.getTheme(), ug.getVisitCount(), webAddress, ugEditData.getLanguageId(), new Date(),
+						true, true, true, true, true, true);
 
 				userGroup = userGroupDao.update(userGroup);
 

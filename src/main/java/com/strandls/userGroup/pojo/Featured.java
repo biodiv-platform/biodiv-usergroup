@@ -29,7 +29,6 @@ public class Featured implements Serializable {
 	 */
 	private static final long serialVersionUID = -3585218408042488760L;
 	private Long id;
-	private Long version;
 	private Long authorId;
 	private Date createdOn;
 	private String notes;
@@ -37,7 +36,6 @@ public class Featured implements Serializable {
 	private String objectType;
 	private Long userGroup;
 	private Long languageId;
-	private Date expireTime;
 
 	/**
 	 * 
@@ -48,7 +46,6 @@ public class Featured implements Serializable {
 
 	/**
 	 * @param id
-	 * @param version
 	 * @param authorId
 	 * @param createdOn
 	 * @param notes
@@ -56,13 +53,11 @@ public class Featured implements Serializable {
 	 * @param objectType
 	 * @param userGroup
 	 * @param languageId
-	 * @param expireTime
 	 */
-	public Featured(Long id, Long version, Long authorId, Date createdOn, String notes, Long objectId,
-			String objectType, Long userGroup, Long languageId, Date expireTime) {
+	public Featured(Long id, Long authorId, Date createdOn, String notes, Long objectId, String objectType,
+			Long userGroup, Long languageId) {
 		super();
 		this.id = id;
-		this.version = version;
 		this.authorId = authorId;
 		this.createdOn = createdOn;
 		this.notes = notes;
@@ -70,7 +65,6 @@ public class Featured implements Serializable {
 		this.objectType = objectType;
 		this.userGroup = userGroup;
 		this.languageId = languageId;
-		this.expireTime = expireTime;
 	}
 
 	@Id
@@ -82,15 +76,6 @@ public class Featured implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	@Column(name = "version")
-	public Long getVersion() {
-		return version;
-	}
-
-	public void setVersion(Long version) {
-		this.version = version;
 	}
 
 	@Column(name = "author_id")
@@ -154,15 +139,6 @@ public class Featured implements Serializable {
 
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
-	}
-
-	@Column(name = "expire_time")
-	public Date getExpireTime() {
-		return expireTime;
-	}
-
-	public void setExpireTime(Date expireTime) {
-		this.expireTime = expireTime;
 	}
 
 }

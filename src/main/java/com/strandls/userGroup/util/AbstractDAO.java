@@ -2,16 +2,12 @@ package com.strandls.userGroup.util;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.NoResultException;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 
 public abstract class AbstractDAO<T, K extends Serializable> {

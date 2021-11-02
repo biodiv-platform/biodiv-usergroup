@@ -23,8 +23,6 @@ public class UserGroupEditData {
 	private Double swLongitude;
 	private String theme;
 	private Long languageId;
-	private Boolean sendDigestMail;
-	private String newFilterRule;
 	private List<Long> speciesGroupId;
 	private List<Long> habitatId;
 
@@ -48,15 +46,12 @@ public class UserGroupEditData {
 	 * @param swLongitude
 	 * @param theme
 	 * @param languageId
-	 * @param sendDigestMail
-	 * @param newFilterRule
 	 * @param speciesGroupId
 	 * @param habitatId
 	 */
 	public UserGroupEditData(Boolean allowUserToJoin, String description, String homePage, String icon,
 			String domainName, String name, Double neLatitude, Double neLongitude, Double swLatitude,
-			Double swLongitude, String theme, Long languageId, Boolean sendDigestMail, String newFilterRule,
-			List<Long> speciesGroupId, List<Long> habitatId) {
+			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.description = description;
@@ -70,8 +65,6 @@ public class UserGroupEditData {
 		this.swLongitude = swLongitude;
 		this.theme = theme;
 		this.languageId = languageId;
-		this.sendDigestMail = sendDigestMail;
-		this.newFilterRule = newFilterRule;
 		this.speciesGroupId = speciesGroupId;
 		this.habitatId = habitatId;
 	}
@@ -172,22 +165,6 @@ public class UserGroupEditData {
 		this.languageId = languageId;
 	}
 
-	public Boolean getSendDigestMail() {
-		return sendDigestMail;
-	}
-
-	public void setSendDigestMail(Boolean sendDigestMail) {
-		this.sendDigestMail = sendDigestMail;
-	}
-
-	public String getNewFilterRule() {
-		return newFilterRule;
-	}
-
-	public void setNewFilterRule(String newFilterRule) {
-		this.newFilterRule = newFilterRule;
-	}
-
 	public List<Long> getSpeciesGroupId() {
 		return speciesGroupId;
 	}
@@ -203,7 +180,5 @@ public class UserGroupEditData {
 	public void setHabitatId(List<Long> habitatId) {
 		this.habitatId = habitatId;
 	}
-
-	
 
 }
