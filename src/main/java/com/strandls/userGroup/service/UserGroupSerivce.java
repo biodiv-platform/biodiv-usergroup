@@ -31,7 +31,6 @@ import com.strandls.userGroup.pojo.UserGroupInvitationData;
 import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
-import com.strandls.userGroup.pojo.UserGroupWKT;
 
 /**
  * @author Abhishek Rudra
@@ -65,8 +64,6 @@ public interface UserGroupSerivce {
 
 	public List<Featured> removeFeatured(HttpServletRequest request, Long userId, String objectType, Long objectId,
 			UserGroupMappingCreateData userGroupList);
-
-	public String updateUserGroupFilter(Long userGroupId, UserGroupWKT userGroupWKT);
 
 	public List<UserGroupSpeciesGroup> getUserGroupSpeciesGroup(Long ugId);
 
@@ -138,7 +135,7 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> updateUGSpeciesMapping(HttpServletRequest request, Long speciesId,
 			UserGroupSpeciesCreateData ugSpeciesCreateData);
-	
-	public String createUgDescription(	UserGroupIbp ugIbp);
+
+	public String createUgDescription(UserGroupIbp ugIbp);
 
 }

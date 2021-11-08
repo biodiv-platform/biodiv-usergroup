@@ -5,15 +5,14 @@ package com.strandls.userGroup.dao;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
-import com.strandls.userGroup.pojo.UserGroupCreatedOnDateRule;
 import com.strandls.userGroup.pojo.UserGroupSpatialData;
 import com.strandls.userGroup.util.AbstractDAO;
 

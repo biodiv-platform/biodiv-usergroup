@@ -59,7 +59,6 @@ import com.strandls.userGroup.pojo.UserGroupObvFilterData;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
-import com.strandls.userGroup.pojo.UserGroupWKT;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupFilterService;
 import com.strandls.userGroup.service.UserGroupMemberService;
@@ -402,28 +401,6 @@ public class UserGroupController {
 			Long userGroupId = Long.parseLong(groupId);
 			ugFilterService.bulkFilteringOut(request, userGroupId, ugObvFilterDataList);
 			return Response.status(Status.OK).build();
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
-	@PUT
-	@Path(ApiConstants.UPDATE + ApiConstants.FILTERRULE + "/{userGroupId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ValidateUser
-
-	public Response updateUserGroupFilterRule(@Context HttpServletRequest request,
-			@PathParam("userGroupId") String userGroupId, @ApiParam(name = "userGroupWKT") UserGroupWKT userGroupWKT) {
-		try {
-			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
-			JSONArray userRole = (JSONArray) profile.getAttribute("roles");
-			if (userRole.contains("ROLE_ADMIN")) {
-				Long userGroup = Long.parseLong(userGroupId);
-				String result = ugServices.updateUserGroupFilter(userGroup, userGroupWKT);
-				return Response.status(Status.OK).entity(result).build();
-			}
-			return Response.status(Status.NOT_ACCEPTABLE).entity("USER NOT ALLOWED TO PERFORM THE TASK").build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}

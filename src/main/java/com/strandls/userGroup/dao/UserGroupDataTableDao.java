@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.pojo.UserGroupDataTable;
-import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.util.AbstractDAO;
 
 public class UserGroupDataTableDao   extends AbstractDAO<UserGroupDataTable, Long> {

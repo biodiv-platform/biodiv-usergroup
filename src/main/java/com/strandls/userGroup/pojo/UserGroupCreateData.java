@@ -5,10 +5,13 @@ package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author Abhishek Rudra
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupCreateData {
 
 //	core userGroup data
@@ -26,8 +29,6 @@ public class UserGroupCreateData {
 	private Double swLongitude;
 	private String theme;
 	private Long languageId;
-	private Boolean sendDigestMail;
-	private String newFilterRule;
 
 //	Founder and Moderator Invitation List
 	private UserGroupInvitationData invitationData;
@@ -54,14 +55,12 @@ public class UserGroupCreateData {
 	 * @param swLongitude
 	 * @param theme
 	 * @param languageId
-	 * @param sendDigestMail
-	 * @param newFilterRule
 	 * @param invitationData
 	 */
 	public UserGroupCreateData(Boolean allowUserToJoin, String description, String homePage, String icon,
 			String domainName, String name, List<Long> speciesGroup, List<Long> habitatId, Double neLatitude,
 			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long languageId,
-			Boolean sendDigestMail, String newFilterRule, UserGroupInvitationData invitationData) {
+			UserGroupInvitationData invitationData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.description = description;
@@ -77,8 +76,6 @@ public class UserGroupCreateData {
 		this.swLongitude = swLongitude;
 		this.theme = theme;
 		this.languageId = languageId;
-		this.sendDigestMail = sendDigestMail;
-		this.newFilterRule = newFilterRule;
 		this.invitationData = invitationData;
 	}
 
@@ -192,22 +189,6 @@ public class UserGroupCreateData {
 
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
-	}
-
-	public Boolean getSendDigestMail() {
-		return sendDigestMail;
-	}
-
-	public void setSendDigestMail(Boolean sendDigestMail) {
-		this.sendDigestMail = sendDigestMail;
-	}
-
-	public String getNewFilterRule() {
-		return newFilterRule;
-	}
-
-	public void setNewFilterRule(String newFilterRule) {
-		this.newFilterRule = newFilterRule;
 	}
 
 	public UserGroupInvitationData getInvitationData() {

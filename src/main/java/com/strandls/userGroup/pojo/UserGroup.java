@@ -50,10 +50,7 @@ public class UserGroup implements Serializable {
 	private Long visitCount;
 	private String webAddress;
 	private Long languageId;
-	private Boolean sendDigestMail;
 	private Date startDate;
-	private String filterRule;
-	private String newFilterRule;
 	private Boolean showGallery;
 	private Boolean showStats;
 	private Boolean showRecentObservations;
@@ -91,10 +88,7 @@ public class UserGroup implements Serializable {
 	 * @param visitCount
 	 * @param webAddress
 	 * @param languageId
-	 * @param sendDigestMail
 	 * @param startDate
-	 * @param filterRule
-	 * @param newFilterRule
 	 * @param showGallery
 	 * @param showStats
 	 * @param showRecentObservations
@@ -106,9 +100,8 @@ public class UserGroup implements Serializable {
 			Boolean allow_obv_cross_posting, Boolean allowUserToJoin, String description, String domianName,
 			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, Double neLatitude,
 			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long visitCount, String webAddress,
-			Long languageId, Boolean sendDigestMail, Date startDate, String filterRule, String newFilterRule,
-			Boolean showGallery, Boolean showStats, Boolean showRecentObservations, Boolean showGridMap,
-			Boolean showPartners, Boolean showDesc) {
+			Long languageId, Date startDate, Boolean showGallery, Boolean showStats, Boolean showRecentObservations,
+			Boolean showGridMap, Boolean showPartners, Boolean showDesc) {
 		super();
 		this.id = id;
 		this.allow_members_to_make_species_call = allow_members_to_make_species_call;
@@ -130,10 +123,7 @@ public class UserGroup implements Serializable {
 		this.visitCount = visitCount;
 		this.webAddress = webAddress;
 		this.languageId = languageId;
-		this.sendDigestMail = sendDigestMail;
 		this.startDate = startDate;
-		this.filterRule = filterRule;
-		this.newFilterRule = newFilterRule;
 		this.showGallery = showGallery;
 		this.showStats = showStats;
 		this.showRecentObservations = showRecentObservations;
@@ -324,15 +314,6 @@ public class UserGroup implements Serializable {
 		this.languageId = languageId;
 	}
 
-	@Column(name = "send_digest_mail")
-	public Boolean getSendDigestMail() {
-		return sendDigestMail;
-	}
-
-	public void setSendDigestMail(Boolean sendDigestMail) {
-		this.sendDigestMail = sendDigestMail;
-	}
-
 	@Column(name = "stat_start_date")
 	public Date getStartDate() {
 		return startDate;
@@ -340,24 +321,6 @@ public class UserGroup implements Serializable {
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
-	}
-
-	@Column(name = "filter_rule")
-	public String getFilterRule() {
-		return filterRule;
-	}
-
-	public void setFilterRule(String filterRule) {
-		this.filterRule = filterRule;
-	}
-
-	@Column(name = "new_filter_rule", columnDefinition = "TEXT")
-	public String getNewFilterRule() {
-		return newFilterRule;
-	}
-
-	public void setNewFilterRule(String newFilterRule) {
-		this.newFilterRule = newFilterRule;
 	}
 
 	@Column(name = "show_gallery", columnDefinition = "boolean default true")
