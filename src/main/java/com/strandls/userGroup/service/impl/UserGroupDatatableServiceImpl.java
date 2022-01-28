@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.dao.UserGroupDataTableDao;
 import com.strandls.userGroup.pojo.UserGroupDataTable;
+import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
+import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 
@@ -94,6 +96,26 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 		}
 
 		List<UserGroupIbp> result = fetchByDataTableId(datatableId);
+
+		return result;
+	}
+
+	@Override
+	public UserGroupDatatableMapping fetchDataTableByUserGroup(UserGroupDatatableFetch groupDatatableFetch) {
+		UserGroupDatatableMapping result = new UserGroupDatatableMapping();
+		if (groupDatatableFetch.getUserGroupId() == null) {
+			result.setTotal(0L);
+			return result;
+		}
+		Long totalCount = userGroupDataTableDao.findTotalDatatableByUserGroup(groupDatatableFetch.getUserGroupId());
+		if (totalCount > 0) {
+			List<UserGroupDataTable> userGroupDataTableList = userGroupDataTableDao.findDatatableByUserGroupId(
+					groupDatatableFetch.getUserGroupId(), groupDatatableFetch.getLimit(),
+					groupDatatableFetch.getOffset());
+
+			result.setUserGroupDataTableList(userGroupDataTableList);
+		}
+		result.setTotal(totalCount);
 
 		return result;
 	}

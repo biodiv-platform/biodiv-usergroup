@@ -45,6 +45,8 @@ import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
 import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
+import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
+import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
 import com.strandls.userGroup.pojo.UserGroupExpanded;
@@ -1191,6 +1193,24 @@ public class UserGroupController {
 		try {
 			Long id = Long.parseLong(dataTableId);
 			List<UserGroupIbp> userGroup = udDatatableService.fetchByDataTableId(id);
+			return Response.status(Status.OK).entity(userGroup).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.USERGROUPDATATABLE)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Find dataTable by UserGroup ID", notes = "Returns Datatable list by userGroup", response = UserGroupDatatableMapping.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "Datatable not found", response = String.class) })
+
+	public Response getDataTablebyUserGroupId(
+			@ApiParam(name = "groupDatatableFetch") UserGroupDatatableFetch groupDatatableFetch) {
+		try {
+			UserGroupDatatableMapping userGroup = udDatatableService.fetchDataTableByUserGroup(groupDatatableFetch);
 			return Response.status(Status.OK).entity(userGroup).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
