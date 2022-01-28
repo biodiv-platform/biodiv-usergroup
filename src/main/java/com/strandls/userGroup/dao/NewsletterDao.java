@@ -49,7 +49,6 @@ public class NewsletterDao extends AbstractDAO<Newsletter, Long> {
 		return entity;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Newsletter> getByUserGroupAndLanguage(Long userGroupId, Long languageId) {
 		String queryStr = "from Newsletter t  where ((t.userGroupId is null and :userGroupId is null) or t.userGroupId = :userGroupId) and t.languageId = :languageId and sticky = true order by displayOrder";
 
