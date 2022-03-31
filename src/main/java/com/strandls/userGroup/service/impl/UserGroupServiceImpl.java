@@ -266,9 +266,55 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			}
 
 		}
+		
+		try {
+			produce.setMessage("observation", observationId.toString(), "User Groups");
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 		return resultList;
 	}
 
+	public List<UserGroupIbp> removeUserGroupObservationMapping(HttpServletRequest request, Long observationId,
+			UserGroupMappingCreateData userGorups) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		Long userId = Long.parseLong(profile.getId());
+
+		List<Long> previousUserGroup = new ArrayList<Long>();
+		List<UserGroupObservation> previousMapping = userGroupObvDao.findByObservationId(observationId);
+		for (UserGroupObservation ug : previousMapping) {
+			if ((userGorups.getUserGroups().contains(ug.getUserGroupId()))) {
+				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ug.getUserGroupId());
+
+				if (eligible) {
+					userGroupObvDao.delete(ug);
+
+					UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
+
+					String description = createUgDescription(ugIbp);
+
+					MailData mailData = userGorups.getMailData() != null
+							? updateMailData(observationId, userGorups.getMailData())
+							: null;
+					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
+							observationId, "observation", ug.getUserGroupId(), "Removed resoruce", mailData);
+				}
+
+			}else {
+				previousUserGroup.add(ug.getUserGroupId());
+			}			
+			
+		}
+		try {
+			produce.setMessage("observation", observationId.toString(), "User Groups");
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		List<UserGroupIbp> result = fetchByObservationId(observationId);
+
+		return result;
+	}
+	
 	@Override
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups) {
@@ -1097,7 +1143,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							ugObservationPayload.setMailData(null);
 							ugObservationPayload.setUserGroups(ugList);
 							ugObservationPayload.setUgFilterData(ugData);
-							createUserGroupObservationMapping(request, userGroupId, ugObservationPayload);
+							createUserGroupObservationMapping(request, ugData.getObservationId(), ugObservationPayload);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.DOCUMENT.getValue())) {
 							UserGroupDocCreateData ugDatapayload = new UserGroupDocCreateData();
@@ -1167,7 +1213,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							ugObservationPayload.setMailData(null);
 							ugObservationPayload.setUserGroups(ugList);
 							ugObservationPayload.setUgFilterData(record);
-							updateUserGroupObservationMapping(request, record.getObservationId(), ugObservationPayload);
+							removeUserGroupObservationMapping(request, record.getObservationId(), ugObservationPayload);
 							counter++;
 						} else if (recordType.contains(RecordType.DOCUMENT.getValue())) {
 							UserGroupDocCreateData ugDatapayload = new UserGroupDocCreateData();
