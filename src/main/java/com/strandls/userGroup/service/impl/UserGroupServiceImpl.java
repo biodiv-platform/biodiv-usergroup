@@ -342,8 +342,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				ugMap.put(userGroup.getId(), ibp);
 			}
 			for (UserGroupMembersCount ugm : count) {
-				result.add(ugMap.get(ugm.getUserGroupId()));
-				ugMap.remove(ugm.getUserGroupId());
+				if(ugMap.get(ugm.getUserGroupId()) != null) {
+					result.add(ugMap.get(ugm.getUserGroupId()));
+					ugMap.remove(ugm.getUserGroupId());
+				}
 			}
 			for (Entry<Long, UserGroupIbp> entry : ugMap.entrySet()) {
 				result.add(entry.getValue());
