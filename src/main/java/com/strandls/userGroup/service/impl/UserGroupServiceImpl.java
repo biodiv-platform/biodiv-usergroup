@@ -393,8 +393,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				ugMap.put(userGroup.getId(), ibp);
 			}
 			for (UserGroupMembersCount ugm : count) {
-				result.add(ugMap.get(ugm.getUserGroupId()));
-				ugMap.remove(ugm.getUserGroupId());
+				if(ugMap.get(ugm.getUserGroupId()) != null) {
+					result.add(ugMap.get(ugm.getUserGroupId()));
+					ugMap.remove(ugm.getUserGroupId());
+				}
 			}
 			for (Entry<Long, UserGroupIbp> entry : ugMap.entrySet()) {
 				result.add(entry.getValue());
@@ -444,9 +446,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			// Iterate through member count and assign it to expanded modal
 			for (UserGroupMembersCount ugm : count) {
 				UserGroupExpanded ugx = ugMap.get(ugm.getUserGroupId());
-				ugx.setMemberCount(ugm.getCount());
-				result.add(ugx);
-				ugMap.remove(ugm.getUserGroupId());
+				if(ugx!= null) {
+					ugx.setMemberCount(ugm.getCount());
+					result.add(ugx);
+					ugMap.remove(ugm.getUserGroupId());
+				}
+				
 			}
 
 			for (Entry<Long, UserGroupExpanded> entry : ugMap.entrySet()) {
