@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ import com.strandls.userGroup.dao.UserGroupDocumentDao;
 import com.strandls.userGroup.dao.UserGroupHabitatDao;
 import com.strandls.userGroup.dao.UserGroupInvitaionDao;
 import com.strandls.userGroup.dao.UserGroupJoinRequestDao;
+import com.strandls.userGroup.dao.UserGroupMemberRoleDao;
 import com.strandls.userGroup.dao.UserGroupObservationDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesGroupDao;
@@ -59,6 +61,7 @@ import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
+import com.strandls.userGroup.pojo.UserGroupAdminList;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocument;
@@ -71,6 +74,7 @@ import com.strandls.userGroup.pojo.UserGroupInvitation;
 import com.strandls.userGroup.pojo.UserGroupInvitationData;
 import com.strandls.userGroup.pojo.UserGroupJoinRequest;
 import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
+import com.strandls.userGroup.pojo.UserGroupMemberRole;
 import com.strandls.userGroup.pojo.UserGroupMembersCount;
 import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupObvFilterData;
@@ -161,6 +165,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	@Inject
 	private UserGroupDatatableService ugDatatableService;
 
+	@Inject
+	private UserGroupMemberRoleDao ugMemberDao;
+
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
@@ -187,21 +194,29 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		try {
 
 			UserGroup ug = userGroupDao.findById(id);
-			UserGroupIbp ibp;
-			if (ug != null) {
-				if (ug.getDomianName() != null)
-					ibp = new UserGroupIbp(ug.getId(), ug.getName(), ug.getIcon(), ug.getDomianName(),
-							ug.getAllowUserToJoin());
-				else {
-					String webAddress = "/group/" + ug.getWebAddress();
-					ibp = new UserGroupIbp(ug.getId(), ug.getName(), ug.getIcon(), webAddress, ug.getAllowUserToJoin());
-				}
-				return ibp;
-			}
+			return getUserGroupIbp(ug);
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		return null;
+	}
+
+	private UserGroupIbp getUserGroupIbp(UserGroup ug) {
+		UserGroupIbp ibp;
+		if (ug != null) {
+			if (ug.getDomianName() != null)
+				ibp = new UserGroupIbp(ug.getId(), ug.getName(), ug.getIcon(), ug.getDomianName(),
+						ug.getAllowUserToJoin());
+			else {
+				String webAddress = "/group/" + ug.getWebAddress();
+				ibp = new UserGroupIbp(ug.getId(), ug.getName(), ug.getIcon(), webAddress, ug.getAllowUserToJoin());
+			}
+			return ibp;
+		}
+
+		return null;
+
 	}
 
 	@Override
@@ -266,7 +281,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			}
 
 		}
-		
+
 		try {
 			produce.setMessage("observation", observationId.toString(), "User Groups");
 		} catch (Exception e) {
@@ -300,10 +315,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							observationId, "observation", ug.getUserGroupId(), "Removed resoruce", mailData);
 				}
 
-			}else {
+			} else {
 				previousUserGroup.add(ug.getUserGroupId());
-			}			
-			
+			}
+
 		}
 		try {
 			produce.setMessage("observation", observationId.toString(), "User Groups");
@@ -314,7 +329,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return result;
 	}
-	
+
 	@Override
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups) {
@@ -393,7 +408,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				ugMap.put(userGroup.getId(), ibp);
 			}
 			for (UserGroupMembersCount ugm : count) {
-				if(ugMap.get(ugm.getUserGroupId()) != null) {
+				if (ugMap.get(ugm.getUserGroupId()) != null) {
 					result.add(ugMap.get(ugm.getUserGroupId()));
 					ugMap.remove(ugm.getUserGroupId());
 				}
@@ -446,12 +461,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			// Iterate through member count and assign it to expanded modal
 			for (UserGroupMembersCount ugm : count) {
 				UserGroupExpanded ugx = ugMap.get(ugm.getUserGroupId());
-				if(ugx!= null) {
+				if (ugx != null) {
 					ugx.setMemberCount(ugm.getCount());
 					result.add(ugx);
 					ugMap.remove(ugm.getUserGroupId());
 				}
-				
+
 			}
 
 			for (Entry<Long, UserGroupExpanded> entry : ugMap.entrySet()) {
@@ -2037,6 +2052,36 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		}
 
 		return fetchBySpeciesId(speciesId);
+	}
+
+	@Override
+	public UserGroupAdminList getUserGroupAdminListByUserId(HttpServletRequest request) {
+
+		UserGroupAdminList result = new UserGroupAdminList();
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		Long userId = Long.parseLong(profile.getId());
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		if (roles.contains("ROLE_ADMIN")) {
+			result.setIsAdmin(true);
+			result.setUgList(fetchAllUserGroup());
+			return result;
+		}
+		List<UserGroupMemberRole> ugMemberList = ugMemberDao.findUserGroupbyUserIdRole(userId);
+
+		if (ugMemberList.isEmpty()) {
+			ArrayList<Long> arrayList = ugMemberList.stream().map(item -> item.getUserGroupId())
+					.collect(Collectors.toCollection(ArrayList::new));
+
+			List<UserGroupIbp> list = userGroupDao.findUgListByIds(arrayList.toString()).stream()
+					.map(item -> getUserGroupIbp(item)).collect(Collectors.toCollection(ArrayList::new));
+
+			result.setIsAdmin(true);
+			result.setUgList(list);
+
+			return result;
+		}
+
+		return null;
 	}
 
 }

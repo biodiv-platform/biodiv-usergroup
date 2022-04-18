@@ -46,6 +46,24 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return entity;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserGroup> findUgListByIds(String ids) {
+		Session session = sessionFactory.openSession();
+		List<UserGroup> result = null;
+		String qry = "from UserGroup where id IN (:groupIds) isDeleted is false" ;
+		try {
+			Query<UserGroup> query = session.createQuery(qry);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<UserGroup> findFilterRule() {
