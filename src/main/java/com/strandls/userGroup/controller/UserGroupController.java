@@ -213,7 +213,7 @@ public class UserGroupController {
 		try {
 
 			Long observationId = Long.parseLong(obsId);
-			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData);
+			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,true);
 			if (result == null)
 				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
 			return Response.status(Status.CREATED).entity(result).build();
