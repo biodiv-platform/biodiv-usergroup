@@ -170,6 +170,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
+	
+	private final  String messageType =  "User Groups";
 
 	@Override
 	public UserGroup fetchByGroupId(Long id) {
@@ -284,7 +286,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		if (Boolean.TRUE.equals(canEsUpdate)) {
 			try {
-				produce.setMessage("observation", observationId.toString(), "User Groups");
+				produce.setMessage("observation", observationId.toString(), messageType);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
@@ -325,15 +327,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		}
 		if (Boolean.TRUE.equals(canEsUpdate)) {
 			try {
-				produce.setMessage("observation", observationId.toString(), "User Groups");
+				produce.setMessage("observation", observationId.toString(),messageType);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		}
 
-		List<UserGroupIbp> result = fetchByObservationId(observationId);
+		return  fetchByObservationId(observationId);
 
-		return result;
 	}
 
 	@Override
@@ -384,7 +385,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			}
 		}
 		try {
-			produce.setMessage("observation", observationId.toString(), "User Groups");
+			produce.setMessage("observation", observationId.toString(),messageType);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -1231,7 +1232,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 				if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder)
 						|| Boolean.TRUE.equals(isModerator)) {
-					for (UserGroupObvFilterData record : ugFilterList) {
+					for (UserGroupObvFilterData item : ugFilterList) {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
@@ -1239,25 +1240,25 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							UserGroupMappingCreateData ugObservationPayload = new UserGroupMappingCreateData();
 							ugObservationPayload.setMailData(null);
 							ugObservationPayload.setUserGroups(ugList);
-							ugObservationPayload.setUgFilterData(record);
-							removeUserGroupObservationMapping(request, record.getObservationId(), ugObservationPayload,
+							ugObservationPayload.setUgFilterData(item);
+							removeUserGroupObservationMapping(request, item.getObservationId(), ugObservationPayload,
 									false);
 							counter++;
 						} else if (recordType.contains(RecordType.DOCUMENT.getValue())) {
 							UserGroupDocCreateData ugDatapayload = new UserGroupDocCreateData();
-							ugDatapayload.setDocumentId(record.getObservationId());
+							ugDatapayload.setDocumentId(item.getObservationId());
 							ugDatapayload.setUserGroupIds(ugList);
 							ugDatapayload.setMailData(null);
 							updateUGDocMapping(request, ugDatapayload);
 							counter++;
 						} else if (recordType.contains(RecordType.DATATABLE.getValue())) {
-							ugDatatableService.updateUserGroupDatatableMapping(request, record.getObservationId(),
+							ugDatatableService.updateUserGroupDatatableMapping(request, item.getObservationId(),
 									ugList);
 							counter++;
 						} else if (recordType.contains(RecordType.SPECIES.getValue())) {
 							UserGroupSpeciesCreateData ugSpeciesPayload = new UserGroupSpeciesCreateData();
 							ugSpeciesPayload.setUserGroupIds(ugList);
-							updateUGSpeciesMapping(request, record.getObservationId(), ugSpeciesPayload);
+							updateUGSpeciesMapping(request, item.getObservationId(), ugSpeciesPayload);
 							counter++;
 						}
 

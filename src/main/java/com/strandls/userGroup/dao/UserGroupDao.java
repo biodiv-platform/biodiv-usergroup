@@ -50,18 +50,19 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 	@SuppressWarnings("unchecked")
 	public List<UserGroup> findUgListByIds(String ids) {
 		Session session = sessionFactory.openSession();
-		List<UserGroup> result = null;
-		String qry = "from UserGroup where id IN (:groupIds) isDeleted is false" ;
+		
+		String qry = "from UserGroup where id IN (:ugIds) isDeleted is false" ;
 		try {
 			Query<UserGroup> query = session.createQuery(qry);
-			result = query.getResultList();
+			query.setParameter("ugIds", ids);
+			return  query.getResultList();
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
 			session.close();
 		}
-		return result;
+		return null;
 	}
 	
 
