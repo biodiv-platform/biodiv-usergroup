@@ -2077,11 +2077,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		}
 		List<UserGroupMemberRole> ugMemberList = ugMemberDao.findUserGroupbyUserIdRole(userId);
 
-		if (ugMemberList.isEmpty()) {
+		if (!ugMemberList.isEmpty()) {
 			ArrayList<Long> arrayList = ugMemberList.stream().map(item -> item.getUserGroupId())
 					.collect(Collectors.toCollection(ArrayList::new));
 
-			List<UserGroupIbp> list = userGroupDao.findUgListByIds(arrayList.toString()).stream()
+			List<UserGroupIbp> list = userGroupDao.findUgListByIds(arrayList).stream()
 					.map(item -> getUserGroupIbp(item)).collect(Collectors.toCollection(ArrayList::new));
 
 			result.setIsAdmin(true);
