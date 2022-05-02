@@ -43,6 +43,7 @@ import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.ShowFilterRule;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
+import com.strandls.userGroup.pojo.UserGroupAdminList;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
 import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
 import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
@@ -212,7 +213,7 @@ public class UserGroupController {
 		try {
 
 			Long observationId = Long.parseLong(obsId);
-			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData);
+			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,true);
 			if (result == null)
 				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
 			return Response.status(Status.CREATED).entity(result).build();
@@ -1393,6 +1394,26 @@ public class UserGroupController {
 			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,
 					userGroupData.getUserGroupIds());
 			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path(ApiConstants.GROUPLIST_ADMIN)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "fetch by speciesId", notes = "return the usergroup associated with the species", response = UserGroupAdminList.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "unable to fetch the user group", response = String.class) })
+
+	public Response getUserGroupAdminListByUserId(@Context HttpServletRequest request) {
+		try {
+			UserGroupAdminList result = ugServices.getUserGroupAdminListByUserId(request);
+			return Response.status(Status.OK).entity(result).build();
+
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}

@@ -46,6 +46,25 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return entity;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserGroup> findUgListByIds(List<Long> ids) {
+		Session session = sessionFactory.openSession();
+		
+		String qry = "from UserGroup where id IN (:ugIds)" ;
+		try {
+			Query<UserGroup> query = session.createQuery(qry);
+			query.setParameter("ugIds", ids);
+			return  query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<UserGroup> findFilterRule() {
