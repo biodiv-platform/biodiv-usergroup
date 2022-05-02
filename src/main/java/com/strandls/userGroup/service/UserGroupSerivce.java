@@ -21,6 +21,7 @@ import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
+import com.strandls.userGroup.pojo.UserGroupAdminList;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
@@ -49,7 +50,7 @@ public interface UserGroupSerivce {
 	public List<UserGroupIbp> fetchByUserGroupDetails(List<Long> userGroupMember);
 
 	public List<Long> createUserGroupObservationMapping(HttpServletRequest request, Long observationId,
-			UserGroupMappingCreateData userGroups);
+			UserGroupMappingCreateData userGroups,Boolean canEsUpdate);
 
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups);
@@ -138,4 +139,5 @@ public interface UserGroupSerivce {
 
 	public String createUgDescription(UserGroupIbp ugIbp);
 
+	public UserGroupAdminList getUserGroupAdminListByUserId(HttpServletRequest request);
 }

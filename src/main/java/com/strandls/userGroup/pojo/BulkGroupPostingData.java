@@ -12,16 +12,19 @@ import java.util.List;
 public class BulkGroupPostingData {
 
 	private List<Long> userGroupList;
-	private List<UserGroupObvFilterData> ugObvFilterDataList;
+	private List<UserGroupObvFilterData> ugFilterDataList;
+	private String recordType;
 
 	public BulkGroupPostingData() {
 		super();
 	}
 
-	public BulkGroupPostingData(List<Long> userGroupList, List<UserGroupObvFilterData> ugObvFilterDataList) {
+	public BulkGroupPostingData(List<Long> userGroupList, List<UserGroupObvFilterData> ugFilterDataList,
+			String recordType) {
 		super();
 		this.userGroupList = userGroupList;
-		this.ugObvFilterDataList = ugObvFilterDataList;
+		this.ugFilterDataList = ugFilterDataList;
+		this.recordType = recordType;
 	}
 
 	public List<Long> getUserGroupList() {
@@ -33,11 +36,19 @@ public class BulkGroupPostingData {
 	}
 
 	public List<UserGroupObvFilterData> getUgObvFilterDataList() {
-		return ugObvFilterDataList;
+		return ugFilterDataList;
 	}
 
-	public void setUgObvFilterDataList(List<UserGroupObvFilterData> ugObvFilterDataList) {
-		this.ugObvFilterDataList = ugObvFilterDataList;
+	public void setUgObvFilterDataList(List<UserGroupObvFilterData> ugFilterDataList) {
+		this.ugFilterDataList = ugFilterDataList;
+	}
+
+	public String getRecordType() {
+		return recordType;
+	}
+
+	public void setRecordType(String recordType) {
+		this.recordType = recordType;
 	}
 
 }
