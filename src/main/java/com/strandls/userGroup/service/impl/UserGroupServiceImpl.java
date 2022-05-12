@@ -336,6 +336,48 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return  fetchByObservationId(observationId);
 
 	}
+	
+	
+	public void removeUGSpeciesMapping(HttpServletRequest request, Long speciesId,
+			UserGroupSpeciesCreateData ugSpeciesCreateData) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		Long userId = Long.parseLong(profile.getId());
+
+		List<UserGroupSpecies> ugSpeciesList = ugSpeciesDao.findBySpeciesId(speciesId);
+		List<Long> userGroupIds = ugSpeciesCreateData.getUserGroupIds();
+
+//		remove the existing groups
+		for (UserGroupSpecies ugSpecies : ugSpeciesList) {
+			if (userGroupIds.contains(ugSpecies.getUserGroupId())) {
+				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugSpecies.getUserGroupId());
+				if (eligible) {
+					ugSpeciesDao.delete(ugSpecies);
+					UserGroupActivity ugActivity = new UserGroupActivity();
+					UserGroupIbp ugIbp = fetchByGroupIdIbp(ugSpecies.getUserGroupId());
+					String description = null;
+					ugActivity.setFeatured(null);
+					ugActivity.setUserGroupId(ugIbp.getId());
+					ugActivity.setUserGroupName(ugIbp.getName());
+					ugActivity.setWebAddress(ugIbp.getWebAddress());
+					try {
+						description = objectMapper.writeValueAsString(ugActivity);
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+					}
+
+//					TODO mail Data
+					MailData mailData = null;
+//					MailData mailData = updateMailData(observationId, userGorups.getMailData());
+
+					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							speciesId, speciesId, "species", ugSpecies.getUserGroupId(), "Removed resoruce", mailData);
+
+				}
+
+			} 
+
+		}
+	}
 
 	@Override
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
@@ -1258,7 +1300,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						} else if (recordType.contains(RecordType.SPECIES.getValue())) {
 							UserGroupSpeciesCreateData ugSpeciesPayload = new UserGroupSpeciesCreateData();
 							ugSpeciesPayload.setUserGroupIds(ugList);
-							updateUGSpeciesMapping(request, item.getObservationId(), ugSpeciesPayload);
+							removeUGSpeciesMapping(request, item.getObservationId(), ugSpeciesPayload);
 							counter++;
 						}
 
