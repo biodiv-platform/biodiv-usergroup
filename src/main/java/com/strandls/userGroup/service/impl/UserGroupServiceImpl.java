@@ -170,8 +170,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
-	
-	private final  String messageType =  "User Groups";
+
+	private final String messageType = "User Groups";
 
 	@Override
 	public UserGroup fetchByGroupId(Long id) {
@@ -262,11 +262,13 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
 		List<Long> resultList = new ArrayList<Long>();
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+
 		for (Long userGroup : userGroups.getUserGroups()) {
 
 			Boolean isEligible = ugFilterService.checkUserGroupEligiblity(userGroup, userId,
 					userGroups.getUgFilterData(), true);
-			if (isEligible) {
+			if (roles.contains("ROLE_ADMIN") || isEligible) {
 				UserGroupObservation userGroupObs = new UserGroupObservation(userGroup, observationId);
 				UserGroupObservation result = userGroupObvDao.save(userGroupObs);
 				if (result != null) {
@@ -299,6 +301,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			UserGroupMappingCreateData userGorups, Boolean canEsUpdate) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupObservation> previousMapping = userGroupObvDao.findByObservationId(observationId);
@@ -306,7 +309,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if ((userGorups.getUserGroups().contains(ug.getUserGroupId()))) {
 				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ug.getUserGroupId());
 
-				if (eligible) {
+				if (roles.contains("ROLE_ADMIN") || eligible) {
 					userGroupObvDao.delete(ug);
 
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
@@ -327,17 +330,16 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		}
 		if (Boolean.TRUE.equals(canEsUpdate)) {
 			try {
-				produce.setMessage("observation", observationId.toString(),messageType);
+				produce.setMessage("observation", observationId.toString(), messageType);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		}
 
-		return  fetchByObservationId(observationId);
+		return fetchByObservationId(observationId);
 
 	}
-	
-	
+
 	public void removeUGSpeciesMapping(HttpServletRequest request, Long speciesId,
 			UserGroupSpeciesCreateData ugSpeciesCreateData) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -345,12 +347,13 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		List<UserGroupSpecies> ugSpeciesList = ugSpeciesDao.findBySpeciesId(speciesId);
 		List<Long> userGroupIds = ugSpeciesCreateData.getUserGroupIds();
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 
 //		remove the existing groups
 		for (UserGroupSpecies ugSpecies : ugSpeciesList) {
 			if (userGroupIds.contains(ugSpecies.getUserGroupId())) {
 				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugSpecies.getUserGroupId());
-				if (eligible) {
+				if (roles.contains("ROLE_ADMIN") || eligible) {
 					ugSpeciesDao.delete(ugSpecies);
 					UserGroupActivity ugActivity = new UserGroupActivity();
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(ugSpecies.getUserGroupId());
@@ -374,7 +377,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 				}
 
-			} 
+			}
 
 		}
 	}
@@ -427,7 +430,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			}
 		}
 		try {
-			produce.setMessage("observation", observationId.toString(),messageType);
+			produce.setMessage("observation", observationId.toString(), messageType);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -1995,9 +1998,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			UserGroupSpeciesCreateData ugSpeciesCreateData) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		for (Long userGroupId : ugSpeciesCreateData.getUserGroupIds()) {
 			Boolean eligible = ugMemberService.checkUserGroupMember(userId, userGroupId);
-			if (eligible) {
+			if (roles.contains("ROLE_ADMIN") || eligible) {
 				UserGroupSpecies ugSpecies = new UserGroupSpecies(userGroupId, speciesId);
 				ugSpecies = ugSpeciesDao.save(ugSpecies);
 				if (ugSpecies != null) {
