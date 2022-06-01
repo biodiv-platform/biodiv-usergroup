@@ -33,6 +33,8 @@ import com.strandls.userGroup.pojo.CustomFieldReordering;
 import com.strandls.userGroup.pojo.CustomFieldUGData;
 import com.strandls.userGroup.pojo.CustomFieldValues;
 import com.strandls.userGroup.pojo.CustomFieldValuesCreateData;
+import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.service.CustomFieldServices;
 
 import io.swagger.annotations.Api;
@@ -323,5 +325,58 @@ public class CustomFieldController {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
+	
+	@GET
+	@Path("/{customfieldId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 
+	@ValidateUser
+
+	@ApiOperation(value = "Find the custom field ", notes = "Returns the customField ", response = CustomFieldDetails.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to retrive the data", response = String.class) })
+
+	public Response getCustomFieldById(@Context HttpServletRequest request,
+			@PathParam("customfieldId") String customfieldId) {
+		try {
+//			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long cfId = Long.parseLong(customfieldId);
+			CustomFieldDetails customField = cfService.getCustomFieldById(request, cfId);
+			if (customField != null)
+				return Response.status(Status.OK).entity(customField).build();
+			return Response.status(Status.NOT_ACCEPTABLE).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+
+	}
+	
+	
+	@PUT
+	@Path(ApiConstants.EDIT+ "/{customFieldId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "edit custom field data", notes = "return customField data", response = CustomFieldDetails.class )
+	@ApiResponses(value = {@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+	public Response editCustomFieldById(@Context HttpServletRequest request, @PathParam("customFieldId") String customFieldId,
+			@ApiParam(name = "editData") CustomFieldCreateData  CustomFieldEditData ) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long cfId = Long.parseLong(customFieldId);
+			CustomFieldDetails result = cfService.editCustomFieldById(request, profile, cfId, CustomFieldEditData);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
 }
+	
+	

@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.strandls.activity.pojo.MailData;
+import com.strandls.activity.pojo.UserGroupActivity;
 import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.userGroup.dao.CustomFieldValuesDao;
 import com.strandls.userGroup.dao.CustomFieldsDao;
@@ -46,6 +47,8 @@ import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupCustomFieldMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupObservation;
+import com.strandls.userGroup.pojo.UserGroupSpecies;
+import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.service.CustomFieldServices;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
@@ -817,5 +820,75 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 
 		return null;
 	}
+	
+	@Override
+	public CustomFieldDetails getCustomFieldById(HttpServletRequest request,Long customfieldId) {
+		try {
+
+			List<CustomFieldValues> cfValues = new ArrayList<CustomFieldValues>();
+			List<UserGroupCustomFieldMapping> ugCFMappingList = ugCFMappingDao.findBycustomfieldId(customfieldId);
+			for (UserGroupCustomFieldMapping ugCFMapping : ugCFMappingList) {
+				CustomFields customField = cfsDao.findById(ugCFMapping.getCustomFieldId());
+				if (customField.getFieldType().equalsIgnoreCase("SINGLE CATEGORICAL")
+						|| customField.getFieldType().equalsIgnoreCase("MULTIPLE CATEGORICAL")) {
+					cfValues = cfValueDao.findByCustomFieldId(customField.getId());
+				}
+
+				return new CustomFieldDetails(customField, cfValues, ugCFMapping.getDefaultValue(),
+						ugCFMapping.getDisplayOrder(), ugCFMapping.getIsMandatory(),
+						ugCFMapping.getAllowedParticipation());
+				
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
+	}
+	
+	
+	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile,
+			Long customfieldId , CustomFieldCreateData editData) {
+		List<CustomFieldValues> prevCustomFieldValues = new ArrayList<CustomFieldValues>();
+		prevCustomFieldValues = cfValueDao.findByCustomFieldId(customfieldId);
+
+		try {
+			// check role
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			if(roles.contains("ROLE_ADMIN")) {
+				
+				// find prev data by id				
+				
+				
+				// get edit data
+				Long authorId = Long.parseLong(profile.getId());
+				CustomFields customFields = new CustomFields(null, authorId, editData.getName(),
+						editData.getDataType(), editData.getFieldType(),
+						editData.getUnits(), editData.getIconURL(),
+						editData.getNotes());
+				
+				customFields = cfsDao.update(customFields);
+				
+				
+				// check with new data for changes
+				
+				// return
+				
+				return null;
+
+				
+			}
+
+
+			
+		}
+		catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	
+		return null;
+		
+	}
+
 
 }

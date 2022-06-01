@@ -64,5 +64,25 @@ public class CustomFieldValuesDao extends AbstractDAO<CustomFieldValues, Long> {
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<CustomFieldValues> editByCustomFieldId(Long customFieldId ) {
+		Session session = sessionFactory.openSession();
+		List<CustomFieldValues> result = new ArrayList<CustomFieldValues>();
+		String qry = "from CustomFieldValues where customFieldId = :cfId";
+		try {
+			Query<CustomFieldValues> query = session.createQuery(qry);
+			query.setParameter("cfId", customFieldId);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+	
+
 
 }

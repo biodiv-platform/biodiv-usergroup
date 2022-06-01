@@ -18,6 +18,8 @@ import com.strandls.userGroup.pojo.CustomFieldReordering;
 import com.strandls.userGroup.pojo.CustomFieldUGData;
 import com.strandls.userGroup.pojo.CustomFieldValues;
 import com.strandls.userGroup.pojo.CustomFieldValuesCreateData;
+import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 
 /**
  * @author Abhishek Rudra
@@ -54,5 +56,10 @@ public interface CustomFieldServices {
 
 	public List<CustomFieldDetails> addCustomFieldValues(HttpServletRequest request, Long customFieldId,
 			Long userGroupId, CustomFieldValuesCreateData cfVCreateData);
+	
+	public CustomFieldDetails getCustomFieldById(HttpServletRequest request, Long customfieldId);
+
+	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile, Long cfId,
+			CustomFieldCreateData customFieldEditData);
 
 }
