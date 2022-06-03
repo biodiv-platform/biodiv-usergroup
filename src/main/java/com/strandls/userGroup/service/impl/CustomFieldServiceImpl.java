@@ -913,7 +913,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						if (updateCFValueList.contains(item.getId())) {
 							CustomFieldValues cfValues = new CustomFieldValues(item.getId(), item.getCustomFieldId(),
 									item.getValues(), item.getAuthorId(), item.getIconURL(), item.getNotes());
-							cfValues = cfValueDao.save(cfValues);
+							cfValues = cfValueDao.update(cfValues);
 						}
 					});
 				}
