@@ -845,22 +845,24 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 		return null;
 	}
 
-	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile, Long customfieldId,
-			CustomFieldEditData editData) {
+	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile,
+			Long customfieldId,CustomFieldEditData editData) {
+		
 		List<Long> prevCustomFieldValuesIds = cfValueDao.findByCustomFieldId(customfieldId).stream()
 				.map(item -> item.getId()).collect(Collectors.toList());
-
+		// Null Exception
 		if (customfieldId == null)
 			return null;
 
 		try {
-			// check role
+			
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, editData.getUserGroupId());
 
 			if (roles.contains("ROLE_ADMIN") || isFounder) {
-
+				
+				// Update Meta Data
 				CustomFields customFields = new CustomFields(customfieldId, userId,
 						editData.getCustomFields().getName(), editData.getCustomFields().getDataType(),
 						editData.getCustomFields().getFieldType(), editData.getCustomFields().getUnits(),
@@ -871,6 +873,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 				// edit ugCFMapping record
 				UserGroupCustomFieldMapping ugCFData = ugCFMappingDao
 						.findByUserGroupCustomFieldId(editData.getUserGroupId(), customfieldId);
+				
 				if (ugCFData != null) {
 					UserGroupCustomFieldMapping ugCFMapping = new UserGroupCustomFieldMapping(ugCFData.getId(), userId,
 							editData.getUserGroupId(), customfieldId, editData.getDefaultValue(),
@@ -889,7 +892,8 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 
 				List<Long> updateCFValueList = prevCustomFieldValuesIds.stream()
 						.filter(item -> nonNullCFValueList.contains(item)).collect(Collectors.toList());
-
+				
+				// Adds a new CustomFiled Value
 				if (newCFValueList != null && !newCFValueList.isEmpty()) {
 					for (CustomFieldValues cfVCreateData : newCFValueList) {
 						CustomFieldValues cfValues = new CustomFieldValues(null, cfVCreateData.getCustomFieldId(),
@@ -899,14 +903,16 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 					}
 
 				}
-
+				
+				// Removes a CustomFiled Value based on Unique ID in the CustomField Values Table
 				if (removeCFValueList != null && !removeCFValueList.isEmpty()) {
 					for (Long cfValId : removeCFValueList) {
 						CustomFieldValues cfVal = cfValueDao.findById(cfValId);
 						cfValueDao.delete(cfVal);
 					}
 				}
-
+				
+				// Updates a CustomFiled Value based on based on Unique ID in the CustomField Values Table
 				if (updateCFValueList != null && !updateCFValueList.isEmpty()) {
 
 					editData.getCfValues().forEach((item) -> {
@@ -917,7 +923,6 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						}
 					});
 				}
-
 
 				return getCustomFieldById(customfieldId);
 
