@@ -821,10 +821,10 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 	}
 
 	@Override
-	public CustomFieldDetails getCustomFieldById(Long customfieldId) {
+	public CustomFieldEditData getCustomFieldById(Long customfieldId) {
 		try {
 
-			List<CustomFieldValues> cfValues = new ArrayList<CustomFieldValues>();
+			List<CustomFieldValues> cfValues = new ArrayList<>();
 			List<UserGroupCustomFieldMapping> ugCFMappingList = ugCFMappingDao.findBycustomfieldId(customfieldId);
 			for (UserGroupCustomFieldMapping ugCFMapping : ugCFMappingList) {
 				CustomFields customField = cfsDao.findById(ugCFMapping.getCustomFieldId());
@@ -832,10 +832,11 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						|| customField.getFieldType().equalsIgnoreCase("MULTIPLE CATEGORICAL")) {
 					cfValues = cfValueDao.findByCustomFieldId(customField.getId());
 				}
-
-				return new CustomFieldDetails(customField, cfValues, ugCFMapping.getDefaultValue(),
+				if(cfValues != null && !cfValues.isEmpty()) {
+				return new CustomFieldEditData(customField, cfValues, ugCFMapping.getDefaultValue(),
 						ugCFMapping.getDisplayOrder(), ugCFMapping.getIsMandatory(),
-						ugCFMapping.getAllowedParticipation());
+						ugCFMapping.getAllowedParticipation(),ugCFMapping.getUserGroupId());
+				}
 
 			}
 
@@ -860,7 +861,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, editData.getUserGroupId());
 
-			if (roles.contains("ROLE_ADMIN") || isFounder) {
+			if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder)) {
 				
 				// Update Meta Data
 				CustomFields customFields = new CustomFields(customfieldId, userId,
@@ -880,18 +881,23 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 							editData.getDisplayOrder(), editData.getIsMandatory(), editData.getAllowedParticipation());
 					ugCFMappingDao.update(ugCFMapping);
 				}
-
+				
 				List<CustomFieldValues> newCFValueList = editData.getCfValues().stream()
-						.filter(item -> item.getId() == null).collect(Collectors.toList());
+						.filter(item -> item.getId() == null)
+						.collect(Collectors.toList());
 
-				List<Long> nonNullCFValueList = editData.getCfValues().stream().filter(item -> item.getId() != null)
-						.map(item -> item.getId()).collect(Collectors.toList());
+				List<Long> nonNullCFValueList = editData.getCfValues().stream()
+						.filter(item -> item.getId() != null)
+						.map(CustomFieldValues::getId)
+						.collect(Collectors.toList());
 
 				List<Long> removeCFValueList = prevCustomFieldValuesIds.stream()
-						.filter(item -> !nonNullCFValueList.contains(item)).collect(Collectors.toList());
+						.filter(item -> !nonNullCFValueList.contains(item))
+						.collect(Collectors.toList());
 
 				List<Long> updateCFValueList = prevCustomFieldValuesIds.stream()
-						.filter(item -> nonNullCFValueList.contains(item)).collect(Collectors.toList());
+						.filter(nonNullCFValueList::contains)
+						.collect(Collectors.toList());
 				
 				// Adds a new CustomFiled Value
 				if (newCFValueList != null && !newCFValueList.isEmpty()) {
@@ -899,7 +905,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						CustomFieldValues cfValues = new CustomFieldValues(null, cfVCreateData.getCustomFieldId(),
 								cfVCreateData.getValues(), cfVCreateData.getAuthorId(), cfVCreateData.getIconURL(),
 								cfVCreateData.getNotes());
-						cfValues = cfValueDao.save(cfValues);
+						cfValueDao.save(cfValues);
 					}
 
 				}
@@ -915,11 +921,11 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 				// Updates a CustomFiled Value based on based on Unique ID in the CustomField Values Table
 				if (updateCFValueList != null && !updateCFValueList.isEmpty()) {
 
-					editData.getCfValues().forEach((item) -> {
+					editData.getCfValues().forEach(item -> {
 						if (updateCFValueList.contains(item.getId())) {
 							CustomFieldValues cfValues = new CustomFieldValues(item.getId(), item.getCustomFieldId(),
 									item.getValues(), item.getAuthorId(), item.getIconURL(), item.getNotes());
-							cfValues = cfValueDao.update(cfValues);
+							cfValueDao.update(cfValues);
 						}
 					});
 				}

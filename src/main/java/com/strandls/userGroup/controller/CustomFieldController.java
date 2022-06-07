@@ -330,17 +330,17 @@ public class CustomFieldController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 
-	@ApiOperation(value = "Find the custom field ", notes = "Returns the customField ", response = CustomFieldDetails.class)
+	@ApiOperation(value = "Find the custom field ", notes = "Returns the customField ", response = CustomFieldEditData.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to retrive the data", response = String.class) })
 
 	public Response getCustomFieldById(
 			@PathParam("customfieldId") String customfieldId) {
 		try {
 			Long cfId = Long.parseLong(customfieldId);
-			CustomFieldDetails customField = cfService.getCustomFieldById(cfId);
+			CustomFieldEditData customField = (CustomFieldEditData) cfService.getCustomFieldById(cfId);
 			if (customField != null)
 				return Response.status(Status.OK).entity(customField).build();
-			return Response.status(Status.NOT_ACCEPTABLE).build();
+			return Response.status(Status.NOT_ACCEPTABLE).status(404,"Custom Field Record NOT Found !").build();
 
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -359,11 +359,11 @@ public class CustomFieldController {
 	@ApiOperation(value = "edit custom field data", notes = "return customField data", response = CustomFieldDetails.class )
 	@ApiResponses(value = {@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 	public Response editCustomFieldById(@Context HttpServletRequest request, @PathParam("customFieldId") String customFieldId,
-			@ApiParam(name = "editData") CustomFieldEditData  CustomFieldEditData ) {
+			@ApiParam(name = "editData") CustomFieldEditData  editData ) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long cfId = Long.parseLong(customFieldId);
-			CustomFieldDetails result = cfService.editCustomFieldById(request, profile, cfId, CustomFieldEditData);
+			CustomFieldDetails result = cfService.editCustomFieldById(request, profile, cfId, editData);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
