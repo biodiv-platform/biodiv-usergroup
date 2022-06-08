@@ -850,7 +850,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 			Long customfieldId,CustomFieldEditData editData) {
 		
 		List<Long> prevCustomFieldValuesIds = cfValueDao.findByCustomFieldId(customfieldId).stream()
-				.map(item -> item.getId()).collect(Collectors.toList());
+				.map(CustomFieldValues::getId).collect(Collectors.toList());
 		// Null Exception
 		if (customfieldId == null)
 			return null;
@@ -869,7 +869,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						editData.getCustomFields().getFieldType(), editData.getCustomFields().getUnits(),
 						editData.getCustomFields().getIconURL(), editData.getCustomFields().getNotes());
 
-				customFields = cfsDao.update(customFields);
+				cfsDao.update(customFields);
 
 				// edit ugCFMapping record
 				UserGroupCustomFieldMapping ugCFData = ugCFMappingDao
@@ -937,7 +937,6 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
 		return null;
 
 	}
