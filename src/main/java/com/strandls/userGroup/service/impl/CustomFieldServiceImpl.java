@@ -832,7 +832,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 						|| customField.getFieldType().equalsIgnoreCase("MULTIPLE CATEGORICAL")) {
 					cfValues = cfValueDao.findByCustomFieldId(customField.getId());
 				}
-				if(cfValues != null && !cfValues.isEmpty()) {
+				if(cfValues != null && !cfValues.isEmpty() || customField != null ) {
 				return new CustomFieldEditData(customField, cfValues, ugCFMapping.getDefaultValue(),
 						ugCFMapping.getDisplayOrder(), ugCFMapping.getIsMandatory(),
 						ugCFMapping.getAllowedParticipation(),ugCFMapping.getUserGroupId());
