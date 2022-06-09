@@ -338,7 +338,7 @@ public class CustomFieldController {
 		try {
 			Long ugId = Long.parseLong(userGroupId);
 			Long cfId = Long.parseLong(customfieldId);
-			CustomFieldEditData customField = (CustomFieldEditData) cfService.getCustomFieldById(ugId,cfId);
+			CustomFieldEditData customField =cfService.getCustomFieldById(ugId,cfId);
 			if (customField != null )
 				return Response.status(Status.OK).entity(customField).build();
 			return Response.status(Status.NOT_ACCEPTABLE).status(404,"Custom Field Record NOT ").build();
