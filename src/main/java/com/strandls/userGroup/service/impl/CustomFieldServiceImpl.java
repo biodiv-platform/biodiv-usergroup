@@ -819,25 +819,31 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 
 		return null;
 	}
-
+	
 	@Override
-	public CustomFieldEditData getCustomFieldById(Long customfieldId) {
+	public CustomFieldEditData getCustomFieldById(Long userGroupId,Long customfieldId) {
 		try {
-
-			List<CustomFieldValues> cfValues = new ArrayList<>();
-			List<UserGroupCustomFieldMapping> ugCFMappingList = ugCFMappingDao.findBycustomfieldId(customfieldId);
-			for (UserGroupCustomFieldMapping ugCFMapping : ugCFMappingList) {
-				CustomFields customField = cfsDao.findById(ugCFMapping.getCustomFieldId());
+			if(customfieldId == null && userGroupId == null) {
+				return null;
+			}
+			CustomFields customField = cfsDao.findById(customfieldId);
+			if(customField!= null){
+				List<CustomFieldValues> cfValues = new ArrayList<>();
+				UserGroupCustomFieldMapping ugCFMapping = ugCFMappingDao.findByUserGroupCustomFieldId(userGroupId,customfieldId);
+				
 				if (customField.getFieldType().equalsIgnoreCase("SINGLE CATEGORICAL")
 						|| customField.getFieldType().equalsIgnoreCase("MULTIPLE CATEGORICAL")) {
-					cfValues = cfValueDao.findByCustomFieldId(customField.getId());
-				}
-				if(cfValues != null && !cfValues.isEmpty() || customField != null ) {
-				return new CustomFieldEditData(customField, cfValues, ugCFMapping.getDefaultValue(),
-						ugCFMapping.getDisplayOrder(), ugCFMapping.getIsMandatory(),
-						ugCFMapping.getAllowedParticipation(),ugCFMapping.getUserGroupId());
+					cfValues = cfValueDao.findByCustomFieldId(customfieldId);
 				}
 
+				if( ugCFMapping != null ) {
+					return new CustomFieldEditData(customField, cfValues, ugCFMapping.getDefaultValue(),
+					ugCFMapping.getDisplayOrder(), ugCFMapping.getIsMandatory(),
+					ugCFMapping.getAllowedParticipation(),ugCFMapping.getUserGroupId());
+				}else {
+					return new CustomFieldEditData(customField, cfValues, null,null, null,null,null);
+
+				}
 			}
 
 		} catch (Exception e) {
@@ -847,7 +853,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 	}
 
 	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile,
-			Long customfieldId,CustomFieldEditData editData) {
+			Long userGroupId,Long customfieldId,CustomFieldEditData editData) {
 		
 		List<Long> prevCustomFieldValuesIds = cfValueDao.findByCustomFieldId(customfieldId).stream()
 				.map(CustomFieldValues::getId).collect(Collectors.toList());
@@ -859,7 +865,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 			
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
-			Boolean isFounder = ugMemberService.checkFounderRole(userId, editData.getUserGroupId());
+			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 
 			if (roles.contains("ROLE_ADMIN") || Boolean.TRUE.equals(isFounder)) {
 				
@@ -873,11 +879,11 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 
 				// edit ugCFMapping record
 				UserGroupCustomFieldMapping ugCFData = ugCFMappingDao
-						.findByUserGroupCustomFieldId(editData.getUserGroupId(), customfieldId);
+						.findByUserGroupCustomFieldId(userGroupId, customfieldId);
 				
 				if (ugCFData != null) {
 					UserGroupCustomFieldMapping ugCFMapping = new UserGroupCustomFieldMapping(ugCFData.getId(), userId,
-							editData.getUserGroupId(), customfieldId, editData.getDefaultValue(),
+							userGroupId, customfieldId, editData.getDefaultValue(),
 							editData.getDisplayOrder(), editData.getIsMandatory(), editData.getAllowedParticipation());
 					ugCFMappingDao.update(ugCFMapping);
 				}
@@ -930,7 +936,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 					});
 				}
 
-				return getCustomFieldById(customfieldId);
+				return getCustomFieldById(userGroupId,customfieldId);
 
 			}
 

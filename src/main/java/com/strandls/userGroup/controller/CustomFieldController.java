@@ -323,10 +323,10 @@ public class CustomFieldController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-	}
+	}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 	
 	@GET
-	@Path("/{customfieldId}")
+	@Path("/{userGroupId}/{customfieldId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 
@@ -334,13 +334,14 @@ public class CustomFieldController {
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to retrive the data", response = String.class) })
 
 	public Response getCustomFieldById(
-			@PathParam("customfieldId") String customfieldId) {
+			@PathParam("userGroupId") String userGroupId,@PathParam("customfieldId") String customfieldId) {
 		try {
+			Long ugId = Long.parseLong(userGroupId);
 			Long cfId = Long.parseLong(customfieldId);
-			CustomFieldEditData customField = (CustomFieldEditData) cfService.getCustomFieldById(cfId);
-			if (customField != null)
+			CustomFieldEditData customField = (CustomFieldEditData) cfService.getCustomFieldById(ugId,cfId);
+			if (customField != null )
 				return Response.status(Status.OK).entity(customField).build();
-			return Response.status(Status.NOT_ACCEPTABLE).status(404,"Custom Field Record NOT Found !").build();
+			return Response.status(Status.NOT_ACCEPTABLE).status(404,"Custom Field Record NOT ").build();
 
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -349,8 +350,9 @@ public class CustomFieldController {
 	}
 	
 	
+	
 	@PUT
-	@Path(ApiConstants.EDIT+ "/{customFieldId}")
+	@Path(ApiConstants.EDIT+ "/{userGroupId}/{customFieldId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 
@@ -358,12 +360,14 @@ public class CustomFieldController {
 
 	@ApiOperation(value = "edit custom field data", notes = "return customField data", response = CustomFieldDetails.class )
 	@ApiResponses(value = {@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
-	public Response editCustomFieldById(@Context HttpServletRequest request, @PathParam("customFieldId") String customFieldId,
+	public Response editCustomFieldById(@Context HttpServletRequest request,
+			@PathParam("userGroupId") String userGroupId,@PathParam("customFieldId") String customFieldId,
 			@ApiParam(name = "editData") CustomFieldEditData  editData ) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long ugId = Long.parseLong(userGroupId);
 			Long cfId = Long.parseLong(customFieldId);
-			CustomFieldDetails result = cfService.editCustomFieldById(request, profile, cfId, editData);
+			CustomFieldDetails result = cfService.editCustomFieldById(request, profile,ugId, cfId, editData);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();

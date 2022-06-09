@@ -56,9 +56,9 @@ public interface CustomFieldServices {
 	public List<CustomFieldDetails> addCustomFieldValues(HttpServletRequest request, Long customFieldId,
 			Long userGroupId, CustomFieldValuesCreateData cfVCreateData);
 	
-	public CustomFieldDetails getCustomFieldById(Long customfieldId);
+	public CustomFieldEditData getCustomFieldById(Long usergroupId, Long customfieldId);
 
-	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile, Long cfId,
-			CustomFieldEditData customFieldEditData);
+	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile,Long ugID,
+			Long cfId,CustomFieldEditData customFieldEditData);
 
 }
