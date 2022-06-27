@@ -820,39 +820,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 		return null;
 	}
 	
-	@Override
-	public CustomFieldEditData getCustomFieldById(Long userGroupId,Long customfieldId) {
-		try {
-			if(customfieldId == null && userGroupId == null) {
-				return null;
-			}
-			CustomFields customField = cfsDao.findById(customfieldId);
-			if(customField!= null){
-				List<CustomFieldValues> cfValues = new ArrayList<>();
-				UserGroupCustomFieldMapping ugCFMapping = ugCFMappingDao.findByUserGroupCustomFieldId(userGroupId,customfieldId);
-				
-				if (customField.getFieldType().equalsIgnoreCase("SINGLE CATEGORICAL")
-						|| customField.getFieldType().equalsIgnoreCase("MULTIPLE CATEGORICAL")) {
-					cfValues = cfValueDao.findByCustomFieldId(customfieldId);
-				}
-
-				if( ugCFMapping != null ) {
-					return new CustomFieldEditData(customField, cfValues, ugCFMapping.getDefaultValue(),
-					ugCFMapping.getDisplayOrder(), ugCFMapping.getIsMandatory(),
-					ugCFMapping.getAllowedParticipation(),ugCFMapping.getUserGroupId());
-				}else {
-					return new CustomFieldEditData(customField, cfValues, null,null, null,null,null);
-
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return null;
-	}
-
-	public CustomFieldDetails editCustomFieldById(HttpServletRequest request, CommonProfile profile,
+	public List<CustomFieldDetails> editCustomFieldById(HttpServletRequest request, CommonProfile profile,
 			Long userGroupId,Long customfieldId,CustomFieldEditData editData) {
 		
 		List<Long> prevCustomFieldValuesIds = cfValueDao.findByCustomFieldId(customfieldId).stream()
@@ -908,7 +876,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 				// Adds a new CustomFiled Value
 				if (newCFValueList != null && !newCFValueList.isEmpty()) {
 					for (CustomFieldValues cfVCreateData : newCFValueList) {
-						CustomFieldValues cfValues = new CustomFieldValues(null, cfVCreateData.getCustomFieldId(),
+						CustomFieldValues cfValues = new CustomFieldValues(null, customfieldId,
 								cfVCreateData.getValues(), cfVCreateData.getAuthorId(), cfVCreateData.getIconURL(),
 								cfVCreateData.getNotes());
 						cfValueDao.save(cfValues);
@@ -936,7 +904,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 					});
 				}
 
-				return getCustomFieldById(userGroupId,customfieldId);
+				return getCustomField(request, profile, userGroupId);
 
 			}
 
