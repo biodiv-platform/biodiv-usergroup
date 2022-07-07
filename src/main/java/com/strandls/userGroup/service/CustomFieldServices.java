@@ -11,6 +11,7 @@ import org.pac4j.core.profile.CommonProfile;
 
 import com.strandls.userGroup.pojo.CustomFieldCreateData;
 import com.strandls.userGroup.pojo.CustomFieldDetails;
+import com.strandls.userGroup.pojo.CustomFieldEditData;
 import com.strandls.userGroup.pojo.CustomFieldFactsInsertData;
 import com.strandls.userGroup.pojo.CustomFieldObservationData;
 import com.strandls.userGroup.pojo.CustomFieldPermission;
@@ -54,5 +55,8 @@ public interface CustomFieldServices {
 
 	public List<CustomFieldDetails> addCustomFieldValues(HttpServletRequest request, Long customFieldId,
 			Long userGroupId, CustomFieldValuesCreateData cfVCreateData);
+
+	public List<CustomFieldDetails> editCustomFieldById(HttpServletRequest request, CommonProfile profile,Long ugID,
+			Long cfId,CustomFieldEditData customFieldEditData);
 
 }

@@ -172,8 +172,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
 	private final String messageType = "User Groups";
-	private final String roleAdmin = "ROLE_ADMIN";
-	private final String species = "species";
+	private static final String roleAdmin = "ROLE_ADMIN";
+	private static final String species = "species";
 
 
 
@@ -371,6 +371,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
+          
 				}
 
 			}
@@ -634,7 +635,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					MailData mailData = null;
 //					TODO mailData
 					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-							featuredCreate.getObjectId(), featuredCreate.getObjectId(), "species", activityId,
+							featuredCreate.getObjectId(), featuredCreate.getObjectId(), species, activityId,
 							"Featured", mailData);
 				}
 
@@ -788,7 +789,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			List<InvitaionMailData> inviteData = new ArrayList<InvitaionMailData>();
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Boolean isFounder = ugMemberService.checkFounderRole(inviterId, userGroupInvitations.getUserGroupId());
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				UserGroupIbp userGroupIbp = fetchByGroupIdIbp(userGroupInvitations.getUserGroupId());
 				if (!userGroupInvitations.getFounderIds().isEmpty()) {
 					for (Long inviteeId : userGroupInvitations.getFounderIds()) {
@@ -972,8 +973,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long tokenUserId = Long.parseLong(profile.getId());
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
-			Boolean isfounder = ugMemberService.checkFounderRole(tokenUserId, Long.parseLong(userGroupId));
-			if (roles.contains(roleAdmin) || isfounder) {
+			Boolean isFounder = ugMemberService.checkFounderRole(tokenUserId, Long.parseLong(userGroupId));
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				Boolean result = ugMemberService.removeGroupMember(tokenUserId, Long.parseLong(userGroupId));
 				if (result) {
 					logActivity.logUserGroupActivities(request.getHeader(HttpHeaders.AUTHORIZATION), null,
@@ -1080,7 +1081,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupJoin.getUserGroupId());
 			Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupJoin.getUserGroupId());
-			if (roles.contains(roleAdmin) || isFounder || isModerator) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 				UserGroupJoinRequest originalObject = ugJoinRequestDao.findById(userGroupJoin.getId());
 				if (originalObject != null) {
 					if (userGroupJoin.equals(originalObject)) {
@@ -1150,7 +1151,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 //			closer group check for founder , moderator and admin
 				Boolean isFounder = ugMemberService.checkFounderRole(inviterId, userGroupId);
 				Boolean isModerator = ugMemberService.checkModeratorRole(inviterId, userGroupId);
-				if (roles.contains(roleAdmin) || isFounder || isModerator) {
+				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 
 					for (Long inviteeId : inviteeList) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId, userGroupId,
@@ -1380,7 +1381,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				UserGroup userGroup = userGroupDao.findById(userGroupId);
 				if (userGroup != null) {
 					List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroupId);
@@ -1418,7 +1419,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 
 				String webAddress = ugEditData.getName().replace(" ", "_");
 				UserGroup ug = userGroupDao.findById(userGroupId);
@@ -1817,7 +1818,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				UserGroup userGroup = userGroupDao.findById(userGroupId);
 
 				List<GroupGallerySlider> gallerySlider = groupGallerySliderDao.findByUsergroupId(userGroupId);
@@ -1874,7 +1875,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 
 				UserGroup userGroup = userGroupDao.findById(userGroupId);
 				userGroup.setShowDesc(editData.getShowDesc());
@@ -1910,7 +1911,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				GroupGallerySlider entity = groupGallerySliderDao.findById(groupGalleryId);
 				groupGallerySliderDao.delete(entity);
 				return getGroupHomePageData(userGroupId);
@@ -1930,7 +1931,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
-			if (roles.contains(roleAdmin) || isFounder) {
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				for (ReorderingHomePage reOrder : reorderingHomePage) {
 					GroupGallerySlider gallery = groupGallerySliderDao.findById(reOrder.getGalleryId());
 					gallery.setDisplayOrder(reOrder.getDisplayOrder());
@@ -2019,7 +2020,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 //						mailData = updateMailData(observationId, userGroups.getMailData());
 //					}
 					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-							speciesId, speciesId, "species", ugSpecies.getUserGroupId(), "Posted resource", mailData);
+							speciesId, speciesId, species, ugSpecies.getUserGroupId(), "Posted resource", mailData);
 
 				}
 			}
