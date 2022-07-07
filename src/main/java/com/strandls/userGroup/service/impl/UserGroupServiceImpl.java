@@ -371,13 +371,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
-
-//					TODO mail Data
-					MailData mailData = null;
-
-					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-							speciesId, speciesId, species, ugSpecies.getUserGroupId(), "Removed resoruce", mailData);
-
+          
 				}
 
 			}
