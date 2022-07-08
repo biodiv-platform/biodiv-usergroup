@@ -1924,6 +1924,34 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
+	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId ,
+			GroupGallerySlider editData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			Long userId = Long.parseLong(profile.getId());
+			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
+				GroupGallerySlider entity = groupGallerySliderDao.findById(groupGalleryId);
+				entity.setId(editData.getId());
+				entity.setUgId(editData.getUgId());
+				entity.setFileName(editData.getFileName());
+				entity.setTitle(editData.getTitle());
+				entity.setCustomDescripition(editData.getCustomDescripition());
+				entity.setMoreLinks(editData.getMoreLinks());
+				entity.setDisplayOrder(editData.getDisplayOrder());
+	
+				groupGallerySliderDao.update(entity);
+				return getGroupHomePageData(userGroupId);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage) {
 		try {
