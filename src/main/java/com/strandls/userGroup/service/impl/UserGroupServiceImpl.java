@@ -1932,16 +1932,16 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
-				GroupGallerySlider entity = groupGallerySliderDao.findById(groupGalleryId);
-				entity.setId(editData.getId());
-				entity.setUgId(editData.getUgId());
-				entity.setFileName(editData.getFileName());
-				entity.setTitle(editData.getTitle());
-				entity.setCustomDescripition(editData.getCustomDescripition());
-				entity.setMoreLinks(editData.getMoreLinks());
-				entity.setDisplayOrder(editData.getDisplayOrder());
-	
-				groupGallerySliderDao.update(entity);
+				GroupGallerySlider gallerySliderEntity = groupGallerySliderDao.findById(groupGalleryId);
+				gallerySliderEntity.setId(editData.getId());
+				gallerySliderEntity.setUgId(editData.getUgId());
+				gallerySliderEntity.setFileName(editData.getFileName());
+				gallerySliderEntity.setTitle(editData.getTitle());
+				gallerySliderEntity.setCustomDescripition(editData.getCustomDescripition());
+				gallerySliderEntity.setMoreLinks(editData.getMoreLinks());
+				gallerySliderEntity.setDisplayOrder(editData.getDisplayOrder());
+
+				groupGallerySliderDao.update(gallerySliderEntity);
 				return getGroupHomePageData(userGroupId);
 			}
 		} catch (Exception e) {
