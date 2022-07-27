@@ -17,6 +17,7 @@ import com.strandls.userGroup.pojo.BulkGroupPostingData;
 import com.strandls.userGroup.pojo.BulkGroupUnPostingData;
 import com.strandls.userGroup.pojo.Featured;
 import com.strandls.userGroup.pojo.FeaturedCreateData;
+import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.UserGroup;
@@ -123,6 +124,10 @@ public interface UserGroupSerivce {
 			UserGroupHomePageEditData editData);
 
 	public GroupHomePageData removeHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
+	
+	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
+			GroupGallerySlider editData);
+
 
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage);
