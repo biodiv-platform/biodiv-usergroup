@@ -1924,6 +1924,34 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
+	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId ,
+			GroupGallerySlider editData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			Long userId = Long.parseLong(profile.getId());
+			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
+				GroupGallerySlider gallerySliderEntity = groupGallerySliderDao.findById(groupGalleryId);
+				gallerySliderEntity.setId(editData.getId());
+				gallerySliderEntity.setUgId(editData.getUgId());
+				gallerySliderEntity.setFileName(editData.getFileName());
+				gallerySliderEntity.setTitle(editData.getTitle());
+				gallerySliderEntity.setCustomDescripition(editData.getCustomDescripition());
+				gallerySliderEntity.setMoreLinks(editData.getMoreLinks());
+				gallerySliderEntity.setDisplayOrder(editData.getDisplayOrder());
+
+				groupGallerySliderDao.update(gallerySliderEntity);
+				return getGroupHomePageData(userGroupId);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage) {
 		try {
