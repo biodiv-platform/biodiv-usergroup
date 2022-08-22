@@ -168,14 +168,15 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	@Inject
 	private UserGroupMemberRoleDao ugMemberDao;
 
+	@Inject
+	UserGroupObservationDao ugObvDao;
+
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
 	private final String messageType = "User Groups";
 	private static final String roleAdmin = "ROLE_ADMIN";
 	private static final String species = "species";
-
-
 
 	@Override
 	public UserGroup fetchByGroupId(Long id) {
@@ -371,7 +372,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
-          
+
 				}
 
 			}
@@ -635,8 +636,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					MailData mailData = null;
 //					TODO mailData
 					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-							featuredCreate.getObjectId(), featuredCreate.getObjectId(), species, activityId,
-							"Featured", mailData);
+							featuredCreate.getObjectId(), featuredCreate.getObjectId(), species, activityId, "Featured",
+							mailData);
 				}
 
 			}
@@ -1195,8 +1196,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)
-						|| Boolean.TRUE.equals(isModerator)) {
+				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 
 					for (UserGroupObvFilterData ugData : ugObservationFilterList) {
 						List<Long> ugList = new ArrayList<Long>();
@@ -1272,8 +1272,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)
-						|| Boolean.TRUE.equals(isModerator)) {
+				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 					for (UserGroupObvFilterData item : ugFilterList) {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
@@ -1924,7 +1923,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId ,
+	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
 			GroupGallerySlider editData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -2124,8 +2123,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 //						TODO mailData
 //						mailData = updateMailData(observationId, userGroups.getMailData());
 						logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-								speciesId, speciesId, species, ugSpecies.getUserGroupId(), "Posted resource",
-								mailData);
+								speciesId, speciesId, species, ugSpecies.getUserGroupId(), "Posted resource", mailData);
 					}
 				}
 			}
@@ -2161,6 +2159,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			return result;
 		}
 
+		return null;
+	}
+
+	@Override
+	public UserGroupObservation checkObservationUGMApping(Long observationId, Long userGroupId) {
+		UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(observationId, userGroupId);
 		return null;
 	}
 
