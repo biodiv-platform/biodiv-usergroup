@@ -41,7 +41,6 @@ import com.strandls.userGroup.pojo.FeaturedCreateData;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
-import com.strandls.userGroup.pojo.ShowFilterRule;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupAdminList;
@@ -52,20 +51,15 @@ import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupEditData;
 import com.strandls.userGroup.pojo.UserGroupExpanded;
-import com.strandls.userGroup.pojo.UserGroupFilterEnable;
-import com.strandls.userGroup.pojo.UserGroupFilterRemove;
-import com.strandls.userGroup.pojo.UserGroupFilterRuleInputData;
 import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupInvitationData;
 import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
 import com.strandls.userGroup.pojo.UserGroupObservation;
-import com.strandls.userGroup.pojo.UserGroupObvFilterData;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.service.UserGroupDatatableService;
-import com.strandls.userGroup.service.UserGroupFilterService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 import com.strandls.userGroup.util.AppUtil;
@@ -91,9 +85,6 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupDatatableService udDatatableService;
-
-	@Inject
-	private UserGroupFilterService ugFilterService;
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
@@ -343,70 +334,6 @@ public class UserGroupController {
 			Long objId = Long.parseLong(objectId);
 			List<Featured> result = ugServices.removeFeatured(request, userId, objectType, objId, userGroupList);
 			return Response.status(Status.OK).entity(result).build();
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
-	@POST
-	@Path(ApiConstants.FILTERRULE)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ValidateUser
-
-	@ApiOperation(value = "Checks the post creation rule", notes = "Add the observation Based on rules", response = String.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to set the filter Rule", response = String.class) })
-
-	public Response getFilterRule(@Context HttpServletRequest request,
-			@ApiParam(name = "ugObvFilterData") UserGroupObvFilterData ugObvFilterData) {
-		try {
-			ugFilterService.bgFiltureRule(request, ugObvFilterData);
-			return Response.status(Status.OK).build();
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
-	@POST
-	@Path(ApiConstants.FILTERRULE + ApiConstants.BULK + ApiConstants.POSTING + "/{userGroupId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ValidateUser
-
-	@ApiOperation(value = "Checks the post creation rule in Bulk to post", notes = "Add the observation Based on rules in Bulk", response = String.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to set the filter Rule", response = String.class) })
-
-	public Response bulkFilterRulePosting(@Context HttpServletRequest request, @PathParam("userGroupId") String groupId,
-			@ApiParam(name = "ugObvFilterDataList") List<UserGroupObvFilterData> ugObvFilterDataList) {
-		try {
-			Long userGroupId = Long.parseLong(groupId);
-			ugFilterService.bulkFilteringIn(request, userGroupId, ugObvFilterDataList);
-			return Response.status(Status.OK).build();
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity("Not Allowed").build();
-		}
-	}
-
-	@POST
-	@Path(ApiConstants.FILTERRULE + ApiConstants.BULK + ApiConstants.REMOVING + "/{userGroupId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Checks the post creation rule in Bulk to remove", notes = "remove the observation Based on rules in Bulk", response = String.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to set the filter Rule", response = String.class) })
-
-	public Response bulkFilterRuleRemoving(@Context HttpServletRequest request,
-			@PathParam("userGroupId") String groupId,
-			@ApiParam(name = "ugObvFilterDataList") List<UserGroupObvFilterData> ugObvFilterDataList) {
-		try {
-			Long userGroupId = Long.parseLong(groupId);
-			ugFilterService.bulkFilteringOut(request, userGroupId, ugObvFilterDataList);
-			return Response.status(Status.OK).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
@@ -782,96 +709,6 @@ public class UserGroupController {
 		}
 	}
 
-	@GET
-	@Path(ApiConstants.FILTERRULE + ApiConstants.SHOW + "/{userGroupId}")
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Show all the filter rules attached to a group", notes = "Returns all the filter rule", response = ShowFilterRule.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to fetch the rule", response = String.class) })
-
-	public Response showAllFilterRules(@PathParam("userGroupId") String groupId) {
-		try {
-			Long userGroupId = Long.parseLong(groupId);
-			ShowFilterRule result = ugFilterService.showAllFilter(userGroupId);
-			if (result != null)
-				return Response.status(Status.OK).entity(result).build();
-			return Response.status(Status.NOT_FOUND).build();
-
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
-	@POST
-	@Path(ApiConstants.FILTERRULE + ApiConstants.REMOVE + "/{userGroupId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ValidateUser
-
-	@ApiOperation(value = "Remove a filter rules attached to a group", notes = "Returns all the filter rule", response = ShowFilterRule.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to fetch the rule", response = String.class) })
-
-	public Response deleteFilterRule(@Context HttpServletRequest request, @PathParam("userGroupId") String groupId,
-			@ApiParam(name = "ugFilterRemove") UserGroupFilterRemove ugFilterRemove) {
-		try {
-			Long userGroupId = Long.parseLong(groupId);
-			ShowFilterRule result = ugFilterService.deleteUGFilter(request, userGroupId, ugFilterRemove);
-			if (result != null)
-				return Response.status(Status.OK).entity(result).build();
-			return Response.status(Status.NOT_ACCEPTABLE).build();
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
-	@POST
-	@Path(ApiConstants.FILTERRULE + ApiConstants.ENABLE + "/{userGroupId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ValidateUser
-	@ApiOperation(value = "Enable disable the filter rules attached to a group", notes = "Returns all the filter rule", response = ShowFilterRule.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to fetch the rule", response = String.class) })
-
-	public Response enableDisableFilter(@Context HttpServletRequest request, @PathParam("userGroupId") String groupId,
-			@ApiParam(name = "ugFilterEnable") UserGroupFilterEnable ugFilterEnable) {
-		try {
-			Long userGroupId = Long.parseLong(groupId);
-			ShowFilterRule result = ugFilterService.enableDisableUGFilter(request, userGroupId, ugFilterEnable);
-			if (result != null)
-				return Response.status(Status.OK).entity(result).build();
-			return Response.status(Status.NOT_ACCEPTABLE).build();
-
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
-	@POST
-	@Path(ApiConstants.FILTERRULE + ApiConstants.ADD + "/{userGroupId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ValidateUser
-	@ApiOperation(value = "Create filter rules for a group", notes = "Returns all the filter rule", response = ShowFilterRule.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to fetch the rule", response = String.class) })
-
-	public Response addFilterRule(@Context HttpServletRequest request, @PathParam("userGroupId") String groupId,
-			@ApiParam(name = "ugFilterInputData") UserGroupFilterRuleInputData ugFilterInputData) {
-		try {
-
-			Long userGroupId = Long.parseLong(groupId);
-			ShowFilterRule result = ugFilterService.changeUgFilter(request, userGroupId, ugFilterInputData);
-			if (result != null)
-				return Response.status(Status.OK).entity(result).build();
-			return Response.status(Status.NOT_ACCEPTABLE).build();
-		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	}
-
 	@POST
 	@Path(ApiConstants.REGISTER)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -993,7 +830,7 @@ public class UserGroupController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "unable to get the usergroup", response = String.class) })
 
-	public Response  getUserGroupObservationPermission(@Context HttpServletRequest request) {
+	public Response getUserGroupObservationPermission(@Context HttpServletRequest request) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long userId = Long.parseLong(profile.getId());
@@ -1464,6 +1301,60 @@ public class UserGroupController {
 		try {
 			UserGroupAdminList result = ugServices.getUserGroupAdminListByUserId(request);
 			return Response.status(Status.OK).entity(result).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.CREATE + "/{obsId}/{ugId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupObservation.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
+
+	public Response createObservationUserGroup(@Context HttpServletRequest request, @PathParam("obsId") String obsId,
+			@PathParam("ugId") String ugId) {
+		try {
+
+			Long observationId = Long.parseLong(obsId);
+			Long userGroupId = Long.parseLong(obsId);
+
+			UserGroupObservation result = ugServices.createUserGroupObervation(request, observationId, userGroupId);
+			if (result == null)
+				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+			return Response.status(Status.CREATED).entity(result).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@DELETE
+	@Path(ApiConstants.REMOVE + "/{obsId}/{ugId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupObservation.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
+
+	public Response removeObservationUserGroup(@Context HttpServletRequest request, @PathParam("obsId") String obsId,
+			@PathParam("ugId") String ugId) {
+		try {
+
+			Long observationId = Long.parseLong(obsId);
+			Long userGroupId = Long.parseLong(obsId);
+
+			UserGroupObservation result = ugServices.removeUserGroupObervation(request, observationId, userGroupId);
+			if (result == null)
+				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+			return Response.status(Status.CREATED).entity(result).build();
 
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

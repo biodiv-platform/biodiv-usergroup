@@ -147,4 +147,11 @@ public interface UserGroupSerivce {
 	public UserGroupAdminList getUserGroupAdminListByUserId(HttpServletRequest request);
 
 	public UserGroupObservation checkObservationUGMApping(Long observationId, Long userGroupId);
+	
+	
+	public UserGroupObservation createUserGroupObervation(HttpServletRequest request,Long ObvId,Long ugId);
+	
+	public UserGroupObservation removeUserGroupObervation(HttpServletRequest request,Long ObvId,Long ugId);
+
+	
 }
