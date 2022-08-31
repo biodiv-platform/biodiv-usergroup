@@ -378,6 +378,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupObservation> previousMapping = userGroupObvDao.findByObservationId(observationId);
@@ -385,7 +386,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (!(userGorups.getUserGroups().contains(ug.getUserGroupId()))) {
 				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ug.getUserGroupId());
 
-				if (eligible) {
+				if (roles.contains(roleAdmin) || eligible) {
 					userGroupObvDao.delete(ug);
 
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
