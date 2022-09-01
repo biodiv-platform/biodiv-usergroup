@@ -1347,7 +1347,7 @@ public class UserGroupController {
 		try {
 
 			Long observationId = Long.parseLong(obsId);
-			Long userGroupId = Long.parseLong(obsId);
+			Long userGroupId = Long.parseLong(ugId);
 
 			List<UserGroupIbp> result = ugServices.removeUserGroupObervation(request, observationId, userGroupId);
 			return Response.status(Status.OK).entity(result).build();
