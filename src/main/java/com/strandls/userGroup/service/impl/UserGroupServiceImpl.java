@@ -2158,7 +2158,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public UserGroupObservation createUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId) {
+	public List<UserGroupIbp> createUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
@@ -2166,14 +2166,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
 		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
 			UserGroupObservation ugObv = new UserGroupObservation(ugId, ObvId);
-			return ugObvDao.save(ugObv);
+			return fetchByObservationId(ObvId);
 		}
 
 		return null;
 	}
 
 	@Override
-	public UserGroupObservation removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId) {
+	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
@@ -2181,7 +2181,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
 		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
 			UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(ObvId, ugId);
-			return ugObvDao.delete(ugObvMapping);
+			return fetchByObservationId(ObvId);
 		}
 
 		return null;

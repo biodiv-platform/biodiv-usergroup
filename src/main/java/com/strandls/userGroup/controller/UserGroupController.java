@@ -1313,7 +1313,7 @@ public class UserGroupController {
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupObservation.class)
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupIbp.class, responseContainer = "List")
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
 			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
 
@@ -1324,10 +1324,8 @@ public class UserGroupController {
 			Long observationId = Long.parseLong(obsId);
 			Long userGroupId = Long.parseLong(obsId);
 
-			UserGroupObservation result = ugServices.createUserGroupObervation(request, observationId, userGroupId);
-			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
-			return Response.status(Status.CREATED).entity(result).build();
+			List<UserGroupIbp> result = ugServices.createUserGroupObervation(request, observationId, userGroupId);
+			return Response.status(Status.OK).entity(result).build();
 
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -1340,7 +1338,7 @@ public class UserGroupController {
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupObservation.class)
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation",response = UserGroupIbp.class, responseContainer = "List")
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
 			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
 
@@ -1351,10 +1349,8 @@ public class UserGroupController {
 			Long observationId = Long.parseLong(obsId);
 			Long userGroupId = Long.parseLong(obsId);
 
-			UserGroupObservation result = ugServices.removeUserGroupObervation(request, observationId, userGroupId);
-			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
-			return Response.status(Status.CREATED).entity(result).build();
+			List<UserGroupIbp> result = ugServices.removeUserGroupObervation(request, observationId, userGroupId);
+			return Response.status(Status.OK).entity(result).build();
 
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
