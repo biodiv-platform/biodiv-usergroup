@@ -52,7 +52,7 @@ public interface UserGroupSerivce {
 	public List<UserGroupIbp> fetchByUserGroupDetails(List<Long> userGroupMember);
 
 	public List<Long> createUserGroupObservationMapping(HttpServletRequest request, Long observationId,
-			UserGroupMappingCreateData userGroups, Boolean canEsUpdate);
+			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity);
 
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups);

@@ -207,7 +207,7 @@ public class UserGroupController {
 
 			Long observationId = Long.parseLong(obsId);
 			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,
-					true);
+					true, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
 			if (result == null)
 				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
 			return Response.status(Status.CREATED).entity(result).build();
@@ -1338,7 +1338,7 @@ public class UserGroupController {
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation",response = UserGroupIbp.class, responseContainer = "List")
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupIbp.class, responseContainer = "List")
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
 			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
 

@@ -258,7 +258,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Override
 	public List<Long> createUserGroupObservationMapping(HttpServletRequest request, Long observationId,
-			UserGroupMappingCreateData userGroups, Boolean canEsUpdate) {
+			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
@@ -277,8 +277,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				if (userGroups.getMailData() != null) {
 					mailData = updateMailData(observationId, userGroups.getMailData());
 				}
-				logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
-						observationId, "observation", result.getUserGroupId(), "Posted resource", mailData);
+
+				if (setActivity) {
+					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
+							observationId, "observation", result.getUserGroupId(), "Posted resource", mailData);
+
+				}
 			}
 
 		}
@@ -1203,7 +1207,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							ugObservationPayload.setUserGroups(ugList);
 							ugObservationPayload.setUgFilterData(ugData);
 							createUserGroupObservationMapping(request, ugData.getObservationId(), ugObservationPayload,
-									false);
+									false, true);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.DOCUMENT.getValue())) {
 							UserGroupDocCreateData ugDatapayload = new UserGroupDocCreateData();
