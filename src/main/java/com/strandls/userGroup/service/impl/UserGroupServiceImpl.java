@@ -2185,7 +2185,16 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
 		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
 			UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(ObvId, ugId);
-			ugObvDao.delete(ugObvMapping);
+
+			try {
+				if (ugObvMapping != null) {
+					ugObvDao.delete(ugObvMapping);
+					produce.setMessage("observation", ObvId.toString(), messageType);
+				}
+
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
 			return fetchByObservationId(ObvId);
 		}
 
