@@ -83,7 +83,6 @@ import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupUserJoinRequest;
 import com.strandls.userGroup.service.UserGroupDatatableService;
-import com.strandls.userGroup.service.UserGroupFilterService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 import com.strandls.userGroup.util.PropertyFileUtil;
@@ -130,9 +129,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	private EncryptionUtils encryptionUtils;
 
 	@Inject
-	private UserGroupFilterService ugFilterService;
-
-	@Inject
 	private StatsDao statsDao;
 
 	@Inject
@@ -168,14 +164,15 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	@Inject
 	private UserGroupMemberRoleDao ugMemberDao;
 
+	@Inject
+	UserGroupObservationDao ugObvDao;
+
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
 	private final String messageType = "User Groups";
 	private static final String roleAdmin = "ROLE_ADMIN";
 	private static final String species = "species";
-
-
 
 	@Override
 	public UserGroup fetchByGroupId(Long id) {
@@ -261,7 +258,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Override
 	public List<Long> createUserGroupObservationMapping(HttpServletRequest request, Long observationId,
-			UserGroupMappingCreateData userGroups, Boolean canEsUpdate) {
+			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
@@ -270,21 +267,21 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		for (Long userGroup : userGroups.getUserGroups()) {
 
-			Boolean isEligible = ugFilterService.checkUserGroupEligiblity(userGroup, userId,
-					userGroups.getUgFilterData(), true);
-			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isEligible)) {
-				UserGroupObservation userGroupObs = new UserGroupObservation(userGroup, observationId);
-				UserGroupObservation result = userGroupObvDao.save(userGroupObs);
-				if (result != null) {
-					resultList.add(result.getUserGroupId());
-					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroup);
-					String description = createUgDescription(ugIbp);
-					MailData mailData = null;
-					if (userGroups.getMailData() != null) {
-						mailData = updateMailData(observationId, userGroups.getMailData());
-					}
+			UserGroupObservation userGroupObs = new UserGroupObservation(userGroup, observationId);
+			UserGroupObservation result = userGroupObvDao.save(userGroupObs);
+			if (result != null) {
+				resultList.add(result.getUserGroupId());
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroup);
+				String description = createUgDescription(ugIbp);
+				MailData mailData = null;
+				if (userGroups.getMailData() != null) {
+					mailData = updateMailData(observationId, userGroups.getMailData());
+				}
+
+				if (setActivity) {
 					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
 							observationId, "observation", result.getUserGroupId(), "Posted resource", mailData);
+
 				}
 			}
 
@@ -371,7 +368,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 					}
-          
+
 				}
 
 			}
@@ -385,6 +382,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupObservation> previousMapping = userGroupObvDao.findByObservationId(observationId);
@@ -392,7 +390,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (!(userGorups.getUserGroups().contains(ug.getUserGroupId()))) {
 				Boolean eligible = ugMemberService.checkUserGroupMember(userId, ug.getUserGroupId());
 
-				if (eligible) {
+				if (roles.contains(roleAdmin) || eligible) {
 					userGroupObvDao.delete(ug);
 
 					UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
@@ -411,19 +409,16 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		for (Long userGroupId : userGorups.getUserGroups()) {
 			if (!(previousUserGroup.contains(userGroupId))) {
 
-				Boolean isEligible = ugFilterService.checkUserGroupEligiblity(userGroupId, userId,
-						userGorups.getUgFilterData(), true);
-				if (isEligible) {
-					UserGroupObservation userGroupMapping = new UserGroupObservation(userGroupId, observationId);
-					userGroupObvDao.save(userGroupMapping);
+				UserGroupObservation userGroupMapping = new UserGroupObservation(userGroupId, observationId);
+				userGroupObvDao.save(userGroupMapping);
 
-					UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
-					String description = createUgDescription(ugIbp);
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(userGroupId);
+				String description = createUgDescription(ugIbp);
 
-					MailData mailData = updateMailData(observationId, userGorups.getMailData());
-					logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
-							observationId, "observation", userGroupId, "Posted resource", mailData);
-				}
+				MailData mailData = updateMailData(observationId, userGorups.getMailData());
+				logActivity.LogActivity(request.getHeader(HttpHeaders.AUTHORIZATION), description, observationId,
+						observationId, "observation", userGroupId, "Posted resource", mailData);
+
 			}
 		}
 		try {
@@ -635,8 +630,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					MailData mailData = null;
 //					TODO mailData
 					logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-							featuredCreate.getObjectId(), featuredCreate.getObjectId(), species, activityId,
-							"Featured", mailData);
+							featuredCreate.getObjectId(), featuredCreate.getObjectId(), species, activityId, "Featured",
+							mailData);
 				}
 
 			}
@@ -1195,8 +1190,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)
-						|| Boolean.TRUE.equals(isModerator)) {
+				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 
 					for (UserGroupObvFilterData ugData : ugObservationFilterList) {
 						List<Long> ugList = new ArrayList<Long>();
@@ -1213,7 +1207,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							ugObservationPayload.setUserGroups(ugList);
 							ugObservationPayload.setUgFilterData(ugData);
 							createUserGroupObservationMapping(request, ugData.getObservationId(), ugObservationPayload,
-									false);
+									false, true);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.DOCUMENT.getValue())) {
 							UserGroupDocCreateData ugDatapayload = new UserGroupDocCreateData();
@@ -1272,8 +1266,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
 				int counter = 0;
 
-				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)
-						|| Boolean.TRUE.equals(isModerator)) {
+				if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator)) {
 					for (UserGroupObvFilterData item : ugFilterList) {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
@@ -1924,7 +1917,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId ,
+	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
 			GroupGallerySlider editData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -2124,8 +2117,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 //						TODO mailData
 //						mailData = updateMailData(observationId, userGroups.getMailData());
 						logActivity.logSpeciesActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-								speciesId, speciesId, species, ugSpecies.getUserGroupId(), "Posted resource",
-								mailData);
+								speciesId, speciesId, species, ugSpecies.getUserGroupId(), "Posted resource", mailData);
 					}
 				}
 			}
@@ -2159,6 +2151,51 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			result.setUgList(list);
 
 			return result;
+		}
+
+		return null;
+	}
+
+	@Override
+	public UserGroupObservation checkObservationUGMApping(Long observationId, Long userGroupId) {
+		return ugObvDao.checkObservationUGMApping(observationId, userGroupId);
+	}
+
+	@Override
+	public List<UserGroupIbp> createUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		Long userId = Long.parseLong(profile.getId());
+		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
+		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
+			UserGroupObservation ugObv = new UserGroupObservation(ugId, ObvId);
+			return fetchByObservationId(ObvId);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		Long userId = Long.parseLong(profile.getId());
+		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
+		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
+			UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(ObvId, ugId);
+
+			try {
+				if (ugObvMapping != null) {
+					ugObvDao.delete(ugObvMapping);
+					produce.setMessage("observation", ObvId.toString(), messageType);
+				}
+
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+			return fetchByObservationId(ObvId);
 		}
 
 		return null;
