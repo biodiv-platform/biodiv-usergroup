@@ -31,6 +31,7 @@ import com.strandls.userGroup.pojo.UserGroupHomePageEditData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.pojo.UserGroupInvitationData;
 import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
+import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 
@@ -51,7 +52,7 @@ public interface UserGroupSerivce {
 	public List<UserGroupIbp> fetchByUserGroupDetails(List<Long> userGroupMember);
 
 	public List<Long> createUserGroupObservationMapping(HttpServletRequest request, Long observationId,
-			UserGroupMappingCreateData userGroups,Boolean canEsUpdate);
+			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity);
 
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups);
@@ -124,10 +125,9 @@ public interface UserGroupSerivce {
 			UserGroupHomePageEditData editData);
 
 	public GroupHomePageData removeHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
-	
+
 	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
 			GroupGallerySlider editData);
-
 
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage);
@@ -145,4 +145,13 @@ public interface UserGroupSerivce {
 	public String createUgDescription(UserGroupIbp ugIbp);
 
 	public UserGroupAdminList getUserGroupAdminListByUserId(HttpServletRequest request);
+
+	public UserGroupObservation checkObservationUGMApping(Long observationId, Long userGroupId);
+	
+	
+	public List<UserGroupIbp> createUserGroupObervation(HttpServletRequest request,Long ObvId,Long ugId);
+	
+	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request,Long ObvId,Long ugId);
+
+	
 }
