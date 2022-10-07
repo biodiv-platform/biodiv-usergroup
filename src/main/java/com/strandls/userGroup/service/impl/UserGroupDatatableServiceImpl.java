@@ -21,8 +21,7 @@ import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
 import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.service.UserGroupDatatableService;
-import com.strandls.dataTable.pojo.DataTableWkt;
-import com.strandls.dataTable.service.impl.DataTableServiceImpl;
+
 
 public class UserGroupDatatableServiceImpl implements UserGroupDatatableService {
 
@@ -37,8 +36,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 	@Inject
 	private LogActivities logActivity;
 	
-	@Inject
-	private DataTableServiceImpl datatableService;
+
 
 	@Override
 	public List<UserGroupIbp> fetchByDataTableId(Long id) {
@@ -60,17 +58,15 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 	}
 
 	private MailData updateDatatableMailData(HttpServletRequest request,Long datatableId) {
-		DataTableWkt dataTable = null;
+
 		try {
-			dataTable = datatableService.show(datatableId);
-		
 			MailData mailData = new MailData();
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String authorId = profile.getId();
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			dataTableMailData.setAuthorId(Long.parseLong(authorId));
 			dataTableMailData.setDataTableId(datatableId);
-			dataTableMailData.setTitle(dataTable.getTitle());
+//			dataTableMailData.setTitle(dataTable.getTitle());
 	
 			List<UserGroupMailData> userGroup = new ArrayList<>();
 			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
