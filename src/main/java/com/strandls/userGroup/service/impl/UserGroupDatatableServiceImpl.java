@@ -7,14 +7,12 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.hibernate.spatial.criterion.IsEmptyExpression;
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.strandls.activity.pojo.DataTableMailData;
 import com.strandls.activity.pojo.MailData;
-import com.strandls.activity.pojo.SpeciesMailData;
 import com.strandls.activity.pojo.UserGroupMailData;
 import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.userGroup.dao.UserGroupDataTableDao;
@@ -23,6 +21,8 @@ import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
 import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.service.UserGroupDatatableService;
+import com.strandls.dataTable.pojo.DataTableWkt;
+import com.strandls.dataTable.service.impl.DataTableServiceImpl;
 
 public class UserGroupDatatableServiceImpl implements UserGroupDatatableService {
 
@@ -36,6 +36,9 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 	@Inject
 	private LogActivities logActivity;
+	
+	@Inject
+	private DataTableServiceImpl datatableService;
 
 	@Override
 	public List<UserGroupIbp> fetchByDataTableId(Long id) {
@@ -56,31 +59,40 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 		return null;
 	}
 
-	private MailData updateDatatableMailData(HttpServletRequest request,Long datatableId , MailData mailData) {
-
-		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
-		String authorId = profile.getId();
-		DataTableMailData dataTableMailData = new DataTableMailData();
-		dataTableMailData.setAuthorId(Long.parseLong(authorId));
-		dataTableMailData.setDataTableId(datatableId);
-		//dataTableMailData.setTitle(title);
-
-		List<UserGroupMailData> userGroup = new ArrayList<UserGroupMailData>();
-		List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
-		if (updatedUG != null && !updatedUG.isEmpty()) {
-			for (UserGroupIbp ug : updatedUG) {
-				UserGroupMailData ugMail = new UserGroupMailData();
-				ugMail.setIcon(ug.getIcon());
-				ugMail.setId(ug.getId());
-				ugMail.setName(ug.getName());
-				ugMail.setWebAddress(ug.getWebAddress());
-
-				userGroup.add(ugMail);
+	private MailData updateDatatableMailData(HttpServletRequest request,Long datatableId) {
+		DataTableWkt dataTable = null;
+		try {
+			dataTable = datatableService.show(datatableId);
+		
+			MailData mailData = new MailData();
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			String authorId = profile.getId();
+			DataTableMailData dataTableMailData = new DataTableMailData();
+			dataTableMailData.setAuthorId(Long.parseLong(authorId));
+			dataTableMailData.setDataTableId(datatableId);
+			dataTableMailData.setTitle(dataTable.getTitle());
+	
+			List<UserGroupMailData> userGroup = new ArrayList<>();
+			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
+			
+			if (updatedUG != null && !updatedUG.isEmpty()) {
+				for (UserGroupIbp ug : updatedUG) {
+					UserGroupMailData ugMail = new UserGroupMailData();
+					ugMail.setIcon(ug.getIcon());
+					ugMail.setId(ug.getId());
+					ugMail.setName(ug.getName());
+					ugMail.setWebAddress(ug.getWebAddress());
+	
+					userGroup.add(ugMail);
+				}
 			}
+			mailData.setUserGroupData(userGroup);
+			mailData.setDataTableMailData(dataTableMailData);
+			return mailData;
+		}catch (Exception e) {
+		logger.error(e.getMessage());
 		}
-		mailData.setUserGroupData(userGroup);
-		mailData.setDataTableMailData(dataTableMailData);
-		return mailData;
+		return null;
 	}
 
 
@@ -95,12 +107,10 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				resultList.add(result.getUserGroupId());
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroup);
 				String description = userGroupService.createUgDescription(ugIbp);
-				MailData mailData = new MailData();
-				if (userGroups != null && !userGroups.isEmpty()) {
-					mailData = updateDatatableMailData(request,datatableId , mailData);
-				}
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", result.getUserGroupId(), "Posted resource", mailData);
+						datatableId, datatableId, "datatable", result.getUserGroupId(), "Posted resource",
+						updateDatatableMailData(request,datatableId));
 			}
 		}
 		return resultList;
@@ -117,10 +127,10 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				userGroupDataTableDao.delete(ug);
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(ug.getUserGroupId());
 				String description = userGroupService.createUgDescription(ugIbp);
-				MailData mailData = new MailData();
-				mailData = updateDatatableMailData(request,datatableId , mailData);
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce", mailData);
+						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce",
+						updateDatatableMailData(request,datatableId));
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
@@ -131,10 +141,10 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				userGroupDataTableDao.save(userGroupMapping);
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroupId);
 				String description = userGroupService.createUgDescription(ugIbp);
-				MailData mailData = new MailData();
-				mailData = updateDatatableMailData(request,datatableId , mailData);
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", userGroupId, "Posted resource", mailData);
+						datatableId, datatableId, "datatable", userGroupId, "Posted resource", 
+						updateDatatableMailData(request,datatableId));
 			}
 		}
 
