@@ -7,11 +7,16 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.hibernate.spatial.criterion.IsEmptyExpression;
+import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.strandls.activity.pojo.DataTableMailData;
 import com.strandls.activity.pojo.MailData;
+import com.strandls.activity.pojo.SpeciesMailData;
 import com.strandls.activity.pojo.UserGroupMailData;
+import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.userGroup.dao.UserGroupDataTableDao;
 import com.strandls.userGroup.pojo.UserGroupDataTable;
 import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
@@ -50,20 +55,31 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 		}
 		return null;
 	}
-	
-	private MailData updateDatatableMailData(Long datatableId , MailData mailData) {
+
+	private MailData updateDatatableMailData(HttpServletRequest request,Long datatableId , MailData mailData) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		String authorId = profile.getId();
+		DataTableMailData dataTableMailData = new DataTableMailData();
+		dataTableMailData.setAuthorId(Long.parseLong(authorId));
+		dataTableMailData.setDataTableId(datatableId);
+		//dataTableMailData.setTitle(title);
+
 		List<UserGroupMailData> userGroup = new ArrayList<UserGroupMailData>();
 		List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
-		for (UserGroupIbp ug : updatedUG) {
-			UserGroupMailData ugMail = new UserGroupMailData();
-			ugMail.setIcon(ug.getIcon());
-			ugMail.setId(ug.getId());
-			ugMail.setName(ug.getName());
-			ugMail.setWebAddress(ug.getWebAddress());
+		if (updatedUG != null && !updatedUG.isEmpty()) {
+			for (UserGroupIbp ug : updatedUG) {
+				UserGroupMailData ugMail = new UserGroupMailData();
+				ugMail.setIcon(ug.getIcon());
+				ugMail.setId(ug.getId());
+				ugMail.setName(ug.getName());
+				ugMail.setWebAddress(ug.getWebAddress());
 
-			userGroup.add(ugMail);
+				userGroup.add(ugMail);
+			}
 		}
 		mailData.setUserGroupData(userGroup);
+		mailData.setDataTableMailData(dataTableMailData);
 		return mailData;
 	}
 
@@ -80,8 +96,8 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroup);
 				String description = userGroupService.createUgDescription(ugIbp);
 				MailData mailData = new MailData();
-				if (userGroups != null) {
-					mailData = updateDatatableMailData(datatableId , mailData);
+				if (userGroups != null && !userGroups.isEmpty()) {
+					mailData = updateDatatableMailData(request,datatableId , mailData);
 				}
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", result.getUserGroupId(), "Posted resource", mailData);
@@ -102,7 +118,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(ug.getUserGroupId());
 				String description = userGroupService.createUgDescription(ugIbp);
 				MailData mailData = new MailData();
-				mailData = updateDatatableMailData(datatableId , mailData);
+				mailData = updateDatatableMailData(request,datatableId , mailData);
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce", mailData);
 			}
@@ -116,7 +132,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroupId);
 				String description = userGroupService.createUgDescription(ugIbp);
 				MailData mailData = new MailData();
-				mailData = updateDatatableMailData(datatableId , mailData);
+				mailData = updateDatatableMailData(request,datatableId , mailData);
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", userGroupId, "Posted resource", mailData);
 			}
