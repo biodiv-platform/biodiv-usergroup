@@ -68,7 +68,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			dataTableMailData.setAuthorId(Long.parseLong(authorId));
 			dataTableMailData.setDataTableId(datatableId);
-			if (dataTableData != null && dataTableData.toString()!="null"){
+			if (dataTableData != null && dataTableData.toString().equals("null")){
 			dataTableMailData.setTitle(dataTableData.getTitle());
 			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
 			}
