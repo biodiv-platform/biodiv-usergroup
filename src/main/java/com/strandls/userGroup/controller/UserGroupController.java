@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -1277,7 +1278,7 @@ public class UserGroupController {
 	public Response updateDatatableUserGroupMapping(@Context HttpServletRequest request,
 			@PathParam("datatableId") String dataTableId,
 			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupData,
-			@ApiParam(name = "dataTableData") UserGroupCreateDatatable dataTableData) {
+			@ApiParam(name = "dataTableData") @DefaultValue("null") UserGroupCreateDatatable dataTableData ) {
 		try {
 			Long datatableId = Long.parseLong(dataTableId);
 			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,

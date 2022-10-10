@@ -68,14 +68,14 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			dataTableMailData.setAuthorId(Long.parseLong(authorId));
 			dataTableMailData.setDataTableId(datatableId);
-			if (dataTableData != null){
+			if (dataTableData != null && dataTableData.toString()!="null"){
 			dataTableMailData.setTitle(dataTableData.getTitle());
 			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
 			}
-	
+
 			List<UserGroupMailData> userGroup = new ArrayList<>();
 			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
-			
+
 			if (updatedUG != null && !updatedUG.isEmpty()) {
 				for (UserGroupIbp ug : updatedUG) {
 					UserGroupMailData ugMail = new UserGroupMailData();
@@ -83,7 +83,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 					ugMail.setId(ug.getId());
 					ugMail.setName(ug.getName());
 					ugMail.setWebAddress(ug.getWebAddress());
-	
+
 					userGroup.add(ugMail);
 				}
 			}
