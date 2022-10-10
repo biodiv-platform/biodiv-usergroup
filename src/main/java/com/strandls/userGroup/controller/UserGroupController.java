@@ -1276,11 +1276,12 @@ public class UserGroupController {
 
 	public Response updateDatatableUserGroupMapping(@Context HttpServletRequest request,
 			@PathParam("datatableId") String dataTableId,
-			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupData) {
+			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupData,
+			@ApiParam(name = "dataTableData") UserGroupCreateDatatable dataTableData) {
 		try {
 			Long datatableId = Long.parseLong(dataTableId);
 			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,
-					userGroupData.getUserGroupIds());
+					userGroupData.getUserGroupIds(),dataTableData);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

@@ -1288,7 +1288,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							counter++;
 						} else if (recordType.contains(RecordType.DATATABLE.getValue())) {
 							ugDatatableService.updateUserGroupDatatableMapping(request, item.getObservationId(),
-									ugList);
+									ugList ,null);
 							counter++;
 						} else if (recordType.contains(RecordType.SPECIES.getValue())) {
 							UserGroupSpeciesCreateData ugSpeciesPayload = new UserGroupSpeciesCreateData();

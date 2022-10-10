@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
 import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
 import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
@@ -18,6 +19,7 @@ public interface UserGroupDatatableService {
 			List<Long> userGroups);
 
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
-			List<Long> userGroups);
+			List<Long> userGroups ,UserGroupCreateDatatable dataTableData);
+
 
 }
