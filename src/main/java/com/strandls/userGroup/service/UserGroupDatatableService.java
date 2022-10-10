@@ -19,7 +19,7 @@ public interface UserGroupDatatableService {
 			List<Long> userGroups);
 
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
-			List<Long> userGroups ,UserGroupCreateDatatable dataTableData);
+			UserGroupCreateDatatable userGroupDataTableData );
 
 
 }

@@ -11,7 +11,7 @@ public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData{
 	 * 
 	 */
 	private String title;
-	 private Date createdOn;
+	private Date createdOn;
 	public UserGroupCreateDatatable() {
 		super();
 	}

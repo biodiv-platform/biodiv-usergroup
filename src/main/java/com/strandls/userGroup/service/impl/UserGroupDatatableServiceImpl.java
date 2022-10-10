@@ -68,7 +68,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			dataTableMailData.setAuthorId(Long.parseLong(authorId));
 			dataTableMailData.setDataTableId(datatableId);
-			if (dataTableData != null && dataTableData.toString().equals("null")){
+			if (dataTableData != null ){
 			dataTableMailData.setTitle(dataTableData.getTitle());
 			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
 			}
@@ -119,8 +119,9 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 	@Override
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
-			List<Long> userGroups , UserGroupCreateDatatable dataTableData) {
-
+			UserGroupCreateDatatable userGroupDataTableData) {
+		
+		List<Long> userGroups =userGroupDataTableData.getUserGroupIds();
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupDataTable> previousMapping = userGroupDataTableDao.findByDataTableId(datatableId);
 		for (UserGroupDataTable ug : previousMapping) {
@@ -131,7 +132,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce",
-						generateMailData(request,datatableId,dataTableData));
+						generateMailData(request,datatableId,userGroupDataTableData));
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
@@ -145,7 +146,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", userGroupId, "Posted resource", 
-						generateMailData(request,datatableId,dataTableData));
+						generateMailData(request,datatableId,userGroupDataTableData));
 			}
 		}
 
