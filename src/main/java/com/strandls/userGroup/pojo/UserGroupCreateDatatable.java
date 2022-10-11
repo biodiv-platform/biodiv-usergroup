@@ -12,11 +12,8 @@ public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData{
 	private String title;
 	private Date createdOn;
 	private String location;
-	public UserGroupCreateDatatable(String title, Date createdOn, String location) {
+	public UserGroupCreateDatatable() {
 		super();
-		this.title = title;
-		this.createdOn = createdOn;
-		this.location = location;
 	}
 
 	/**
