@@ -3,7 +3,6 @@ package com.strandls.userGroup.pojo;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
 
 public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData{
 	
@@ -12,8 +11,12 @@ public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData{
 	 */
 	private String title;
 	private Date createdOn;
-	public UserGroupCreateDatatable() {
+	private String location;
+	public UserGroupCreateDatatable(String title, Date createdOn, String location) {
 		super();
+		this.title = title;
+		this.createdOn = createdOn;
+		this.location = location;
 	}
 
 	/**
@@ -40,5 +43,12 @@ public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData{
         this.createdOn = createdOn;
     }
 
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
 }

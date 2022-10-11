@@ -1272,7 +1272,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
-						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable(ugList);
 						ugDataTableGroupList.setUserGroupIds(ugList);
 
 						if (recordType.contains(RecordType.OBSERVATION.getValue())) {

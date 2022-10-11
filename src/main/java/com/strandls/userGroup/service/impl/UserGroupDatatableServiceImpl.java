@@ -68,10 +68,8 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			dataTableMailData.setAuthorId(Long.parseLong(authorId));
 			dataTableMailData.setDataTableId(datatableId);
-			if (dataTableData != null ){
 			dataTableMailData.setTitle(dataTableData.getTitle());
 			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
-			}
 
 			List<UserGroupMailData> userGroup = new ArrayList<>();
 			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
@@ -120,7 +118,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 	@Override
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
 			UserGroupCreateDatatable userGroupDataTableData) {
-		
+
 		List<Long> userGroups =userGroupDataTableData.getUserGroupIds();
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupDataTable> previousMapping = userGroupDataTableDao.findByDataTableId(datatableId);
