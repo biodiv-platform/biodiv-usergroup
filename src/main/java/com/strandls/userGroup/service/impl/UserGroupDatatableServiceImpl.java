@@ -90,6 +90,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			}
 			mailData.setUserGroupData(userGroup);
 			mailData.setDataTableMailData(dataTableMailData);
+			System.out.println(mailData);
 			return mailData;
 		}catch (Exception e) {
 		logger.error(e.getMessage());
