@@ -68,8 +68,11 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			dataTableMailData.setAuthorId(Long.parseLong(authorId));
 			dataTableMailData.setDataTableId(datatableId);
+			if(dataTableData!= null) {
 			dataTableMailData.setTitle(dataTableData.getTitle());
 			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
+			dataTableMailData.setLocation(dataTableData.getLocation());
+			}
 
 			List<UserGroupMailData> userGroup = new ArrayList<>();
 			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
