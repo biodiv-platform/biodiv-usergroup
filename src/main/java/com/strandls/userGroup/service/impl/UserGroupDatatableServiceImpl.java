@@ -36,8 +36,6 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 	@Inject
 	private LogActivities logActivity;
-	
-
 
 	@Override
 	public List<UserGroupIbp> fetchByDataTableId(Long id) {
