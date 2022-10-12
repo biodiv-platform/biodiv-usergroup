@@ -1197,6 +1197,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
+						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						ugDataTableGroupList.setUserGroupIds(ugList);
+
 						if (bulkGroupPosting.getRecordType().contains(RecordType.OBSERVATION.getValue())) {
 							UserGroupObservation isAlreadyMapped = userGroupObvDao
 									.checkObservationUGMApping(ugData.getObservationId(), userGroupId);
@@ -1218,8 +1221,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							createUGDocMapping(request, ugDatapayload);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.DATATABLE.getValue())) {
-							ugDatatableService.createUserGroupDatatableMapping(request, ugData.getObservationId(),
-									ugList);
+							ugDatatableService.updateUserGroupDatatableMapping(request, ugData.getObservationId(),
+									ugDataTableGroupList);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.SPECIES.getValue())) {
 							UserGroupSpeciesCreateData ugSpeciesPayload = new UserGroupSpeciesCreateData();
