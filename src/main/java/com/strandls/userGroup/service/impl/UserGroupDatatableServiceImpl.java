@@ -7,15 +7,22 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.strandls.activity.pojo.DataTableMailData;
+import com.strandls.activity.pojo.MailData;
+import com.strandls.activity.pojo.UserGroupMailData;
+import com.strandls.authentication_utility.util.AuthUtil;
 import com.strandls.userGroup.dao.UserGroupDataTableDao;
+import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
 import com.strandls.userGroup.pojo.UserGroupDataTable;
 import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
 import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.service.UserGroupDatatableService;
+
 
 public class UserGroupDatatableServiceImpl implements UserGroupDatatableService {
 
@@ -49,6 +56,46 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 		return null;
 	}
 
+	private MailData generateMailData(HttpServletRequest request,Long datatableId ,
+			UserGroupCreateDatatable dataTableData) {
+
+		try {
+			MailData mailData = new MailData();
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			String authorId = profile.getId();
+			DataTableMailData dataTableMailData = new DataTableMailData();
+			dataTableMailData.setAuthorId(Long.parseLong(authorId));
+			dataTableMailData.setDataTableId(datatableId);
+			dataTableMailData.setTitle(dataTableData.getTitle());
+			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
+			dataTableMailData.setLocation(dataTableData.getLocation());
+
+
+			List<UserGroupMailData> userGroup = new ArrayList<>();
+			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
+
+			if (updatedUG != null && !updatedUG.isEmpty()) {
+				for (UserGroupIbp ug : updatedUG) {
+					UserGroupMailData ugMail = new UserGroupMailData();
+					ugMail.setIcon(ug.getIcon());
+					ugMail.setId(ug.getId());
+					ugMail.setName(ug.getName());
+					ugMail.setWebAddress(ug.getWebAddress());
+
+					userGroup.add(ugMail);
+				}
+			}
+			mailData.setUserGroupData(userGroup);
+			mailData.setDataTableMailData(dataTableMailData);
+
+			return mailData;
+		}catch (Exception e) {
+		logger.error(e.getMessage());
+		}
+		return null;
+	}
+
+
 	@Override
 	public List<Long> createUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
 			List<Long> userGroups) {
@@ -60,8 +107,10 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				resultList.add(result.getUserGroupId());
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroup);
 				String description = userGroupService.createUgDescription(ugIbp);
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", result.getUserGroupId(), "Posted resource", null);
+						datatableId, datatableId, "datatable", result.getUserGroupId(), "Posted resource",
+						generateMailData(request,datatableId,null));
 			}
 		}
 		return resultList;
@@ -69,8 +118,9 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 	@Override
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
-			List<Long> userGroups) {
+			UserGroupCreateDatatable userGroupDataTableData) {
 
+		List<Long> userGroups =userGroupDataTableData.getUserGroupIds();
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupDataTable> previousMapping = userGroupDataTableDao.findByDataTableId(datatableId);
 		for (UserGroupDataTable ug : previousMapping) {
@@ -78,8 +128,10 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				userGroupDataTableDao.delete(ug);
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(ug.getUserGroupId());
 				String description = userGroupService.createUgDescription(ugIbp);
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce", null);
+						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce",
+						generateMailData(request,datatableId,userGroupDataTableData));
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
@@ -90,8 +142,10 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				userGroupDataTableDao.save(userGroupMapping);
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroupId);
 				String description = userGroupService.createUgDescription(ugIbp);
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", userGroupId, "Posted resource", null);
+						datatableId, datatableId, "datatable", userGroupId, "Posted resource", 
+						generateMailData(request,datatableId,userGroupDataTableData));
 			}
 		}
 

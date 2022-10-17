@@ -63,6 +63,7 @@ import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupAdminList;
 import com.strandls.userGroup.pojo.UserGroupCreateData;
+import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
 import com.strandls.userGroup.pojo.UserGroupDocCreateData;
 import com.strandls.userGroup.pojo.UserGroupDocument;
 import com.strandls.userGroup.pojo.UserGroupEditData;
@@ -1196,6 +1197,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
+						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						ugDataTableGroupList.setUserGroupIds(ugList);
+
 						if (bulkGroupPosting.getRecordType().contains(RecordType.OBSERVATION.getValue())) {
 							UserGroupObservation isAlreadyMapped = userGroupObvDao
 									.checkObservationUGMApping(ugData.getObservationId(), userGroupId);
@@ -1217,8 +1221,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							createUGDocMapping(request, ugDatapayload);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.DATATABLE.getValue())) {
-							ugDatatableService.createUserGroupDatatableMapping(request, ugData.getObservationId(),
-									ugList);
+							ugDatatableService.updateUserGroupDatatableMapping(request, ugData.getObservationId(),
+									ugDataTableGroupList);
 							counter++;
 						} else if (bulkGroupPosting.getRecordType().contains(RecordType.SPECIES.getValue())) {
 							UserGroupSpeciesCreateData ugSpeciesPayload = new UserGroupSpeciesCreateData();
@@ -1271,6 +1275,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
+						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						ugDataTableGroupList.setUserGroupIds(ugList);
+
 						if (recordType.contains(RecordType.OBSERVATION.getValue())) {
 							UserGroupMappingCreateData ugObservationPayload = new UserGroupMappingCreateData();
 							ugObservationPayload.setMailData(null);
@@ -1288,7 +1295,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							counter++;
 						} else if (recordType.contains(RecordType.DATATABLE.getValue())) {
 							ugDatatableService.updateUserGroupDatatableMapping(request, item.getObservationId(),
-									ugList);
+									ugDataTableGroupList);
 							counter++;
 						} else if (recordType.contains(RecordType.SPECIES.getValue())) {
 							UserGroupSpeciesCreateData ugSpeciesPayload = new UserGroupSpeciesCreateData();
