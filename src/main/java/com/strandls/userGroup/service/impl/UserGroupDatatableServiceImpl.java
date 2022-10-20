@@ -64,11 +64,13 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String authorId = profile.getId();
 			DataTableMailData dataTableMailData = new DataTableMailData();
-			dataTableMailData.setAuthorId(Long.parseLong(authorId));
-			dataTableMailData.setDataTableId(datatableId);
-			dataTableMailData.setTitle(dataTableData.getTitle());
-			dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
-			dataTableMailData.setLocation(dataTableData.getLocation());
+			if(dataTableData!=null) {
+				dataTableMailData.setAuthorId(Long.parseLong(authorId));
+				dataTableMailData.setDataTableId(datatableId);
+				dataTableMailData.setTitle(dataTableData.getTitle());
+				dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
+				dataTableMailData.setLocation(dataTableData.getLocation());
+			}
 
 
 			List<UserGroupMailData> userGroup = new ArrayList<>();
