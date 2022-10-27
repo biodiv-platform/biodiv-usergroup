@@ -973,7 +973,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Boolean isFounder = ugMemberService.checkFounderRole(tokenUserId, Long.parseLong(userGroupId));
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
-				Boolean result = ugMemberService.removeGroupMember(tokenUserId, Long.parseLong(userGroupId));
+				Boolean result = ugMemberService.removeGroupMember(Long.parseLong(userId), Long.parseLong(userGroupId));
 				if (result) {
 					logActivity.logUserGroupActivities(request.getHeader(HttpHeaders.AUTHORIZATION), null,
 							Long.parseLong(userGroupId), Long.parseLong(userGroupId), "userGroup",
