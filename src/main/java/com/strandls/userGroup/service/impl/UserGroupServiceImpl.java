@@ -791,7 +791,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					for (Long inviteeId : userGroupInvitations.getFounderIds()) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
 								userGroupInvitations.getUserGroupId(), founderId, "Founder", null, userGroupIbp);
-						if (mailData != null)
+						UserGroupIbp validateMemberResponse = validateMember(request, inviteeId, mailData.getToken());
+						if (mailData != null && validateMemberResponse != null)
 							inviteData.add(mailData);
 					}
 				}
@@ -799,7 +800,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					for (Long inviteeId : userGroupInvitations.getModeratorsIds()) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
 								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", null, userGroupIbp);
-						if (mailData != null)
+						UserGroupIbp validateMemberResponse = validateMember(request, inviteeId, mailData.getToken());
+						if (mailData != null && validateMemberResponse != null)
 							inviteData.add(mailData);
 					}
 				}
@@ -1197,7 +1199,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
-						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						UserGroupCreateDatatable ugDataTableGroupList = new UserGroupCreateDatatable();
 						ugDataTableGroupList.setUserGroupIds(ugList);
 
 						if (bulkGroupPosting.getRecordType().contains(RecordType.OBSERVATION.getValue())) {
@@ -1275,7 +1277,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
-						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						UserGroupCreateDatatable ugDataTableGroupList = new UserGroupCreateDatatable();
 						ugDataTableGroupList.setUserGroupIds(ugList);
 
 						if (recordType.contains(RecordType.OBSERVATION.getValue())) {
