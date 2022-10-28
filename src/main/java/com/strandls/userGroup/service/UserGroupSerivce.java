@@ -75,7 +75,7 @@ public interface UserGroupSerivce {
 	public Boolean addMemberRoleInvitaions(HttpServletRequest request, CommonProfile profile,
 			UserGroupInvitationData userGroupInvitations);
 
-	public UserGroupIbp validateMember(HttpServletRequest request, Long userId, String token);
+	//public UserGroupIbp validateMember(HttpServletRequest request, Long userId, String token);
 
 	public Boolean removeUser(HttpServletRequest request, String userGroupId, String userId);
 
