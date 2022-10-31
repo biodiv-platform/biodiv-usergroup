@@ -404,32 +404,6 @@ public class UserGroupController {
 
 	}
 
-//	@POST
-//	@Path(ApiConstants.VALIDATE + ApiConstants.MEMBERS)
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//
-//	@ValidateUser
-//
-//	@ApiOperation(value = "Validate the inivation request", notes = "validates the invitaion request", response = UserGroupIbp.class)
-//	@ApiResponses(value = {
-//			@ApiResponse(code = 400, message = "unable to validate the invitation", response = String.class) })
-//
-//	public Response validateUserGroupMemberInvite(@Context HttpServletRequest request,
-//			@ApiParam(name = "encryptionKey") EncryptionKey encryptionKey) {
-//		try {
-//			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
-//			Long userId = Long.parseLong(profile.getId());
-//			UserGroupIbp result = ugServices.validateMember(request, userId, encryptionKey.getToken());
-//			if (result != null)
-//				return Response.status(Status.OK).entity(result).build();
-//			return Response.status(Status.NOT_ACCEPTABLE).entity("user Not allowed to join the group").build();
-//		} catch (Exception e) {
-//			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-//		}
-//
-//	}
-
 	@POST
 	@Path(ApiConstants.VALIDATE + ApiConstants.REQUEST)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -1279,7 +1253,8 @@ public class UserGroupController {
 			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupDataTableData) {
 		try {
 			Long datatableId = Long.parseLong(dataTableId);
-			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,userGroupDataTableData);
+			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,
+					userGroupDataTableData);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

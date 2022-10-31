@@ -75,8 +75,6 @@ public interface UserGroupSerivce {
 	public Boolean addMemberRoleInvitaions(HttpServletRequest request, CommonProfile profile,
 			UserGroupInvitationData userGroupInvitations);
 
-	//public UserGroupIbp validateMember(HttpServletRequest request, Long userId, String token);
-
 	public Boolean removeUser(HttpServletRequest request, String userGroupId, String userId);
 
 	public Boolean leaveGroup(HttpServletRequest request, Long userId, String userGroupId);
@@ -147,11 +145,9 @@ public interface UserGroupSerivce {
 	public UserGroupAdminList getUserGroupAdminListByUserId(HttpServletRequest request);
 
 	public UserGroupObservation checkObservationUGMApping(Long observationId, Long userGroupId);
-	
-	
-	public List<UserGroupIbp> createUserGroupObervation(HttpServletRequest request,Long ObvId,Long ugId);
-	
-	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request,Long ObvId,Long ugId);
 
-	
+	public List<UserGroupIbp> createUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId);
+
+	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId);
+
 }
