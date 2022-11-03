@@ -790,23 +790,35 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				if (!userGroupInvitations.getFounderIds().isEmpty()) {
 					for (Long inviteeId : userGroupInvitations.getFounderIds()) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
-								userGroupInvitations.getUserGroupId(), founderId, "Founder", null, userGroupIbp);
-						if (mailData != null)
+								userGroupInvitations.getUserGroupId(), founderId, "Founder", null, userGroupIbp, false);
+
+						if (mailData != null) {
+							validateMember(request, inviteeId, mailData.getToken());
 							inviteData.add(mailData);
+						}
+
 					}
 				}
 				if (!userGroupInvitations.getModeratorsIds().isEmpty()) {
 					for (Long inviteeId : userGroupInvitations.getModeratorsIds()) {
+
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
-								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", null, userGroupIbp);
-						if (mailData != null)
+								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", null, userGroupIbp,
+								false);
+
+						if (mailData != null) {
+							validateMember(request, inviteeId, mailData.getToken());
 							inviteData.add(mailData);
+
+						}
+
 					}
 				}
 				if (!userGroupInvitations.getFounderEmail().isEmpty()) {
 					for (String email : userGroupInvitations.getFounderEmail()) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, null,
-								userGroupInvitations.getUserGroupId(), founderId, "Founder", email, userGroupIbp);
+								userGroupInvitations.getUserGroupId(), founderId, "Founder", email, userGroupIbp,
+								false);
 						if (mailData != null)
 							inviteData.add(mailData);
 					}
@@ -814,7 +826,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				if (!userGroupInvitations.getModeratorsEmail().isEmpty()) {
 					for (String email : userGroupInvitations.getModeratorsEmail()) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, null,
-								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", email, userGroupIbp);
+								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", email, userGroupIbp,
+								false);
 						if (mailData != null)
 							inviteData.add(mailData);
 					}
@@ -832,7 +845,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	private InvitaionMailData getInvitationMailData(HttpServletRequest request, Long inviterId, Long inviteeId,
-			Long userGroupId, Long roleId, String role, String email, UserGroupIbp userGroupIbp) {
+			Long userGroupId, Long roleId, String role, String email, UserGroupIbp userGroupIbp,
+			Boolean isEncryptionRequired) {
 		try {
 			if (inviteeId != null) {
 				UserGroupInvitation ugInvitee = ugInvitationDao.findByUserIdUGId(inviteeId, userGroupId);
@@ -870,9 +884,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				inviteeName = email.split("@")[0];
 				inviteeEmail = email;
 			}
+			String userGroupInvitationString = ugInviteStr;
+			if (Boolean.TRUE.equals(isEncryptionRequired)) {
+				userGroupInvitationString = encryptionUtils.encrypt(ugInviteStr);
+			}
+
 			if (inviteeEmail != null && inviteeEmail.length() > 0) {
 				InvitaionMailData mailData = new InvitaionMailData(inviterObject, inviteeName, inviteeEmail,
-						userGroupIbp, role, encryptionUtils.encrypt(ugInviteStr));
+						userGroupIbp, role, userGroupInvitationString);
 
 				return mailData;
 			}
@@ -882,8 +901,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return null;
 	}
 
-	@Override
-	public UserGroupIbp validateMember(HttpServletRequest request, Long userId, String token) {
+	private UserGroupIbp validateMember(HttpServletRequest request, Long userId, String userGroupInvitation) {
 		try {
 
 			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties");
@@ -898,8 +916,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Long moderatorId = Long.parseLong(properties.getProperty("userGroupExpert"));
 			in.close();
 
-			String plaintext = encryptionUtils.decrypt(token);
-			UserGroupInvitation ugInvte = objectMapper.readValue(plaintext, UserGroupInvitation.class);
+			UserGroupInvitation ugInvte = objectMapper.readValue(userGroupInvitation, UserGroupInvitation.class);
 			if (userId.equals(ugInvte.getInviteeId())) {
 				UserGroupInvitation ugInviteDB = ugInvitationDao.findByUserIdUGId(userId, ugInvte.getUserGroupId());
 				if (ugInviteDB.equals(ugInvte)) {
@@ -971,7 +988,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Boolean isFounder = ugMemberService.checkFounderRole(tokenUserId, Long.parseLong(userGroupId));
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
-				Boolean result = ugMemberService.removeGroupMember(tokenUserId, Long.parseLong(userGroupId));
+				Boolean result = ugMemberService.removeGroupMember(Long.parseLong(userId), Long.parseLong(userGroupId));
 				if (result) {
 					logActivity.logUserGroupActivities(request.getHeader(HttpHeaders.AUTHORIZATION), null,
 							Long.parseLong(userGroupId), Long.parseLong(userGroupId), "userGroup",
@@ -1133,7 +1150,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (userGroup.getAllowUserToJoin().equals(true)) {
 				for (Long inviteeId : inviteeList) {
 					InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId, userGroupId,
-							memberId, "Member", null, userGroupIbp);
+							memberId, "Member", null, userGroupIbp, true);
 					if (mailData != null) {
 						iniviteData.add(mailData);
 						String desc = "Sent invitation for Role: Member";
@@ -1151,7 +1168,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 					for (Long inviteeId : inviteeList) {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId, userGroupId,
-								memberId, "Member", null, userGroupIbp);
+								memberId, "Member", null, userGroupIbp, true);
 						if (mailData != null) {
 							iniviteData.add(mailData);
 							String desc = "Sent invitation for Role: Member";
@@ -1197,7 +1214,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
-						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						UserGroupCreateDatatable ugDataTableGroupList = new UserGroupCreateDatatable();
 						ugDataTableGroupList.setUserGroupIds(ugList);
 
 						if (bulkGroupPosting.getRecordType().contains(RecordType.OBSERVATION.getValue())) {
@@ -1275,7 +1292,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						List<Long> ugList = new ArrayList<Long>();
 						ugList.add(userGroupId);
 
-						UserGroupCreateDatatable ugDataTableGroupList =  new UserGroupCreateDatatable();
+						UserGroupCreateDatatable ugDataTableGroupList = new UserGroupCreateDatatable();
 						ugDataTableGroupList.setUserGroupIds(ugList);
 
 						if (recordType.contains(RecordType.OBSERVATION.getValue())) {
