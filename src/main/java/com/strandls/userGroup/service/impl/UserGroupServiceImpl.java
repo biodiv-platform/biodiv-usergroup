@@ -792,9 +792,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
 								userGroupInvitations.getUserGroupId(), founderId, "Founder", null, userGroupIbp, false);
 
-						UserGroupIbp validateMemberResponse = validateMember(request, inviteeId, mailData.getToken());
-						if (mailData != null && validateMemberResponse != null)
+						if (mailData != null) {
+							validateMember(request, inviteeId, mailData.getToken());
 							inviteData.add(mailData);
+						}
+
 					}
 				}
 				if (!userGroupInvitations.getModeratorsIds().isEmpty()) {
@@ -804,9 +806,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", null, userGroupIbp,
 								false);
 
-						UserGroupIbp validateMemberResponse = validateMember(request, inviteeId, mailData.getToken());
-						if (mailData != null && validateMemberResponse != null)
+						if (mailData != null) {
+							validateMember(request, inviteeId, mailData.getToken());
 							inviteData.add(mailData);
+
+						}
+
 					}
 				}
 				if (!userGroupInvitations.getFounderEmail().isEmpty()) {
@@ -880,7 +885,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				inviteeEmail = email;
 			}
 			String userGroupInvitationString = ugInviteStr;
-			if (isEncryptionRequired == true) {
+			if (Boolean.TRUE.equals(isEncryptionRequired)) {
 				userGroupInvitationString = encryptionUtils.encrypt(ugInviteStr);
 			}
 
