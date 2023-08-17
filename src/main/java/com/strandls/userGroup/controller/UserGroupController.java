@@ -1334,11 +1334,12 @@ public class UserGroupController {
 
 	@DELETE
 	@Path(ApiConstants.DELETE + "/{userGroupId}")
+	@ValidateUser
 	@ApiOperation(value = "delete a usergroup", notes = "Returns UserGroup data", response = UserGroup.class)
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class), })
-	public Response deletUserGroup(@PathParam("userGroupId") String userGroupId) {
+	public Response deletUserGroup(@Context HttpServletRequest request, @PathParam("userGroupId") String userGroupId) {
 		try {
-			UserGroup result = ugServices.deleteUserGroup(Long.parseLong(userGroupId));
+			UserGroup result = ugServices.deleteUserGroup(request, Long.parseLong(userGroupId));
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

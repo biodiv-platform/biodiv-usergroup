@@ -2223,10 +2223,20 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return null;
 	}
 
-	public UserGroup deleteUserGroup(Long ugId) {
-		UserGroup ug = userGroupDao.findById(ugId);
-		ug.setIsDeleted(true);
-		return userGroupDao.update(ug);
+	public UserGroup deleteUserGroup(HttpServletRequest request, Long ugId) {
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		if (roles.contains(roleAdmin)) {
+			try {
+				UserGroup ug = userGroupDao.findById(ugId);
+				ug.setIsDeleted(true);
+				return userGroupDao.update(ug);
+
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		return null;
 	}
 
 }
