@@ -2223,4 +2223,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return null;
 	}
 
+	public UserGroup deleteUserGroup(Long ugId) {
+		UserGroup ug = userGroupDao.findById(ugId);
+		ug.setIsDeleted(true);
+		return userGroupDao.update(ug);
+	}
+
 }

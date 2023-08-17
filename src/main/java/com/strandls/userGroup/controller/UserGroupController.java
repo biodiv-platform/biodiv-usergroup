@@ -62,6 +62,7 @@ import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
+import com.strandls.userGroup.service.impl.UserGroupServiceImpl;
 import com.strandls.userGroup.util.AppUtil;
 
 import io.swagger.annotations.Api;
@@ -1326,6 +1327,19 @@ public class UserGroupController {
 			List<UserGroupIbp> result = ugServices.removeUserGroupObervation(request, observationId, userGroupId);
 			return Response.status(Status.OK).entity(result).build();
 
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@DELETE
+	@Path(ApiConstants.DELETE + "/{userGroupId}")
+	@ApiOperation(value = "delete a usergroup", notes = "Returns UserGroup data", response = UserGroup.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class), })
+	public Response deletUserGroup(@PathParam("userGroupId") String userGroupId) {
+		try {
+			UserGroup result = ugServices.deleteUserGroup(Long.parseLong(userGroupId));
+			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}

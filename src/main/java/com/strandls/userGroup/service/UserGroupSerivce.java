@@ -150,4 +150,6 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId);
 
+	public UserGroup deleteUserGroup(Long ugId);
+
 }
