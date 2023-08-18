@@ -1334,6 +1334,8 @@ public class UserGroupController {
 
 	@DELETE
 	@Path(ApiConstants.DELETE + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	@ValidateUser
 	@ApiOperation(value = "delete a usergroup", notes = "Returns UserGroup data", response = UserGroup.class)
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class), })
