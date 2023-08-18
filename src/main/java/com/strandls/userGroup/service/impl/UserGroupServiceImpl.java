@@ -436,7 +436,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	public List<UserGroupIbp> fetchAllUserGroup() {
 		List<UserGroupIbp> result = new ArrayList<UserGroupIbp>();
 		try {
-			List<UserGroup> userGroupList = userGroupDao.findAll();
+			List<UserGroup> userGroupList = userGroupDao.findAlUserGroups();
 			List<UserGroupMembersCount> count = ugMemberService.getUserGroupMemberCount();
 			Map<Long, UserGroupIbp> ugMap = new HashMap<Long, UserGroupIbp>();
 			UserGroupIbp ibp = null;
