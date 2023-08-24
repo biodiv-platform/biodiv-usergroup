@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -300,6 +301,28 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 		}
 
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void deleteByUgId(Long id) {
+		List<UserGroupMemberRole> result = null;
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+		String qry = "delete from user_group_member_role where user_group_id = :id";
+		try {
+			transaction = session.beginTransaction();
+			Query<UserGroupMemberRole> query = session.createSQLQuery(qry);
+			query.setParameter("id", id);
+			query.executeUpdate();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
 	}
 
 }

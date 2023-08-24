@@ -168,6 +168,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	@Inject
 	UserGroupObservationDao ugObvDao;
 
+	@Inject
+	private UserGroupMemberRoleDao ugMemberRoleDao;
+
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
@@ -2226,10 +2229,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	public UserGroup deleteUserGroup(HttpServletRequest request, Long ugId) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+
 		if (roles.contains(roleAdmin)) {
 			try {
 				UserGroup ug = userGroupDao.findById(ugId);
 				ug.setIsDeleted(true);
+
+				ugMemberRoleDao.deleteByUgId(ugId);
+
 				return userGroupDao.update(ug);
 
 			} catch (Exception e) {
