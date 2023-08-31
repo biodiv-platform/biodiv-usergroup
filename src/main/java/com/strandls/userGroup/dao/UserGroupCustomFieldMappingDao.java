@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 
 import com.strandls.userGroup.pojo.UserGroupCustomFieldMapping;
+import com.strandls.userGroup.pojo.UserGroupMemberRole;
 import com.strandls.userGroup.util.AbstractDAO;
 
 /**
@@ -98,5 +100,27 @@ public class UserGroupCustomFieldMappingDao extends AbstractDAO<UserGroupCustomF
 			session.close();
 		}
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void bulkDeleteCustomFieldsByUgId(Long id) {
+		List<UserGroupCustomFieldMapping> result = null;
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+		String qry = "delete from user_group_cf_mapping where user_group_id = :id";
+		try {
+			transaction = session.beginTransaction();
+			Query<UserGroupCustomFieldMapping> query = session.createSQLQuery(qry);
+			query.setParameter("id", id);
+			query.executeUpdate();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
 	}
 }

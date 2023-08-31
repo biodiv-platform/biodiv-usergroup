@@ -40,6 +40,7 @@ public class ObservationCustomField implements Serializable {
 	private String valueString;
 	private Double valueNumeric;
 	private Date valueDate;
+	private Boolean isUsergroupDeleted;
 
 	/**
 	 * 
@@ -63,7 +64,7 @@ public class ObservationCustomField implements Serializable {
 	 */
 	public ObservationCustomField(Long id, Long authorId, Long observationId, Long userGroupId, Long customFieldId,
 			Long customFieldValueId, Date createdOn, Date lastModified, String valueString, Double valueNumeric,
-			Date valueDate) {
+			Date valueDate, Boolean isUsergroupDeleted) {
 		super();
 		this.id = id;
 		this.authorId = authorId;
@@ -76,6 +77,7 @@ public class ObservationCustomField implements Serializable {
 		this.valueString = valueString;
 		this.valueNumeric = valueNumeric;
 		this.valueDate = valueDate;
+		this.isUsergroupDeleted = isUsergroupDeleted;
 	}
 
 	@Id
@@ -177,6 +179,15 @@ public class ObservationCustomField implements Serializable {
 
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
+	}
+
+	@Column(name = "is_usergroup_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE", nullable = false)
+	public Boolean getIsUsergroupDeleted() {
+		return isUsergroupDeleted;
+	}
+
+	public void setIsUsergroupDeleted(Boolean isUsergroupDeleted) {
+		this.isUsergroupDeleted = isUsergroupDeleted;
 	}
 
 }

@@ -34,7 +34,9 @@ import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 import com.strandls.userGroup.dao.FeaturedDao;
 import com.strandls.userGroup.dao.GroupGallerySliderDao;
+import com.strandls.userGroup.dao.ObservationCustomFieldDao;
 import com.strandls.userGroup.dao.StatsDao;
+import com.strandls.userGroup.dao.UserGroupCustomFieldMappingDao;
 import com.strandls.userGroup.dao.UserGroupDao;
 import com.strandls.userGroup.dao.UserGroupDocumentDao;
 import com.strandls.userGroup.dao.UserGroupHabitatDao;
@@ -170,6 +172,12 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Inject
 	private UserGroupMemberRoleDao ugMemberRoleDao;
+
+	@Inject
+	private UserGroupCustomFieldMappingDao userGroupCustomFieldMappingDao;
+
+	@Inject
+	private ObservationCustomFieldDao observationCustomFieldDao;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -2236,6 +2244,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				ug.setIsDeleted(true);
 
 				ugMemberRoleDao.deleteByUgId(ugId);
+				userGroupCustomFieldMappingDao.bulkDeleteCustomFieldsByUgId(ugId);
+				observationCustomFieldDao.bulkSoftDeleteObsCfMappingByUgId(ugId);
 
 				return userGroupDao.update(ug);
 
