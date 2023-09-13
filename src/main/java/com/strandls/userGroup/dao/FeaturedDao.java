@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,27 @@ public class FeaturedDao extends AbstractDAO<Featured, Long> {
 			session.close();
 		}
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void bulkDeleteFeaturedObjectsByUgId(Long id) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+		String qry = "delete from featured where user_group_id = :id";
+		try {
+			transaction = session.beginTransaction();
+			Query<Featured> query = session.createSQLQuery(qry);
+			query.setParameter("id", id);
+			query.executeUpdate();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
 	}
 
 }
