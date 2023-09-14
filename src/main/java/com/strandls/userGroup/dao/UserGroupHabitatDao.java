@@ -10,11 +10,13 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.pojo.UserGroupHabitat;
+import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.util.AbstractDAO;
 
 /**
@@ -62,6 +64,27 @@ public class UserGroupHabitatDao extends AbstractDAO<UserGroupHabitat, Long> {
 			session.close();
 		}
 		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void deleteHabitatsMappingByUgId(Long id) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+		String qry = "delete from user_group_habitat where user_group_habitats_id = :id";
+		try {
+			transaction = session.beginTransaction();
+			Query<UserGroupSpeciesGroup> query = session.createSQLQuery(qry);
+			query.setParameter("id", id);
+			query.executeUpdate();
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
 	}
 
 }
