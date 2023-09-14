@@ -2247,7 +2247,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				userGroupCustomFieldMappingDao.bulkDeleteCustomFieldsByUgId(ugId);
 				observationCustomFieldDao.bulkSoftDeleteObsCfMappingByUgId(ugId);
 				featuredDao.bulkDeleteFeaturedObjectsByUgId(ugId);
-	
+				ugSGroupDao.deleteSpeciesGroupsMappingByUgId(ugId);
+
 				return userGroupDao.update(ug);
 
 			} catch (Exception e) {
