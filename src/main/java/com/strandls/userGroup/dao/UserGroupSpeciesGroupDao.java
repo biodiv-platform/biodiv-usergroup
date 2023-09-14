@@ -71,7 +71,7 @@ public class UserGroupSpeciesGroupDao extends AbstractDAO<UserGroupSpeciesGroup,
 	public void deleteSpeciesGroupsMappingByUgId(Long id) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = null;
-		String qry = "delete from user_group_species_group where user_group_id = :id";
+		String qry = "delete from user_group_species_group where user_group_species_groups_id = :id";
 		try {
 			transaction = session.beginTransaction();
 			Query<UserGroupSpeciesGroup> query = session.createSQLQuery(qry);
