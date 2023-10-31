@@ -2211,7 +2211,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				if (ugObvMapping != null) {
 					ugObvDao.delete(ugObvMapping);
-					produce.setMessage("observation", ObvId.toString(), messageType);
+					//produce.setMessage("observation", ObvId.toString(), messageType);
 				}
 
 			} catch (Exception e) {

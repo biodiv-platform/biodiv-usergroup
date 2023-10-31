@@ -207,7 +207,7 @@ public class UserGroupController {
 
 			Long observationId = Long.parseLong(obsId);
 			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,
-					true, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
+					false, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
 			if (result == null)
 				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
 			return Response.status(Status.CREATED).entity(result).build();
