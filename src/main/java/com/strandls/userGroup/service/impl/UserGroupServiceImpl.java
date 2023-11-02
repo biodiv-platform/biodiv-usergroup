@@ -299,6 +299,13 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return resultList;
 	}
 
+//	public List<Long> createUserGroupObservationMappingForDatatable(HttpServletRequest request, Long observationId,
+//			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity) {
+//		List<Long> resultList = new ArrayList<Long>();
+//		resultList = createUserGroupObservationMapping(request, observationId, userGroups, false, setActivity);
+//		return resultList;
+//	}
+
 	public List<UserGroupIbp> removeUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups, Boolean canEsUpdate) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -2211,7 +2218,31 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			try {
 				if (ugObvMapping != null) {
 					ugObvDao.delete(ugObvMapping);
-					//produce.setMessage("observation", ObvId.toString(), messageType);
+					produce.setMessage("observation", ObvId.toString(), messageType);
+				}
+
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+			return fetchByObservationId(ObvId);
+		}
+
+		return null;
+	}
+	
+	@Override
+	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long ObvId, Long ugId) {
+
+		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+		Long userId = Long.parseLong(profile.getId());
+		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
+		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
+			UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(ObvId, ugId);
+
+			try {
+				if (ugObvMapping != null) {
+					ugObvDao.delete(ugObvMapping);
 				}
 
 			} catch (Exception e) {
