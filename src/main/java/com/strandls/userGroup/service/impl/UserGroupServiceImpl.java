@@ -299,13 +299,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return resultList;
 	}
 
-//	public List<Long> createUserGroupObservationMappingForDatatable(HttpServletRequest request, Long observationId,
-//			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity) {
-//		List<Long> resultList = new ArrayList<Long>();
-//		resultList = createUserGroupObservationMapping(request, observationId, userGroups, false, setActivity);
-//		return resultList;
-//	}
-
 	public List<UserGroupIbp> removeUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups, Boolean canEsUpdate) {
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -2229,7 +2222,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return null;
 	}
-	
+
 	@Override
 	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long ObvId, Long ugId) {
 

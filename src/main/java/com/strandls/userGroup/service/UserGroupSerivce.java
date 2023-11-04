@@ -152,7 +152,4 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long ObvId, Long ugId);
 
-//	public List<Long> createUserGroupObservationMappingForDatatable(HttpServletRequest request, Long observationId,
-//			UserGroupMappingCreateData userGroups, Boolean canEsUpdate, Boolean setActivity);
-
 }
