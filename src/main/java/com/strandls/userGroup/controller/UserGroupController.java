@@ -88,6 +88,8 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
+	
+	private static final String ERROR_OCCURED_IN_TRANSACTION = "Error occured in transaction";
 
 	@GET
 	@Path("/ping")
@@ -209,7 +211,7 @@ public class UserGroupController {
 			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,
 					true, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
 			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
 			return Response.status(Status.CREATED).entity(result).build();
 
 		} catch (Exception e) {
@@ -236,7 +238,7 @@ public class UserGroupController {
 			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,
 					false, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
 			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
 			return Response.status(Status.CREATED).entity(result).build();
 
 		} catch (Exception e) {
@@ -1257,7 +1259,7 @@ public class UserGroupController {
 			List<Long> result = udDatatableService.createUserGroupDatatableMapping(request, datatableId,
 					userGroupData.getUserGroupIds());
 			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
 			return Response.status(Status.CREATED).entity(result).build();
 
 		} catch (Exception e) {

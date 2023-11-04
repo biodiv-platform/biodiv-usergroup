@@ -150,6 +150,6 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId);
 
-	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long ObvId, Long ugId);
+	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long obvId, Long ugId);
 
 }

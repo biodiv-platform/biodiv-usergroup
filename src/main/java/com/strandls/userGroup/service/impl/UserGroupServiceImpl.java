@@ -2224,14 +2224,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long ObvId, Long ugId) {
+	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long obvId, Long ugId) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		Long userId = Long.parseLong(profile.getId());
 		Boolean eligible = ugMemberService.checkUserGroupMember(userId, ugId);
 		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(eligible)) {
-			UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(ObvId, ugId);
+			UserGroupObservation ugObvMapping = ugObvDao.checkObservationUGMApping(obvId, ugId);
 
 			try {
 				if (ugObvMapping != null) {
@@ -2241,7 +2241,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
-			return fetchByObservationId(ObvId);
+			return fetchByObservationId(obvId);
 		}
 
 		return null;
