@@ -1442,8 +1442,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				UserGroup ug = userGroupDao.findById(userGroupId);
 				UserGroup userGroup = new UserGroup(ug.getId(), ug.getAllow_members_to_make_species_call(),
 						ug.getAllow_non_members_to_comment(), ug.getAllow_obv_cross_posting(),
-						ugEditData.getAllowUserToJoin(), ugEditData.getDescription(), ugEditData.getDomainName(),
-						new Date(), ugEditData.getHomePage(), ugEditData.getIcon(), false, ugEditData.getName(),
+						ugEditData.getAllowUserToJoin(), ugEditData.getDescription(), ug.getDomianName(), new Date(),
+						ugEditData.getHomePage(), ugEditData.getIcon(), false, ugEditData.getName(),
 						ugEditData.getNeLatitude(), ugEditData.getNeLongitude(), ugEditData.getSwLatitude(),
 						ugEditData.getSwLongitude(), ugEditData.getTheme(), ug.getVisitCount(), webAddress,
 						ugEditData.getLanguageId(), new Date(), ug.getShowGallery(), ug.getShowStats(),
