@@ -88,6 +88,8 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
+	
+	private static final String ERROR_OCCURED_IN_TRANSACTION = "Error occured in transaction";
 
 	@GET
 	@Path("/ping")
@@ -209,7 +211,34 @@ public class UserGroupController {
 			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,
 					true, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
 			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
+			return Response.status(Status.CREATED).entity(result).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.CREATE + "/datatable" + "/{obsId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns List of UserGroup", response = Long.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
+
+	public Response createObservationUserGroupMappingDatatable(@Context HttpServletRequest request,
+			@PathParam("obsId") String obsId,
+			@ApiParam(name = "userGroupData") UserGroupMappingCreateData userGroupData) {
+		try {
+
+			Long observationId = Long.parseLong(obsId);
+			List<Long> result = ugServices.createUserGroupObservationMapping(request, observationId, userGroupData,
+					false, userGroupData.getHasActivity() != null ? userGroupData.getHasActivity() : true);
+			if (result == null)
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
 			return Response.status(Status.CREATED).entity(result).build();
 
 		} catch (Exception e) {
@@ -1230,7 +1259,7 @@ public class UserGroupController {
 			List<Long> result = udDatatableService.createUserGroupDatatableMapping(request, datatableId,
 					userGroupData.getUserGroupIds());
 			if (result == null)
-				return Response.status(Status.CONFLICT).entity("Error occured in transaction").build();
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
 			return Response.status(Status.CREATED).entity(result).build();
 
 		} catch (Exception e) {
@@ -1324,6 +1353,32 @@ public class UserGroupController {
 			Long userGroupId = Long.parseLong(ugId);
 
 			List<UserGroupIbp> result = ugServices.removeUserGroupObervation(request, observationId, userGroupId);
+			return Response.status(Status.OK).entity(result).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@DELETE
+	@Path(ApiConstants.REMOVE + "/datatable" + "/{obsId}/{ugId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupIbp.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
+
+	public Response removeObservationUserGroupDatatable(@Context HttpServletRequest request,
+			@PathParam("obsId") String obsId, @PathParam("ugId") String ugId) {
+		try {
+
+			Long observationId = Long.parseLong(obsId);
+			Long userGroupId = Long.parseLong(ugId);
+
+			List<UserGroupIbp> result = ugServices.removeUserGroupObervationForDatatable(request, observationId,
+					userGroupId);
 			return Response.status(Status.OK).entity(result).build();
 
 		} catch (Exception e) {
