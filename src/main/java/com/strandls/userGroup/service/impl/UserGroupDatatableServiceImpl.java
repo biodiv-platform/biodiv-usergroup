@@ -23,7 +23,6 @@ import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 
-
 public class UserGroupDatatableServiceImpl implements UserGroupDatatableService {
 
 	private final Logger logger = LoggerFactory.getLogger(UserGroupDatatableServiceImpl.class);
@@ -56,7 +55,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 		return null;
 	}
 
-	private MailData generateMailData(HttpServletRequest request,Long datatableId ,
+	private MailData generateMailData(HttpServletRequest request, Long datatableId,
 			UserGroupCreateDatatable dataTableData) {
 
 		try {
@@ -64,14 +63,13 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			String authorId = profile.getId();
 			DataTableMailData dataTableMailData = new DataTableMailData();
-			if(dataTableData!=null) {
-				dataTableMailData.setAuthorId(Long.parseLong(authorId));
+			if (dataTableData != null) {
+				dataTableMailData.setAuthorId(Long.parseLong(dataTableData.getContributor()));
 				dataTableMailData.setDataTableId(datatableId);
 				dataTableMailData.setTitle(dataTableData.getTitle());
 				dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
 				dataTableMailData.setLocation(dataTableData.getLocation());
 			}
-
 
 			List<UserGroupMailData> userGroup = new ArrayList<>();
 			List<UserGroupIbp> updatedUG = fetchByDataTableId(datatableId);
@@ -91,12 +89,11 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			mailData.setDataTableMailData(dataTableMailData);
 
 			return mailData;
-		}catch (Exception e) {
-		logger.error(e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
-
 
 	@Override
 	public List<Long> createUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
@@ -112,7 +109,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", result.getUserGroupId(), "Posted resource",
-						generateMailData(request,datatableId,null));
+						generateMailData(request, datatableId, null));
 			}
 		}
 		return resultList;
@@ -122,7 +119,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
 			UserGroupCreateDatatable userGroupDataTableData) {
 
-		List<Long> userGroups =userGroupDataTableData.getUserGroupIds();
+		List<Long> userGroups = userGroupDataTableData.getUserGroupIds();
 		List<Long> previousUserGroup = new ArrayList<Long>();
 		List<UserGroupDataTable> previousMapping = userGroupDataTableDao.findByDataTableId(datatableId);
 		for (UserGroupDataTable ug : previousMapping) {
@@ -133,7 +130,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce",
-						generateMailData(request,datatableId,userGroupDataTableData));
+						generateMailData(request, datatableId, userGroupDataTableData));
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
@@ -146,8 +143,8 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				String description = userGroupService.createUgDescription(ugIbp);
 
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", userGroupId, "Posted resource", 
-						generateMailData(request,datatableId,userGroupDataTableData));
+						datatableId, datatableId, "datatable", userGroupId, "Posted resource",
+						generateMailData(request, datatableId, userGroupDataTableData));
 			}
 		}
 
