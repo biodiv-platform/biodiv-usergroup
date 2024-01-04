@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -180,6 +182,7 @@ public class UserGroup implements Serializable {
 	}
 
 	@Column(name = "description")
+	@Type(type = "text")
 	public String getDescription() {
 		return description;
 	}
