@@ -64,7 +64,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			String authorId = profile.getId();
 			DataTableMailData dataTableMailData = new DataTableMailData();
 			if (dataTableData != null) {
-				dataTableMailData.setAuthorId(Long.parseLong(dataTableData.getContributor()));
+				dataTableMailData.setAuthorId(Long.parseLong(authorId));
 				dataTableMailData.setDataTableId(datatableId);
 				dataTableMailData.setTitle(dataTableData.getTitle());
 				dataTableMailData.setCreatedOn(dataTableData.getCreatedOn());
@@ -128,9 +128,12 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(ug.getUserGroupId());
 				String description = userGroupService.createUgDescription(ugIbp);
 
+				MailData mailData = generateMailData(request, datatableId, userGroupDataTableData);
+				DataTableMailData datatableMailData = mailData.getDataTableMailData();
+				datatableMailData.setAuthorId(Long.parseLong(userGroupDataTableData.getContributor()));
+
 				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce",
-						generateMailData(request, datatableId, userGroupDataTableData));
+						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce", mailData);
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
