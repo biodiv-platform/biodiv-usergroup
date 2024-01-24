@@ -160,7 +160,7 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			logger.error(e.getMessage());
 		}
 
-		return new ArrayList<UserGroupIbp>();
+		return new ArrayList<>();
 	}
 
 	@Override
