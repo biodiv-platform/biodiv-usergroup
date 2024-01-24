@@ -119,41 +119,47 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
 			UserGroupCreateDatatable userGroupDataTableData) {
 
-		List<Long> userGroups = userGroupDataTableData.getUserGroupIds();
-		List<Long> previousUserGroup = new ArrayList<Long>();
-		List<UserGroupDataTable> previousMapping = userGroupDataTableDao.findByDataTableId(datatableId);
-		for (UserGroupDataTable ug : previousMapping) {
-			if (!(userGroups.contains(ug.getUserGroupId()))) {
-				userGroupDataTableDao.delete(ug);
-				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(ug.getUserGroupId());
-				String description = userGroupService.createUgDescription(ugIbp);
+		try {
+			List<Long> userGroups = userGroupDataTableData.getUserGroupIds();
+			List<Long> previousUserGroup = new ArrayList<Long>();
+			List<UserGroupDataTable> previousMapping = userGroupDataTableDao.findByDataTableId(datatableId);
+			for (UserGroupDataTable ug : previousMapping) {
+				if (!(userGroups.contains(ug.getUserGroupId()))) {
+					userGroupDataTableDao.delete(ug);
+					UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(ug.getUserGroupId());
+					String description = userGroupService.createUgDescription(ugIbp);
 
-				MailData mailData = generateMailData(request, datatableId, userGroupDataTableData);
-				DataTableMailData datatableMailData = mailData.getDataTableMailData();
-				datatableMailData.setAuthorId(Long.parseLong(userGroupDataTableData.getContributor()));
+					MailData mailData = generateMailData(request, datatableId, userGroupDataTableData);
+					DataTableMailData datatableMailData = mailData.getDataTableMailData();
+					datatableMailData.setAuthorId(Long.parseLong(userGroupDataTableData.getContributor()));
 
-				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce", mailData);
+					logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							datatableId, datatableId, "datatable", ug.getUserGroupId(), "Removed resoruce", mailData);
+				}
+				previousUserGroup.add(ug.getUserGroupId());
 			}
-			previousUserGroup.add(ug.getUserGroupId());
+
+			for (Long userGroupId : userGroups) {
+				if (!(previousUserGroup.contains(userGroupId))) {
+					UserGroupDataTable userGroupMapping = new UserGroupDataTable(userGroupId, datatableId);
+					userGroupDataTableDao.save(userGroupMapping);
+					UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroupId);
+					String description = userGroupService.createUgDescription(ugIbp);
+
+					logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+							datatableId, datatableId, "datatable", userGroupId, "Posted resource",
+							generateMailData(request, datatableId, userGroupDataTableData));
+				}
+			}
+
+			List<UserGroupIbp> result = fetchByDataTableId(datatableId);
+			return result;
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 
-		for (Long userGroupId : userGroups) {
-			if (!(previousUserGroup.contains(userGroupId))) {
-				UserGroupDataTable userGroupMapping = new UserGroupDataTable(userGroupId, datatableId);
-				userGroupDataTableDao.save(userGroupMapping);
-				UserGroupIbp ugIbp = userGroupService.fetchByGroupIdIbp(userGroupId);
-				String description = userGroupService.createUgDescription(ugIbp);
-
-				logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
-						datatableId, datatableId, "datatable", userGroupId, "Posted resource",
-						generateMailData(request, datatableId, userGroupDataTableData));
-			}
-		}
-
-		List<UserGroupIbp> result = fetchByDataTableId(datatableId);
-
-		return result;
+		return new ArrayList<UserGroupIbp>();
 	}
 
 	@Override
