@@ -130,7 +130,8 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 					String description = userGroupService.createUgDescription(ugIbp);
 
 					MailData mailData = generateMailData(request, datatableId, userGroupDataTableData);
-					DataTableMailData datatableMailData = mailData.getDataTableMailData();
+					DataTableMailData datatableMailData = mailData != null ? mailData.getDataTableMailData()
+							: new DataTableMailData();
 					datatableMailData.setAuthorId(Long.parseLong(userGroupDataTableData.getContributor()));
 
 					logActivity.logDatatableActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
