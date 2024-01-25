@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -88,7 +89,7 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
-	
+
 	private static final String ERROR_OCCURED_IN_TRANSACTION = "Error occured in transaction";
 
 	@GET
@@ -1062,10 +1063,11 @@ public class UserGroupController {
 	@ApiOperation(value = "check eligiblity for edit button", notes = "Returns true and false", response = Boolean.class)
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to find the data", response = String.class) })
 
-	public Response enableEdit(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId) {
+	public Response enableEdit(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
+			@DefaultValue("false") @QueryParam("checkModerator") boolean checkModerator) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
-			Boolean result = ugServices.enableEdit(request, userGroupId);
+			Boolean result = ugServices.enableEdit(request, userGroupId, checkModerator);
 			return Response.status(Status.OK).entity(result).build();
 
 		} catch (Exception e) {

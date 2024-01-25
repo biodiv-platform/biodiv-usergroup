@@ -1990,16 +1990,15 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public Boolean enableEdit(HttpServletRequest request, Long userGroupId) {
+	public Boolean enableEdit(HttpServletRequest request, Long userGroupId, Boolean checkModerator) {
 
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 		Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
-		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator))
-			return true;
-		return false;
+		return roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)
+				|| (Boolean.TRUE.equals(checkModerator) && Boolean.TRUE.equals(isModerator));
 	}
 
 	@Override

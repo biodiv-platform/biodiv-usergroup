@@ -130,7 +130,7 @@ public interface UserGroupSerivce {
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage);
 
-	public Boolean enableEdit(HttpServletRequest request, Long userGroupId);
+	public Boolean enableEdit(HttpServletRequest request, Long userGroupId, Boolean checkModerator);
 
 	public List<UserGroupIbp> fetchBySpeciesId(Long speciesId);
 
