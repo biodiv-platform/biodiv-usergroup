@@ -36,6 +36,7 @@ public class GroupGallerySlider {
 	private Long displayOrder;
 	private String readMoreText;
 	private String readMoreUIType;
+	private String gallerySidebar;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -154,6 +155,15 @@ public class GroupGallerySlider {
 
 	public void setReadMoreUIType(String readMoreUIType) {
 		this.readMoreUIType = readMoreUIType;
+	}
+
+	@Column(name = "gallery_sidebar", columnDefinition = "text default 'opaque'")
+	public String getGallerySidebar() {
+		return gallerySidebar;
+	}
+
+	public void setGallerySidebar(String gallerySidebar) {
+		this.gallerySidebar = gallerySidebar;
 	}
 
 }
