@@ -1958,6 +1958,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				gallerySliderEntity.setMoreLinks(editData.getMoreLinks());
 				gallerySliderEntity.setDisplayOrder(editData.getDisplayOrder());
 				gallerySliderEntity.setReadMoreText(editData.getReadMoreText());
+				gallerySliderEntity.setReadMoreUIType(editData.getReadMoreUIType());
 
 				groupGallerySliderDao.update(gallerySliderEntity);
 				return getGroupHomePageData(userGroupId);
