@@ -34,6 +34,7 @@ public class GroupGallerySlider {
 	private String customDescripition;
 	private String moreLinks;
 	private Long displayOrder;
+	private String readMoreText;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -134,6 +135,15 @@ public class GroupGallerySlider {
 
 	public void setDisplayOrder(Long displayOrder) {
 		this.displayOrder = displayOrder;
+	}
+
+	@Column(name = "read_more_text")
+	public String getReadMoreText() {
+		return readMoreText;
+	}
+
+	public void setReadMoreText(String readMoreText) {
+		this.readMoreText = readMoreText;
 	}
 
 }
