@@ -72,7 +72,7 @@ public interface UserGroupSerivce {
 
 	public MailData updateMailData(Long observationId, MailData mailData);
 
-	public Boolean addMemberRoleInvitaions(HttpServletRequest request, CommonProfile profile,
+	public AdministrationList addMemberRoleInvitaions(HttpServletRequest request, CommonProfile profile,
 			UserGroupInvitationData userGroupInvitations);
 
 	public Boolean removeUser(HttpServletRequest request, String userGroupId, String userId);

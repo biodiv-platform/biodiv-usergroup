@@ -88,7 +88,7 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
-	
+
 	private static final String ERROR_OCCURED_IN_TRANSACTION = "Error occured in transaction";
 
 	@GET
@@ -403,10 +403,8 @@ public class UserGroupController {
 			@ApiParam(name = "userGroupInvitations") UserGroupInvitationData userGroupInvitations) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
-			Boolean result = ugServices.addMemberRoleInvitaions(request, profile, userGroupInvitations);
-			if (result)
-				return Response.status(Status.OK).entity("Sent out Invitations to all").build();
-			return Response.status(Status.NOT_ACCEPTABLE).entity("User not allowed to send invitations").build();
+			AdministrationList result = ugServices.addMemberRoleInvitaions(request, profile, userGroupInvitations);
+			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}

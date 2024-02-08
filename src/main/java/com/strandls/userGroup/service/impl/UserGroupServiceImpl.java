@@ -763,7 +763,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public Boolean addMemberRoleInvitaions(HttpServletRequest request, CommonProfile profile,
+	public AdministrationList addMemberRoleInvitaions(HttpServletRequest request, CommonProfile profile,
 			UserGroupInvitationData userGroupInvitations) {
 
 		try {
@@ -848,14 +848,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					}
 				}
 				mailUtils.sendInvites(inviteData, serverUrl);
-				return true;
+				return getAdminMembers(userGroupInvitations.getUserGroupId().toString());
 			}
-			return false;
+			return null;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 
-		return false;
+		return null;
 
 	}
 
