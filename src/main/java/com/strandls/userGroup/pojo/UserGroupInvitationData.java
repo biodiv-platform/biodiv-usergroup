@@ -15,6 +15,7 @@ public class UserGroupInvitationData {
 	private Long userGroupId;
 	private List<Long> founderIds;
 	private List<Long> moderatorsIds;
+	private List<Long> memberIds;
 	private List<String> founderEmail;
 	private List<String> moderatorsEmail;
 
@@ -29,15 +30,17 @@ public class UserGroupInvitationData {
 	 * @param userGroupId
 	 * @param founderIds
 	 * @param moderatorsIds
+	 * @param memberIds
 	 * @param founderEmail
 	 * @param moderatorsEmail
 	 */
 	public UserGroupInvitationData(Long userGroupId, List<Long> founderIds, List<Long> moderatorsIds,
-			List<String> founderEmail, List<String> moderatorsEmail) {
+			List<Long> memberIds, List<String> founderEmail, List<String> moderatorsEmail) {
 		super();
 		this.userGroupId = userGroupId;
 		this.founderIds = founderIds;
 		this.moderatorsIds = moderatorsIds;
+		this.memberIds = memberIds;
 		this.founderEmail = founderEmail;
 		this.moderatorsEmail = moderatorsEmail;
 	}
@@ -64,6 +67,14 @@ public class UserGroupInvitationData {
 
 	public void setModeratorsIds(List<Long> moderatorsIds) {
 		this.moderatorsIds = moderatorsIds;
+	}
+
+	public List<Long> getMemberIds() {
+		return memberIds;
+	}
+
+	public void setMemberIds(List<Long> memberIds) {
+		this.memberIds = memberIds;
 	}
 
 	public List<String> getFounderEmail() {

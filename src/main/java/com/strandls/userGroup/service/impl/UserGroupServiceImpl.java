@@ -779,6 +779,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			String serverUrl = properties.getProperty("serverUrl");
 			Long founderId = Long.parseLong(properties.getProperty("userGroupFounder"));
 			Long moderatorId = Long.parseLong(properties.getProperty("userGroupExpert"));
+			Long memberId = Long.parseLong(properties.getProperty("userGroupMember"));
 			in.close();
 
 			Long inviterId = Long.parseLong(profile.getId());
@@ -805,6 +806,20 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
 								userGroupInvitations.getUserGroupId(), moderatorId, "Moderator", null, userGroupIbp,
 								false);
+
+						if (mailData != null) {
+							validateMember(request, inviteeId, mailData.getToken());
+							inviteData.add(mailData);
+
+						}
+
+					}
+				}
+				if (!userGroupInvitations.getMemberIds().isEmpty()) {
+					for (Long inviteeId : userGroupInvitations.getMemberIds()) {
+
+						InvitaionMailData mailData = getInvitationMailData(request, inviterId, inviteeId,
+								userGroupInvitations.getUserGroupId(), memberId, "Member", null, userGroupIbp, false);
 
 						if (mailData != null) {
 							validateMember(request, inviteeId, mailData.getToken());
