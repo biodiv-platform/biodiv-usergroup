@@ -174,6 +174,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	private final String messageType = "User Groups";
 	private static final String roleAdmin = "ROLE_ADMIN";
 	private static final String species = "species";
+	private static final String ROLE_PAGE_EDITOR = "ROLE_PAGE_EDITOR";
 
 	@Override
 	public UserGroup fetchByGroupId(Long id) {
@@ -2017,9 +2018,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 		Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
-		if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder) || Boolean.TRUE.equals(isModerator))
-			return true;
-		return false;
+		return (roles.contains(roleAdmin) || roles.contains(ROLE_PAGE_EDITOR) || Boolean.TRUE.equals(isFounder)
+				|| Boolean.TRUE.equals(isModerator));
 	}
 
 	@Override
