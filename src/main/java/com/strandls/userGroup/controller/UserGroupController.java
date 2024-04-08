@@ -40,6 +40,7 @@ import com.strandls.userGroup.pojo.Featured;
 import com.strandls.userGroup.pojo.FeaturedCreateData;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
@@ -88,7 +89,6 @@ public class UserGroupController {
 
 	@Inject
 	private UserGroupMemberService ugMemberService;
-	
 	private static final String ERROR_OCCURED_IN_TRANSACTION = "Error occured in transaction";
 
 	@GET
@@ -110,6 +110,22 @@ public class UserGroupController {
 			Long id = Long.parseLong(objectId);
 			UserGroup userGroup = ugServices.fetchByGroupId(id);
 			return Response.status(Status.OK).entity(userGroup).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+	}
+
+	@GET
+	@Path(ApiConstants.MEDIATOGGLE + "/{ugId}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Find media toggle value of a UserGroup by ID", notes = "Returns all observations customisation for ug as response", response = ObservationCustomisations.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 404, message = "UserGroup not found", response = ObservationCustomisations.class) })
+	public Response getUserGroupMediaToggle(@PathParam("ugId") String ugId) {
+		try {
+			ObservationCustomisations ugObsCustomisations = ugServices.fetchMediaToggle(Long.parseLong(ugId));
+			return Response.status(Status.OK).entity(ugObsCustomisations).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}

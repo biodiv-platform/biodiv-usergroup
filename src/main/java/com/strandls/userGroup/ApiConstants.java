@@ -60,5 +60,6 @@ public class ApiConstants {
 	public static final String DATATABLE = "/data-table";
 	public static final String USERGROUPDATATABLE = "/ud-data-table";
 	public static final String SPECIES = "/species";
+	public static final String MEDIATOGGLE = "/mediaToggle";
 
 }
