@@ -120,8 +120,7 @@ public class UserGroupController {
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Find media toggle value of a UserGroup by ID", notes = "Returns all observations customisation for ug as response", response = ObservationCustomisations.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 404, message = "UserGroup not found", response = ObservationCustomisations.class) })
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
 	public Response getUserGroupMediaToggle(@PathParam("ugId") String ugId) {
 		try {
 			ObservationCustomisations ugObsCustomisations = ugServices.fetchMediaToggle(Long.parseLong(ugId));
