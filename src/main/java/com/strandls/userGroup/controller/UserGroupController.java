@@ -130,6 +130,32 @@ public class UserGroupController {
 		}
 	}
 
+	@PUT
+	@Path(ApiConstants.OBSERVATIONCUSTOMISATIONS + ApiConstants.UPDATE)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+	@ApiOperation(value = "Update media toggle value of a UserGroup", response = UserGroup.class)
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
+
+	public Response updateGroupObservationCustomisations(@Context HttpServletRequest request,
+			@ApiParam(name = "observationCustomisations") ObservationCustomisations observationCustomisations) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			if (roles.contains("ROLE_ADMIN")) {
+				UserGroup ug = ugServices.updateObservationCustomisations(observationCustomisations);
+				return Response.status(Status.OK).entity(ug).build();
+			} else {
+				return Response.status(Status.FORBIDDEN).build();
+			}
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+	}
+
 	@GET
 	@Path(ApiConstants.IBP + "/{objectId}")
 	@Consumes(MediaType.TEXT_PLAIN)

@@ -2283,4 +2283,19 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return null;
 	}
 
+	@Override
+	public UserGroup updateObservationCustomisations(ObservationCustomisations updateCustomisationData) {
+		try {
+			Long ugId = updateCustomisationData.getUserGroupId();
+			String mediaToggle = updateCustomisationData.getMediaToggle();
+			UserGroup userGroup = userGroupDao.findById(ugId);
+			userGroup.setMediaToggle(mediaToggle);
+			return userGroupDao.update(userGroup);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
 }

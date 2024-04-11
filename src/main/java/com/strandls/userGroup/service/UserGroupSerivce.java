@@ -155,4 +155,6 @@ public interface UserGroupSerivce {
 
 	public ObservationCustomisations fetchMediaToggle(Long ugId);
 
+	public UserGroup updateObservationCustomisations(ObservationCustomisations updateCustomisationData);
+
 }
