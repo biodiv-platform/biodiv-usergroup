@@ -19,6 +19,7 @@ import com.strandls.userGroup.pojo.Featured;
 import com.strandls.userGroup.pojo.FeaturedCreateData;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
@@ -151,5 +152,9 @@ public interface UserGroupSerivce {
 	public List<UserGroupIbp> removeUserGroupObervation(HttpServletRequest request, Long ObvId, Long ugId);
 
 	public List<UserGroupIbp> removeUserGroupObervationForDatatable(HttpServletRequest request, Long obvId, Long ugId);
+
+	public ObservationCustomisations fetchMediaToggle(Long ugId);
+
+	public UserGroup updateObservationCustomisations(ObservationCustomisations updateCustomisationData);
 
 }

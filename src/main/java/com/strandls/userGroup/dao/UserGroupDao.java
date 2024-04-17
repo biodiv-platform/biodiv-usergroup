@@ -46,16 +46,16 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return entity;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<UserGroup> findUgListByIds(List<Long> ids) {
 		Session session = sessionFactory.openSession();
-		
-		String qry = "from UserGroup where id IN (:ugIds)" ;
+
+		String qry = "from UserGroup where id IN (:ugIds)";
 		try {
 			Query<UserGroup> query = session.createQuery(qry);
 			query.setParameter("ugIds", ids);
-			return  query.getResultList();
+			return query.getResultList();
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -64,7 +64,6 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return null;
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	public List<UserGroup> findFilterRule() {
@@ -111,6 +110,22 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 			Object resultObject = query.getSingleResult();
 			Long authorId = Long.parseLong(resultObject.toString());
 			return authorId;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public String findMediaToggleByUgId(Long ugId) {
+		String qry = "SELECT mediaToggle from UserGroup where id = :ugId";
+		Session session = sessionFactory.openSession();
+		try {
+			Query<Object> query = session.createQuery(qry);
+			query.setParameter("ugId", ugId);
+			return query.getSingleResult().toString();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {

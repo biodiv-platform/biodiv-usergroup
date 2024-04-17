@@ -57,6 +57,7 @@ import com.strandls.userGroup.pojo.GroupAddMember;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.InvitaionMailData;
+import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
@@ -192,6 +193,20 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		userGroup.setHabitatIds(habitatId);
 		userGroup.setSpeciesGroupIds(speciesGroupId);
 		return userGroup;
+	}
+
+	@Override
+	public ObservationCustomisations fetchMediaToggle(Long ugId) {
+		try {
+			ObservationCustomisations customisations = new ObservationCustomisations();
+			String mediaToggle = userGroupDao.findMediaToggleByUgId(ugId);
+			customisations.setMediaToggle(mediaToggle);
+			customisations.setUserGroupId(ugId);
+			return customisations;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
 	}
 
 	@Override
@@ -1369,7 +1384,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					ugCreateData.getNeLongitude(), ugCreateData.getSwLatitude(), ugCreateData.getSwLongitude(),
 					ugCreateData.getTheme(), 1L, webAddress,
 					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId, new Date(),
-					true, true, true, true, true, true);
+					true, true, true, true, true, true, "withMedia");
 
 			userGroup = userGroupDao.save(userGroup);
 
@@ -1463,7 +1478,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						ugEditData.getNeLatitude(), ugEditData.getNeLongitude(), ugEditData.getSwLatitude(),
 						ugEditData.getSwLongitude(), ugEditData.getTheme(), ug.getVisitCount(), webAddress,
 						ugEditData.getLanguageId(), new Date(), ug.getShowGallery(), ug.getShowStats(),
-						ug.getShowRecentObservations(), ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc());
+						ug.getShowRecentObservations(), ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(),
+						ug.getMediaToggle());
 
 				userGroup = userGroupDao.update(userGroup);
 
@@ -2262,6 +2278,21 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				logger.error(e.getMessage());
 			}
 			return fetchByObservationId(obvId);
+		}
+
+		return null;
+	}
+
+	@Override
+	public UserGroup updateObservationCustomisations(ObservationCustomisations updateCustomisationData) {
+		try {
+			Long ugId = updateCustomisationData.getUserGroupId();
+			String mediaToggle = updateCustomisationData.getMediaToggle();
+			UserGroup userGroup = userGroupDao.findById(ugId);
+			userGroup.setMediaToggle(mediaToggle);
+			return userGroupDao.update(userGroup);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		}
 
 		return null;
