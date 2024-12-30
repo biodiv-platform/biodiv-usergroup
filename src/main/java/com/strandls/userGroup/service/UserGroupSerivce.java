@@ -35,6 +35,7 @@ import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
 import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
+import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
 
 /**
  * @author Abhishek Rudra
@@ -156,5 +157,7 @@ public interface UserGroupSerivce {
 	public ObservationCustomisations fetchMediaToggle(Long ugId);
 
 	public UserGroup updateObservationCustomisations(ObservationCustomisations updateCustomisationData);
+
+	public List<UsergroupSpeciesFieldMapping> fetchSpeciesFieldsByUgId(Long ugId);
 
 }

@@ -43,6 +43,7 @@ import com.strandls.userGroup.dao.UserGroupJoinRequestDao;
 import com.strandls.userGroup.dao.UserGroupMemberRoleDao;
 import com.strandls.userGroup.dao.UserGroupObservationDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesDao;
+import com.strandls.userGroup.dao.UserGroupSpeciesFieldMappingDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesGroupDao;
 import com.strandls.userGroup.dao.UserGroupUserRequestDAO;
 import com.strandls.userGroup.dto.AuthenticationDTO;
@@ -84,6 +85,7 @@ import com.strandls.userGroup.pojo.UserGroupSpecies;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupUserJoinRequest;
+import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
@@ -168,6 +170,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Inject
 	UserGroupObservationDao ugObvDao;
+
+	@Inject
+	UserGroupSpeciesFieldMappingDao ugSfMappingDao;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -2296,6 +2301,18 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<UsergroupSpeciesFieldMapping> fetchSpeciesFieldsByUgId(Long ugId) {
+		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+		try {
+			result = ugSfMappingDao.findSpeciesFieldsByUgId(ugId);
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return result;
 	}
 
 }

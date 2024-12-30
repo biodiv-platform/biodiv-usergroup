@@ -60,6 +60,7 @@ import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
+import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
@@ -1422,6 +1423,25 @@ public class UserGroupController {
 					userGroupId);
 			return Response.status(Status.OK).entity(result).build();
 
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path("/userGroupSpeciesFields" + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Get species fields By user Group id", notes = "Returns the List of usergroup to species fields mappings", response = UsergroupSpeciesFieldMapping.class, responseContainer = "List")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Datatable Mapping", response = String.class) })
+
+	public Response getSpeciesFieldsByUserGroupId(@PathParam("userGroupId") String userGroupId) {
+		try {
+			Long ugId = Long.parseLong(userGroupId);
+			List<UsergroupSpeciesFieldMapping> result = ugServices.fetchSpeciesFieldsByUgId(ugId);
+			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
