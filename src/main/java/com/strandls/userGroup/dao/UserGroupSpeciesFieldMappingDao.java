@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,66 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 			session.close();
 		}
 		return result;
+	}
+
+	public List<UsergroupSpeciesFieldMapping> addUserGroupSpeciesFields(
+			List<UsergroupSpeciesFieldMapping> mappingList) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+		List<UsergroupSpeciesFieldMapping> savedMappings = new ArrayList<>();
+
+		try {
+			tx = session.beginTransaction();
+
+			for (UsergroupSpeciesFieldMapping mapping : mappingList) {
+				session.save(mapping);
+				savedMappings.add(mapping);
+			}
+
+			tx.commit();
+			return savedMappings;
+
+		} catch (Exception e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error(e.getMessage());
+			return new ArrayList<>();
+
+		} finally {
+			session.close();
+		}
+	}
+
+	public boolean deleteUserGroupSpeciesFields(List<UsergroupSpeciesFieldMapping> mappingList) {
+		Session session = sessionFactory.openSession();
+		Transaction tx = null;
+
+		try {
+			tx = session.beginTransaction();
+
+			for (UsergroupSpeciesFieldMapping mapping : mappingList) {
+				// Create query with composite key conditions
+				String hql = "DELETE FROM UsergroupSpeciesFieldMapping WHERE usergroupId = :ugId AND speciesFieldId = :sfId";
+				Query<?> query = session.createQuery(hql);
+				query.setParameter("ugId", mapping.getUsergroupId());
+				query.setParameter("sfId", mapping.getSpeciesFieldId());
+				query.executeUpdate();
+			}
+
+			tx.commit();
+			return true;
+
+		} catch (Exception e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			logger.error(e.getMessage());
+			return false;
+
+		} finally {
+			session.close();
+		}
 	}
 
 	@Override

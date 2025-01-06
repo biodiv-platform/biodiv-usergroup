@@ -42,6 +42,7 @@ import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
+import com.strandls.userGroup.pojo.SField;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupAdminList;
@@ -1442,6 +1443,31 @@ public class UserGroupController {
 			Long ugId = Long.parseLong(userGroupId);
 			List<UsergroupSpeciesFieldMapping> result = ugServices.fetchSpeciesFieldsByUgId(ugId);
 			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.UPDATE + "/speciesFieldsMapping" + "/{ugId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	// @ValidateUser
+	@ApiOperation(value = "Create UserGroup species fields Mapping", notes = "Returns List of UserGroup specied fields mappings", response = UsergroupSpeciesFieldMapping.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-speciesFields Mapping Cannot be Created", response = String.class) })
+
+	public Response updateUserGroupSpeciesFieldsMapping(@Context HttpServletRequest request,
+			@PathParam("ugId") String ugId, @ApiParam(name = "speciesFields") List<SField> speciesFields) {
+		try {
+
+			List<UsergroupSpeciesFieldMapping> result = ugServices
+					.updateSpeciesFieldsMappingByUgId(Long.parseLong(ugId), speciesFields);
+			if (result == null)
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
+			return Response.status(Status.CREATED).entity(result).build();
+
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}

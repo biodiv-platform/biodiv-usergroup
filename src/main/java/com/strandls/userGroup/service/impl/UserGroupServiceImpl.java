@@ -60,6 +60,7 @@ import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.InvitaionMailData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
+import com.strandls.userGroup.pojo.SField;
 import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
@@ -2312,6 +2313,76 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
+		return result;
+	}
+
+//	@Override
+//	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
+//
+//		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+//
+//		// when we only want to add new fields to the mapping table
+//
+//		try {
+//			List<UsergroupSpeciesFieldMapping> payload = new ArrayList<UsergroupSpeciesFieldMapping>();
+//			for (SField sField : speciesFields) {
+//				UsergroupSpeciesFieldMapping row = new UsergroupSpeciesFieldMapping();
+//				row.setSpeciesFieldId(sField.getId());
+//				row.setUsergroupId(ugId);
+//			}
+//			result = ugSfMappingDao.addUserGroupSpeciesFields(payload);
+//			return result;
+//		} catch (Exception e) {
+//			logger.error(e.getMessage());
+//		}
+//
+//		return result;
+//
+//	}
+
+	@Override
+	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
+		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+
+		try {
+			List<UsergroupSpeciesFieldMapping> payload = new ArrayList<UsergroupSpeciesFieldMapping>();
+
+			for (SField sField : speciesFields) {
+				// Add mapping for the main id
+				UsergroupSpeciesFieldMapping mainRow = new UsergroupSpeciesFieldMapping();
+				mainRow.setSpeciesFieldId(sField.getId());
+				mainRow.setUsergroupId(ugId);
+				payload.add(mainRow);
+
+				// Process path string if it exists
+				if (sField.getPath() != null && !sField.getPath().isEmpty()) {
+					String[] pathIds = sField.getPath().split("\\.");
+					for (String pathId : pathIds) {
+						try {
+							Long id = Long.parseLong(pathId);
+							UsergroupSpeciesFieldMapping pathRow = new UsergroupSpeciesFieldMapping();
+							pathRow.setSpeciesFieldId(id);
+							pathRow.setUsergroupId(ugId);
+							payload.add(pathRow);
+						} catch (NumberFormatException e) {
+							logger.error("Invalid path id format: " + pathId);
+							continue;
+						}
+					}
+				}
+			}
+
+			// Add all the mappings
+			if (!payload.isEmpty()) {
+				result = ugSfMappingDao.addUserGroupSpeciesFields(payload);
+			}
+
+			return result;
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
 		return result;
 	}
 
