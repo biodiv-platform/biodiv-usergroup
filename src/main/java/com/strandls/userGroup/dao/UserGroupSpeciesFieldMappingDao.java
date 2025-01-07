@@ -41,50 +41,70 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 		return result;
 	}
 
-	public List<UsergroupSpeciesFieldMapping> addUserGroupSpeciesFields(
-			List<UsergroupSpeciesFieldMapping> mappingList) {
+//	public UsergroupSpeciesFieldMapping addUserGroupSpeciesFields(UsergroupSpeciesFieldMapping mappingList) {
+//		Session session = sessionFactory.openSession();
+//		Transaction tx = null;
+//		// UsergroupSpeciesFieldMapping savedMappings = new ArrayList<>();
+//
+//		UsergroupSpeciesFieldMapping result = new UsergroupSpeciesFieldMapping();
+//
+//		try {
+//			tx = session.beginTransaction();
+//
+////			for (UsergroupSpeciesFieldMapping mapping : mappingList) {
+////				session.save(mapping);
+////				savedMappings.add(mapping);
+////			}
+//
+//			result = (UsergroupSpeciesFieldMapping) session.save(mappingList);
+//
+//			tx.commit();
+//			return result;
+//
+//		} catch (Exception e) {
+//			if (tx != null && tx.isActive()) {
+//				tx.rollback();
+//			}
+//			logger.error(e.getMessage());
+//			return result;
+//
+//		} finally {
+//			session.close();
+//		}
+//	}
+
+	public UsergroupSpeciesFieldMapping addUserGroupSpeciesField(UsergroupSpeciesFieldMapping mapping) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
-		List<UsergroupSpeciesFieldMapping> savedMappings = new ArrayList<>();
-
 		try {
 			tx = session.beginTransaction();
-
-			for (UsergroupSpeciesFieldMapping mapping : mappingList) {
-				session.save(mapping);
-				savedMappings.add(mapping);
-			}
-
+			session.save(mapping);
 			tx.commit();
-			return savedMappings;
-
+			return mapping;
 		} catch (Exception e) {
 			if (tx != null && tx.isActive()) {
 				tx.rollback();
 			}
 			logger.error(e.getMessage());
-			return new ArrayList<>();
-
+			return null;
 		} finally {
 			session.close();
 		}
 	}
 
-	public boolean deleteUserGroupSpeciesFields(List<UsergroupSpeciesFieldMapping> mappingList) {
+	public boolean deleteUserGroupSpeciesField(UsergroupSpeciesFieldMapping mapping) {
 		Session session = sessionFactory.openSession();
 		Transaction tx = null;
 
 		try {
 			tx = session.beginTransaction();
 
-			for (UsergroupSpeciesFieldMapping mapping : mappingList) {
-				// Create query with composite key conditions
-				String hql = "DELETE FROM UsergroupSpeciesFieldMapping WHERE usergroupId = :ugId AND speciesFieldId = :sfId";
-				Query<?> query = session.createQuery(hql);
-				query.setParameter("ugId", mapping.getUsergroupId());
-				query.setParameter("sfId", mapping.getSpeciesFieldId());
-				query.executeUpdate();
-			}
+			// Create query with composite key conditions
+			String hql = "DELETE FROM UsergroupSpeciesFieldMapping WHERE usergroupId = :ugId AND speciesFieldId = :sfId";
+			Query<?> query = session.createQuery(hql);
+			query.setParameter("ugId", mapping.getUsergroupId());
+			query.setParameter("sfId", mapping.getSpeciesFieldId());
+			query.executeUpdate();
 
 			tx.commit();
 			return true;

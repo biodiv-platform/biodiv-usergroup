@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -2340,50 +2342,126 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 //
 //	}
 
+//	@Override
+//	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
+//		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+//
+//		try {
+//			List<UsergroupSpeciesFieldMapping> payload = new ArrayList<UsergroupSpeciesFieldMapping>();
+//
+//			List<UsergroupSpeciesFieldMapping> exixstingMappings = ugSfMappingDao.findSpeciesFieldsByUgId(ugId);
+//			List<Long> existingSfIds = new ArrayList<Long>();
+//			for (UsergroupSpeciesFieldMapping mapping : exixstingMappings) {
+//				existingSfIds.add(mapping.getSpeciesFieldId());
+//			}
+//
+//			for (SField sField : speciesFields) {
+//				// Add mapping for the main id
+//				if (!existingSfIds.contains(sField.getId())) {
+//					UsergroupSpeciesFieldMapping mainRow = new UsergroupSpeciesFieldMapping();
+//					mainRow.setSpeciesFieldId(sField.getId());
+//					mainRow.setUsergroupId(ugId);
+//					ugSfMappingDao.addUserGroupSpeciesFields(mainRow);
+//					payload.add(mainRow);
+//				}
+//
+//				// payload.add(mainRow);
+//
+//				// Process path string if it exists
+//				if (sField.getPath() != null && !sField.getPath().isEmpty()) {
+//					String[] pathIds = sField.getPath().split("\\.");
+//					for (String pathId : pathIds) {
+//						try {
+//							Long id = Long.parseLong(pathId);
+//							if (!existingSfIds.contains(id)) {
+//
+//								UsergroupSpeciesFieldMapping pathRow = new UsergroupSpeciesFieldMapping();
+//								pathRow.setSpeciesFieldId(id);
+//								pathRow.setUsergroupId(ugId);
+//								ugSfMappingDao.addUserGroupSpeciesFields(pathRow);
+//								payload.add(pathRow);
+//							}
+//
+//						} catch (NumberFormatException e) {
+//							logger.error("Invalid path id format: " + pathId);
+//							continue;
+//						}
+//					}
+//				}
+//			}
+//
+//			// Add all the mappings
+////			if (!payload.isEmpty()) {
+////				result = ugSfMappingDao.addUserGroupSpeciesFields(payload);
+////			}
+//
+//			return payload;
+//
+//		} catch (Exception e) {
+//			logger.error(e.getMessage());
+//		}
+//
+//		return result;
+//	}
+
 	@Override
 	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
-		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+		List<UsergroupSpeciesFieldMapping> result = new ArrayList<>();
 
 		try {
-			List<UsergroupSpeciesFieldMapping> payload = new ArrayList<UsergroupSpeciesFieldMapping>();
+			// Get existing mappings and their IDs
+			List<UsergroupSpeciesFieldMapping> existingMappings = ugSfMappingDao.findSpeciesFieldsByUgId(ugId);
+			Set<Long> existingSfIds = new HashSet<>();
+			for (UsergroupSpeciesFieldMapping mapping : existingMappings) {
+				existingSfIds.add(mapping.getSpeciesFieldId());
+			}
 
+			// Collect all new IDs (including path IDs)
+			Set<Long> newSfIds = new HashSet<>();
 			for (SField sField : speciesFields) {
-				// Add mapping for the main id
-				UsergroupSpeciesFieldMapping mainRow = new UsergroupSpeciesFieldMapping();
-				mainRow.setSpeciesFieldId(sField.getId());
-				mainRow.setUsergroupId(ugId);
-				payload.add(mainRow);
+				// Add main ID
+				newSfIds.add(sField.getId());
 
-				// Process path string if it exists
+				// Add path IDs if they exist
 				if (sField.getPath() != null && !sField.getPath().isEmpty()) {
 					String[] pathIds = sField.getPath().split("\\.");
 					for (String pathId : pathIds) {
 						try {
-							Long id = Long.parseLong(pathId);
-							UsergroupSpeciesFieldMapping pathRow = new UsergroupSpeciesFieldMapping();
-							pathRow.setSpeciesFieldId(id);
-							pathRow.setUsergroupId(ugId);
-							payload.add(pathRow);
+							newSfIds.add(Long.parseLong(pathId));
 						} catch (NumberFormatException e) {
 							logger.error("Invalid path id format: " + pathId);
-							continue;
 						}
 					}
 				}
 			}
 
-			// Add all the mappings
-			if (!payload.isEmpty()) {
-				result = ugSfMappingDao.addUserGroupSpeciesFields(payload);
+			// Add new mappings (IDs in newSfIds but not in existingSfIds)
+			for (Long sfId : newSfIds) {
+				if (!existingSfIds.contains(sfId)) {
+					UsergroupSpeciesFieldMapping newMapping = new UsergroupSpeciesFieldMapping();
+					newMapping.setSpeciesFieldId(sfId);
+					newMapping.setUsergroupId(ugId);
+					ugSfMappingDao.addUserGroupSpeciesField(newMapping);
+					result.add(newMapping);
+				}
+			}
+
+			// Delete old mappings (IDs in existingSfIds but not in newSfIds)
+			for (Long sfId : existingSfIds) {
+				if (!newSfIds.contains(sfId)) {
+					UsergroupSpeciesFieldMapping mappingToDelete = new UsergroupSpeciesFieldMapping();
+					mappingToDelete.setSpeciesFieldId(sfId);
+					mappingToDelete.setUsergroupId(ugId);
+					ugSfMappingDao.deleteUserGroupSpeciesField(mappingToDelete);
+				}
 			}
 
 			return result;
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			return result;
 		}
-
-		return result;
 	}
 
 }
