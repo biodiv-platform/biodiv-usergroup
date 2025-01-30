@@ -1043,14 +1043,15 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Boolean isFounder = ugMemberService.checkFounderRole(tokenUserId, Long.parseLong(userGroupId));
 
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
-				List<Long> userList = Arrays.stream(userIds.split(",")).map(Long::parseLong).collect(Collectors.toList());
-				Boolean result = ugMemberService.removeBulkGroupMember(request, userList, Long.parseLong(userGroupId));
-				return result;
+				List<Long> userList = Arrays.stream(userIds.split(",")).map(Long::parseLong)
+						.collect(Collectors.toList());
+				return ugMemberService.removeBulkGroupMember(request, userList, Long.parseLong(userGroupId));
+
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		return null;
+		return false;
 	}
 
 	@Override

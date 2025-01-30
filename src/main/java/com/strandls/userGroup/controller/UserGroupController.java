@@ -533,13 +533,12 @@ public class UserGroupController {
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to remove the users", response = String.class) })
 
 	public Response removeBulkUserUG(@Context HttpServletRequest request,
-			@DefaultValue("false") @QueryParam("selectAll") Boolean selectAll,
-			@QueryParam("unSelectedIds") String unSelectedIds, @QueryParam("userIds") String userIds,
+			@DefaultValue("false") @QueryParam("selectAll") Boolean selectAll, @QueryParam("userIds") String userIds,
 			@QueryParam("userGroupId") String userGroupId) {
 		try {
 
 			Boolean result = ugServices.removeBulkUser(request, userGroupId, userIds);
-			if (result)
+			if (Boolean.TRUE.equals(result))
 				return Response.status(Status.OK).entity("Removed users").build();
 			return Response.status(Status.NOT_ACCEPTABLE).entity("User Not removed").build();
 		} catch (Exception e) {

@@ -171,7 +171,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 			logger.error(e.getMessage());
 		}
 
-		return null;
+		return false;
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 		try {
 			for (Long userId : userList) {
 				Boolean result = removeGroupMember(userId, userGroupId);
-				if (result) {
+				if (Boolean.TRUE.equals(result)) {
 					logActivity.logUserGroupActivities(request.getHeader(HttpHeaders.AUTHORIZATION), null, userGroupId,
 							userGroupId, "userGroup", userId, "Removed user");
 				}
