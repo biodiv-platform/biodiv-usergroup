@@ -6,6 +6,8 @@ package com.strandls.userGroup.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
 import com.strandls.userGroup.pojo.GroupAddMember;
@@ -31,6 +33,8 @@ public interface UserGroupMemberService {
 
 	public Boolean removeGroupMember(Long userId, Long userGroupId);
 
+	public Boolean removeBulkGroupMember(HttpServletRequest request, List<Long> userId, Long userGroupId);
+
 	public Boolean joinGroup(Long userId, Long userGroupId);
 
 	public List<Long> addMemberDirectly(GroupAddMember addMember);
@@ -42,7 +46,7 @@ public interface UserGroupMemberService {
 	public List<UserIbp> getModeratorList(Long userGroupId);
 
 	public UserGroupPermissions getUserGroupObservationPermissions(Long userId);
-	
+
 	public Map<Long, Boolean> groupListByUserId(Long userId);
 
 }

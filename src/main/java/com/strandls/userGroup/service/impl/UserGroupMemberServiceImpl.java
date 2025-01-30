@@ -13,6 +13,8 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ import com.strandls.userGroup.service.UserGroupSerivce;
 public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	private final Logger logger = LoggerFactory.getLogger(UserGroupMemberServiceImpl.class);
-	
+
 	private static final String INDEX = "extended_user";
 	private static final String TYPE = "_doc";
 
@@ -59,6 +61,9 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	@Inject
 	private EsServicesApi esService;
+
+	@Inject
+	private LogActivities logActivity;
 
 	@Override
 	public Boolean checkUserGroupMember(Long userId, Long userGroupId) {
@@ -158,9 +163,28 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 					userGroupMemberDao.save(ugMember);
 					groupUserEsUpdate(userId);
 				}
+				groupUserEsUpdate(userId);
 				return true;
 			}
 
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
+	public Boolean removeBulkGroupMember(HttpServletRequest request, List<Long> userList, Long userGroupId) {
+		try {
+			for (Long userId : userList) {
+				Boolean result = removeGroupMember(userId, userGroupId);
+				if (result) {
+					logActivity.logUserGroupActivities(request.getHeader(HttpHeaders.AUTHORIZATION), null, userGroupId,
+							userGroupId, "userGroup", userId, "Removed user");
+				}
+			}
+			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
