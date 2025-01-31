@@ -522,7 +522,7 @@ public class UserGroupController {
 
 	}
 
-	@GET
+	@PUT
 	@Path(ApiConstants.REMOVE + ApiConstants.BULK + ApiConstants.MEMBERS)
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
