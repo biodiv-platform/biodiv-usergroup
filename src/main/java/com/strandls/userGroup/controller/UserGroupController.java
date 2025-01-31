@@ -43,6 +43,7 @@ import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
+import com.strandls.userGroup.pojo.SpeciesFieldValuesDTO;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupAdminList;
@@ -1434,14 +1435,14 @@ public class UserGroupController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 
-	@ApiOperation(value = "Get species fields By user Group id", notes = "Returns the List of usergroup to species fields mappings", response = UsergroupSpeciesFieldMapping.class, responseContainer = "List")
+	@ApiOperation(value = "Get species fields By user Group id", notes = "Returns the List of usergroup to species fields mappings", response = SpeciesFieldValuesDTO.class, responseContainer = "List")
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Datatable Mapping", response = String.class) })
 
 	public Response getSpeciesFieldsByUserGroupId(@PathParam("userGroupId") String userGroupId) {
 		try {
 			Long ugId = Long.parseLong(userGroupId);
-			List<UsergroupSpeciesFieldMapping> result = ugServices.fetchSpeciesFieldsByUgId(ugId);
+			List<SpeciesFieldValuesDTO> result = ugServices.fetchSpeciesFieldsWithValuesByUgId(ugId);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();

@@ -63,6 +63,7 @@ import com.strandls.userGroup.pojo.InvitaionMailData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
+import com.strandls.userGroup.pojo.SpeciesFieldValuesDTO;
 import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
@@ -2307,10 +2308,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public List<UsergroupSpeciesFieldMapping> fetchSpeciesFieldsByUgId(Long ugId) {
-		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+	public List<SpeciesFieldValuesDTO> fetchSpeciesFieldsWithValuesByUgId(Long ugId) {
+		List<SpeciesFieldValuesDTO> result = new ArrayList<SpeciesFieldValuesDTO>();
 		try {
-			result = ugSfMappingDao.findSpeciesFieldsByUgId(ugId);
+			result = ugSfMappingDao.findSpeciesFieldsWithValuesByUgId(ugId);
 			return result;
 		} catch (Exception e) {
 			logger.error(e.getMessage());

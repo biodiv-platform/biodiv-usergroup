@@ -22,6 +22,7 @@ import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
+import com.strandls.userGroup.pojo.SpeciesFieldValuesDTO;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupAdminList;
@@ -159,8 +160,9 @@ public interface UserGroupSerivce {
 
 	public UserGroup updateObservationCustomisations(ObservationCustomisations updateCustomisationData);
 
-	public List<UsergroupSpeciesFieldMapping> fetchSpeciesFieldsByUgId(Long ugId);
+	public List<SpeciesFieldValuesDTO> fetchSpeciesFieldsWithValuesByUgId(Long ugId);
 
-	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields);
+	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId,
+			List<SField> speciesFields);
 
 }
