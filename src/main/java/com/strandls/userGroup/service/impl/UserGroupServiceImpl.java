@@ -1035,6 +1035,26 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
+	public Boolean removeBulkUser(HttpServletRequest request, String userGroupId, String userIds) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			Long tokenUserId = Long.parseLong(profile.getId());
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			Boolean isFounder = ugMemberService.checkFounderRole(tokenUserId, Long.parseLong(userGroupId));
+
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
+				List<Long> userList = Arrays.stream(userIds.split(",")).map(Long::parseLong)
+						.collect(Collectors.toList());
+				return ugMemberService.removeBulkGroupMember(request, userList, Long.parseLong(userGroupId));
+
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return false;
+	}
+
+	@Override
 	public Boolean leaveGroup(HttpServletRequest request, Long userId, String userGroupId) {
 		try {
 			Boolean result = ugMemberService.removeGroupMember(userId, Long.parseLong(userGroupId));

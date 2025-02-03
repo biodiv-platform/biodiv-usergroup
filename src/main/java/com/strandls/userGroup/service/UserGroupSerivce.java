@@ -78,6 +78,8 @@ public interface UserGroupSerivce {
 
 	public Boolean removeUser(HttpServletRequest request, String userGroupId, String userId);
 
+	public Boolean removeBulkUser(HttpServletRequest request, String userGroupId, String userIds);
+
 	public Boolean leaveGroup(HttpServletRequest request, Long userId, String userGroupId);
 
 	public Boolean joinGroup(HttpServletRequest request, Long userId, String userGroupId);
