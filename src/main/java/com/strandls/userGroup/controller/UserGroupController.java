@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -517,6 +518,31 @@ public class UserGroupController {
 			Boolean result = ugServices.removeUser(request, userGroupId, userId);
 			if (result)
 				return Response.status(Status.OK).entity("Removed user").build();
+			return Response.status(Status.NOT_ACCEPTABLE).entity("User Not removed").build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+
+	}
+
+	@PUT
+	@Path(ApiConstants.REMOVE + ApiConstants.BULK + ApiConstants.MEMBERS)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "remove list of existing users from the group", notes = "remove existing users", response = String.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to remove the users", response = String.class) })
+
+	public Response removeBulkUserUG(@Context HttpServletRequest request,
+			@DefaultValue("false") @QueryParam("selectAll") Boolean selectAll, @QueryParam("userIds") String userIds,
+			@QueryParam("userGroupId") String userGroupId) {
+		try {
+
+			Boolean result = ugServices.removeBulkUser(request, userGroupId, userIds);
+			if (Boolean.TRUE.equals(result))
+				return Response.status(Status.OK).entity("Removed users").build();
 			return Response.status(Status.NOT_ACCEPTABLE).entity("User Not removed").build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
