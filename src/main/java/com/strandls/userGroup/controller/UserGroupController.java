@@ -522,10 +522,10 @@ public class UserGroupController {
 
 	}
 
-	@POST
+	@PUT
 	@Path(ApiConstants.REMOVE + ApiConstants.BULK + ApiConstants.MEMBERS)
-	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 
 	@ValidateUser
 
