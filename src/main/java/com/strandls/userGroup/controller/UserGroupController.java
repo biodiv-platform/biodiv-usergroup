@@ -44,6 +44,7 @@ import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
+import com.strandls.userGroup.pojo.SpeciesFieldMetadata;
 import com.strandls.userGroup.pojo.SpeciesFieldValuesDTO;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
@@ -62,6 +63,7 @@ import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
 import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
+import com.strandls.userGroup.pojo.UserGroupSpeciesFieldMeta;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
 import com.strandls.userGroup.service.UserGroupDatatableService;
@@ -1495,6 +1497,30 @@ public class UserGroupController {
 				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
 			return Response.status(Status.CREATED).entity(result).build();
 
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@PUT
+	@Path("/speciesField/metadata/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Update Species Field Metadata for User Group", notes = "Returns list of updated metadata", response = UserGroupSpeciesFieldMeta.class, responseContainer = "List")
+//	@ValidateUser
+	public Response updateSpeciesFieldMetadata(@Context HttpServletRequest request,
+			@PathParam("userGroupId") Long userGroupId,
+			@ApiParam(name = "speciesFieldMetadata") List<SpeciesFieldMetadata> metadata) {
+		try {
+
+			List<UserGroupSpeciesFieldMeta> result = ugServices.updateSpeciesFieldMetadata(userGroupId, metadata);
+
+			if (result != null) {
+				return Response.ok().entity(result).build();
+			} else {
+				return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not update species field metadata")
+						.build();
+			}
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}

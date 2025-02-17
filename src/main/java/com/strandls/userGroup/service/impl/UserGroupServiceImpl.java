@@ -46,6 +46,7 @@ import com.strandls.userGroup.dao.UserGroupMemberRoleDao;
 import com.strandls.userGroup.dao.UserGroupObservationDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesFieldMappingDao;
+import com.strandls.userGroup.dao.UserGroupSpeciesFieldMetaDao;
 import com.strandls.userGroup.dao.UserGroupSpeciesGroupDao;
 import com.strandls.userGroup.dao.UserGroupUserRequestDAO;
 import com.strandls.userGroup.dto.AuthenticationDTO;
@@ -63,6 +64,7 @@ import com.strandls.userGroup.pojo.InvitaionMailData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
+import com.strandls.userGroup.pojo.SpeciesFieldMetadata;
 import com.strandls.userGroup.pojo.SpeciesFieldValuesDTO;
 import com.strandls.userGroup.pojo.Stats;
 import com.strandls.userGroup.pojo.UserGroup;
@@ -87,6 +89,7 @@ import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupObvFilterData;
 import com.strandls.userGroup.pojo.UserGroupSpecies;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
+import com.strandls.userGroup.pojo.UserGroupSpeciesFieldMeta;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UserGroupUserJoinRequest;
 import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
@@ -177,6 +180,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Inject
 	UserGroupSpeciesFieldMappingDao ugSfMappingDao;
+
+	@Inject
+	private UserGroupSpeciesFieldMetaDao ugSpeciesFieldMetaDao;
 
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
@@ -2339,92 +2345,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return result;
 	}
 
-//	@Override
-//	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
-//
-//		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
-//
-//		// when we only want to add new fields to the mapping table
-//
-//		try {
-//			List<UsergroupSpeciesFieldMapping> payload = new ArrayList<UsergroupSpeciesFieldMapping>();
-//			for (SField sField : speciesFields) {
-//				UsergroupSpeciesFieldMapping row = new UsergroupSpeciesFieldMapping();
-//				row.setSpeciesFieldId(sField.getId());
-//				row.setUsergroupId(ugId);
-//			}
-//			result = ugSfMappingDao.addUserGroupSpeciesFields(payload);
-//			return result;
-//		} catch (Exception e) {
-//			logger.error(e.getMessage());
-//		}
-//
-//		return result;
-//
-//	}
-
-//	@Override
-//	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
-//		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
-//
-//		try {
-//			List<UsergroupSpeciesFieldMapping> payload = new ArrayList<UsergroupSpeciesFieldMapping>();
-//
-//			List<UsergroupSpeciesFieldMapping> exixstingMappings = ugSfMappingDao.findSpeciesFieldsByUgId(ugId);
-//			List<Long> existingSfIds = new ArrayList<Long>();
-//			for (UsergroupSpeciesFieldMapping mapping : exixstingMappings) {
-//				existingSfIds.add(mapping.getSpeciesFieldId());
-//			}
-//
-//			for (SField sField : speciesFields) {
-//				// Add mapping for the main id
-//				if (!existingSfIds.contains(sField.getId())) {
-//					UsergroupSpeciesFieldMapping mainRow = new UsergroupSpeciesFieldMapping();
-//					mainRow.setSpeciesFieldId(sField.getId());
-//					mainRow.setUsergroupId(ugId);
-//					ugSfMappingDao.addUserGroupSpeciesFields(mainRow);
-//					payload.add(mainRow);
-//				}
-//
-//				// payload.add(mainRow);
-//
-//				// Process path string if it exists
-//				if (sField.getPath() != null && !sField.getPath().isEmpty()) {
-//					String[] pathIds = sField.getPath().split("\\.");
-//					for (String pathId : pathIds) {
-//						try {
-//							Long id = Long.parseLong(pathId);
-//							if (!existingSfIds.contains(id)) {
-//
-//								UsergroupSpeciesFieldMapping pathRow = new UsergroupSpeciesFieldMapping();
-//								pathRow.setSpeciesFieldId(id);
-//								pathRow.setUsergroupId(ugId);
-//								ugSfMappingDao.addUserGroupSpeciesFields(pathRow);
-//								payload.add(pathRow);
-//							}
-//
-//						} catch (NumberFormatException e) {
-//							logger.error("Invalid path id format: " + pathId);
-//							continue;
-//						}
-//					}
-//				}
-//			}
-//
-//			// Add all the mappings
-////			if (!payload.isEmpty()) {
-////				result = ugSfMappingDao.addUserGroupSpeciesFields(payload);
-////			}
-//
-//			return payload;
-//
-//		} catch (Exception e) {
-//			logger.error(e.getMessage());
-//		}
-//
-//		return result;
-//	}
-
 	@Override
 	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields) {
 		List<UsergroupSpeciesFieldMapping> result = new ArrayList<>();
@@ -2482,6 +2402,52 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return result;
+		}
+	}
+
+	@Override
+	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId,
+			List<SpeciesFieldMetadata> metadata) {
+		try {
+			// Get existing metadata for this user group
+			List<UserGroupSpeciesFieldMeta> existingMeta = ugSpeciesFieldMetaDao.findByUserGroupId(userGroupId);
+			Set<Long> existingValueIds = new HashSet<>();
+			for (UserGroupSpeciesFieldMeta meta : existingMeta) {
+				existingValueIds.add(meta.getValueId());
+			}
+
+			List<UserGroupSpeciesFieldMeta> result = new ArrayList<>();
+			Set<Long> newValueIds = new HashSet<>();
+
+			// Process new metadata
+			for (SpeciesFieldMetadata field : metadata) {
+				newValueIds.add(field.getValueId());
+
+				// If value doesn't exist, create new metadata
+				if (!existingValueIds.contains(field.getValueId())) {
+					UserGroupSpeciesFieldMeta newMeta = new UserGroupSpeciesFieldMeta();
+					newMeta.setUserGroupId(userGroupId);
+					newMeta.setValueType(field.getValueType());
+					newMeta.setValueId(field.getValueId());
+
+					ugSpeciesFieldMetaDao.save(newMeta);
+					result.add(newMeta);
+				}
+			}
+
+			// Delete metadata for values that are no longer included
+			for (Long valueId : existingValueIds) {
+				if (!newValueIds.contains(valueId)) {
+					UserGroupSpeciesFieldMeta metaToDelete = ugSpeciesFieldMetaDao
+							.findByUserGroupAndValueId(userGroupId, valueId);
+					ugSpeciesFieldMetaDao.delete(metaToDelete);
+				}
+			}
+
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return null;
 		}
 	}
 

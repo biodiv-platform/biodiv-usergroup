@@ -36,6 +36,7 @@ public class UserGroupDaoModule extends AbstractModule {
 		bind(UserGroupSpeciesDao.class).in(Scopes.SINGLETON);
 		bind(UserGroupDataTableDao.class).in(Scopes.SINGLETON);
 		bind(UserGroupSpeciesFieldMappingDao.class).in(Scopes.SINGLETON);
+		bind(UserGroupSpeciesFieldMetaDao.class).in(Scopes.SINGLETON);
 	}
 
 }
