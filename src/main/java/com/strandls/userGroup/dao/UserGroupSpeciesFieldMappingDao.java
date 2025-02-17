@@ -56,10 +56,10 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 	    Session session = sessionFactory.openSession();
 	    try {
 	        String query = "SELECT " +
-	            "usergroup_id, " +
-	            "species_field_id, " +
+	            "t1.usergroup_id, " +
+	            "t1.species_field_id, " +
 	            "CASE " +
-	                "WHEN MAX(value_type) IS NULL THEN json_build_object('values', NULL) " +
+	                "WHEN MAX(meta.value_type) IS NULL THEN json_build_object('values', NULL) " +
 	                "ELSE ( " +
 	                    "SELECT json_build_object( " +
 	                        "'values', " +
@@ -68,24 +68,24 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 	                    "FROM ( " +
 	                        "SELECT " +
 	                            "value_type, " +
-	                            "array_agg(value_id) as value_array " +
-	                        "FROM user_group_species_fields t2 " +
-	                        "WHERE t2.usergroup_id = t1.usergroup_id " +
-	                        "AND t2.species_field_id = t1.species_field_id " +
-	                        "AND t2.value_type IS NOT NULL " +
+	                            "array_agg(DISTINCT value_id) as value_array " +
+	                        "FROM user_group_species_field_meta meta2 " +
+	                        "WHERE meta2.usergroup_id = t1.usergroup_id " +
+	                        "AND meta2.value_type IS NOT NULL " +
 	                        "GROUP BY value_type " +
 	                    ") subq " +
 	                ") " +
 	            "END as values " +
 	            "FROM user_group_species_fields t1 " +
-	            "WHERE usergroup_id = :ugId " +
-	            "GROUP BY usergroup_id, species_field_id " +
-	            "ORDER BY species_field_id";
+	            "LEFT JOIN user_group_species_field_meta meta ON t1.usergroup_id = meta.usergroup_id " +
+	            "WHERE t1.usergroup_id = :ugId " +
+	            "GROUP BY t1.usergroup_id, t1.species_field_id " +
+	            "ORDER BY t1.species_field_id";
 
 	        NativeQuery<?> nativeQuery = session.createNativeQuery(query)
 	            .addScalar("usergroup_id", LongType.INSTANCE)
 	            .addScalar("species_field_id", LongType.INSTANCE)
-	            .addScalar("values", StringType.INSTANCE);  // Handle JSON as string
+	            .addScalar("values", StringType.INSTANCE);
 
 	        nativeQuery.setParameter("ugId", ugId);
 
@@ -95,9 +95,8 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 	        for (Object[] row : rows) {
 	            Long userGroupId = (Long) row[0];
 	            Long speciesFieldId = (Long) row[1];
-	            String jsonStr = (String) row[2];  // Now we get it as string
+	            String jsonStr = (String) row[2];
 
-	            // Parse the JSON string
 	            JsonNode jsonNode = mapper.readTree(jsonStr);
 	            JsonNode valuesNode = jsonNode.get("values");
 	            Map<String, List<Long>> values;
@@ -111,7 +110,7 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 	            result.add(new SpeciesFieldValuesDTO(userGroupId, speciesFieldId, values));
 	        }
 	    } catch (Exception e) {
-	        logger.error("Error fetching species field values: ", e);
+	        logger.error("Error fetching usergroup values: ", e);
 	    } finally {
 	        session.close();
 	    }

@@ -15,8 +15,6 @@ public class UsergroupSpeciesFieldMapping {
 	private Long id;
 	private Long usergroupId;
 	private Long speciesFieldId;
-	private String valueType;
-	private Long valueId;
 
 	public UsergroupSpeciesFieldMapping() {
 		super();
@@ -56,24 +54,6 @@ public class UsergroupSpeciesFieldMapping {
 
 	public void setSpeciesFieldId(Long speciesFieldId) {
 		this.speciesFieldId = speciesFieldId;
-	}
-
-	@Column(name = "value_type", columnDefinition = "TEXT")
-	public String getValueType() {
-		return valueType;
-	}
-
-	public void setValueType(String valueType) {
-		this.valueType = valueType;
-	}
-
-	@Column(name = "value_id")
-	public Long getValueId() {
-		return valueId;
-	}
-
-	public void setValueId(Long valueId) {
-		this.valueId = valueId;
 	}
 
 }
