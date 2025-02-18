@@ -1526,4 +1526,23 @@ public class UserGroupController {
 		}
 	}
 
+	@GET
+	@Path("/speciesField/metadata/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "get Species Field Metadata for User Group", notes = "Returns list of species fields metadata mapped for the usergroup", response = UserGroupSpeciesFieldMeta.class, responseContainer = "List")
+	public Response getSpeciesFieldMetadata(@PathParam("userGroupId") Long userGroupId) {
+		try {
+			List<UserGroupSpeciesFieldMeta> result = ugServices.getSpeciesFieldMetaData(userGroupId);
+			if (result != null) {
+				return Response.ok().entity(result).build();
+			} else {
+				return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not get species field metadata")
+						.build();
+			}
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
 }

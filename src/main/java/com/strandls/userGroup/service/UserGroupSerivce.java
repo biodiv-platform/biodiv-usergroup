@@ -170,5 +170,7 @@ public interface UserGroupSerivce {
 			List<SField> speciesFields);
 	
 	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId, List<SpeciesFieldMetadata> metadata);
+	
+	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
 
 }

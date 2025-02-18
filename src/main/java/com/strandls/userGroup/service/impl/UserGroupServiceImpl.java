@@ -2451,4 +2451,16 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		}
 	}
 
+	@Override
+	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId) {
+		List<UserGroupSpeciesFieldMeta> speciesFieldMetaData = new ArrayList<>();
+		try {
+			speciesFieldMetaData = ugSpeciesFieldMetaDao.findByUserGroupId(userGroupId);
+			return speciesFieldMetaData;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return speciesFieldMetaData;
+		}
+	}
+
 }
