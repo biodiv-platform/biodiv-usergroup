@@ -2335,7 +2335,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Override
 	public List<SpeciesFieldValuesDTO> fetchSpeciesFieldsWithValuesByUgId(Long ugId) {
-		List<SpeciesFieldValuesDTO> result = new ArrayList<SpeciesFieldValuesDTO>();
+		List<SpeciesFieldValuesDTO> result = new ArrayList<>();
 		try {
 			result = ugSfMappingDao.findSpeciesFieldsWithValuesByUgId(ugId);
 			return result;

@@ -58,6 +58,7 @@ public class UserGroupSpeciesFieldMetaDao extends AbstractDAO<UserGroupSpeciesFi
         return result;
     }
 
+    @Override
     public UserGroupSpeciesFieldMeta save(UserGroupSpeciesFieldMeta metadata) {
         Session session = sessionFactory.openSession();
         try {
@@ -73,6 +74,7 @@ public class UserGroupSpeciesFieldMetaDao extends AbstractDAO<UserGroupSpeciesFi
         return metadata;
     }
 
+    @Override
     public UserGroupSpeciesFieldMeta delete(UserGroupSpeciesFieldMeta metadata) {
         Session session = sessionFactory.openSession();
         try {

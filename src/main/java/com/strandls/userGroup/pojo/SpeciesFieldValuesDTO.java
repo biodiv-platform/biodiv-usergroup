@@ -11,7 +11,6 @@ public class SpeciesFieldValuesDTO {
 
 	public SpeciesFieldValuesDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public SpeciesFieldValuesDTO(Long userGroupId, Long speciesFieldId, Map<String, List<Long>> values) {

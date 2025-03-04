@@ -1,7 +1,6 @@
 package com.strandls.userGroup.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 
 	@SuppressWarnings("unchecked")
 	public List<UsergroupSpeciesFieldMapping> findSpeciesFieldsByUgId(Long ugId) {
-		List<UsergroupSpeciesFieldMapping> result = new ArrayList<UsergroupSpeciesFieldMapping>();
+		List<UsergroupSpeciesFieldMapping> result = new ArrayList<>();
 		String qry = "from UsergroupSpeciesFieldMapping where usergroupId = :ugId";
 		Session session = sessionFactory.openSession();
 		try {
@@ -167,7 +166,6 @@ public class UserGroupSpeciesFieldMappingDao extends AbstractDAO<UsergroupSpecie
 
 	@Override
 	public UsergroupSpeciesFieldMapping findById(Long id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
