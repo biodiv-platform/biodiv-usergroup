@@ -43,6 +43,9 @@ import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
+import com.strandls.userGroup.pojo.SField;
+import com.strandls.userGroup.pojo.SpeciesFieldMetadata;
+import com.strandls.userGroup.pojo.SpeciesFieldValuesDTO;
 import com.strandls.userGroup.pojo.UserGroup;
 import com.strandls.userGroup.pojo.UserGroupAddMemebr;
 import com.strandls.userGroup.pojo.UserGroupAdminList;
@@ -60,7 +63,9 @@ import com.strandls.userGroup.pojo.UserGroupMappingCreateData;
 import com.strandls.userGroup.pojo.UserGroupObservation;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserGroupSpeciesCreateData;
+import com.strandls.userGroup.pojo.UserGroupSpeciesFieldMeta;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
+import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
 import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
@@ -1448,6 +1453,93 @@ public class UserGroupController {
 					userGroupId);
 			return Response.status(Status.OK).entity(result).build();
 
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path("/userGroupSpeciesFields" + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ApiOperation(value = "Get species fields By user Group id", notes = "Returns the List of usergroup to species fields mappings", response = SpeciesFieldValuesDTO.class, responseContainer = "List")
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Datatable Mapping", response = String.class) })
+
+	public Response getSpeciesFieldsByUserGroupId(@PathParam("userGroupId") String userGroupId) {
+		try {
+			Long ugId = Long.parseLong(userGroupId);
+			List<SpeciesFieldValuesDTO> result = ugServices.fetchSpeciesFieldsWithValuesByUgId(ugId);
+			return Response.status(Status.OK).entity(result).build();
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path(ApiConstants.UPDATE + "/speciesFieldsMapping" + "/{ugId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	// @ValidateUser
+	@ApiOperation(value = "Create UserGroup species fields Mapping", notes = "Returns List of UserGroup specied fields mappings", response = UsergroupSpeciesFieldMapping.class, responseContainer = "List")
+	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
+			@ApiResponse(code = 409, message = "UserGroup-speciesFields Mapping Cannot be Created", response = String.class) })
+
+	public Response updateUserGroupSpeciesFieldsMapping(@Context HttpServletRequest request,
+			@PathParam("ugId") String ugId, @ApiParam(name = "speciesFields") List<SField> speciesFields) {
+		try {
+
+			List<UsergroupSpeciesFieldMapping> result = ugServices
+					.updateSpeciesFieldsMappingByUgId(Long.parseLong(ugId), speciesFields);
+			if (result == null)
+				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
+			return Response.status(Status.CREATED).entity(result).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@PUT
+	@Path("/speciesField/metadata/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Update Species Field Metadata for User Group", notes = "Returns list of updated metadata", response = UserGroupSpeciesFieldMeta.class, responseContainer = "List")
+//	@ValidateUser
+	public Response updateSpeciesFieldMetadata(@Context HttpServletRequest request,
+			@PathParam("userGroupId") Long userGroupId,
+			@ApiParam(name = "speciesFieldMetadata") List<SpeciesFieldMetadata> metadata) {
+		try {
+
+			List<UserGroupSpeciesFieldMeta> result = ugServices.updateSpeciesFieldMetadata(userGroupId, metadata);
+
+			if (result != null) {
+				return Response.ok().entity(result).build();
+			} else {
+				return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not update species field metadata")
+						.build();
+			}
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@GET
+	@Path("/speciesField/metadata/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "get Species Field Metadata for User Group", notes = "Returns list of species fields metadata mapped for the usergroup", response = UserGroupSpeciesFieldMeta.class, responseContainer = "List")
+	public Response getSpeciesFieldMetadata(@PathParam("userGroupId") Long userGroupId) {
+		try {
+			List<UserGroupSpeciesFieldMeta> result = ugServices.getSpeciesFieldMetaData(userGroupId);
+			if (result != null) {
+				return Response.ok().entity(result).build();
+			} else {
+				return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not get species field metadata")
+						.build();
+			}
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
