@@ -1988,7 +1988,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					for (Map<Long, List<GroupGallerySlider>> gallery : galleryData) {
 						Long sliderId = null;
 						for (Entry<Long, List<GroupGallerySlider>> translation : gallery.entrySet()) {
-							GroupGallerySlider temp = translation.getValue().getFirst();
+							GroupGallerySlider temp = translation.getValue().get(0);
 							temp.setLanguageId(translation.getKey());
 							if(sliderId!=null) {
 								temp.setSliderId(sliderId);
@@ -2043,7 +2043,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				for (Entry<Long, List<GroupGallerySlider>> translation : editData.entrySet()) {
-					GroupGallerySlider temp = translation.getValue().getFirst();
+					GroupGallerySlider temp = translation.getValue().get(0);
 					if (temp.getId() != null) {
 						GroupGallerySlider gallerySliderEntity = groupGallerySliderDao.findById(temp.getId());
 						gallerySliderEntity.setId(temp.getId());
