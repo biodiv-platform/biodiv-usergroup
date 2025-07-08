@@ -873,7 +873,7 @@ public class UserGroupController {
 		}
 	}
 
-	@GET
+	/*@GET
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -894,7 +894,7 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-	}
+	}*/
 
 	@GET
 	@Path(ApiConstants.PERMISSION + ApiConstants.OBSERVATION)
@@ -977,7 +977,7 @@ public class UserGroupController {
 			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 
 	public Response editHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
-			@PathParam("galleryId") String galleryId, @ApiParam(name = "editData") GroupGallerySlider editData) {
+			@PathParam("galleryId") String galleryId, @ApiParam(name = "editData") Map<Long, List<GroupGallerySlider>> editData) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			Long groupGalleryId = Long.parseLong(galleryId);

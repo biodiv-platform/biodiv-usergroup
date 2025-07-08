@@ -29,6 +29,13 @@ public class UserGroupCreateData {
 	private Double swLongitude;
 	private String theme;
 	private Long languageId;
+	private Boolean showGallery;
+	private Boolean showStats;
+	private Boolean showDesc;
+	private Boolean showRecentObservation;
+	private Boolean showGridMap;
+	private Boolean showPartners;
+	private String mediaToggle;
 
 //	Founder and Moderator Invitation List
 	private UserGroupInvitationData invitationData;
@@ -60,7 +67,8 @@ public class UserGroupCreateData {
 	public UserGroupCreateData(Boolean allowUserToJoin, String description, String homePage, String icon,
 			String domainName, String name, List<Long> speciesGroup, List<Long> habitatId, Double neLatitude,
 			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long languageId,
-			UserGroupInvitationData invitationData) {
+			UserGroupInvitationData invitationData, Boolean showGallery, Boolean showStats, Boolean showDesc,
+			Boolean showRecentObservation, Boolean showGridMap, Boolean showPartners, String mediaToggle) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.description = description;
@@ -77,6 +85,13 @@ public class UserGroupCreateData {
 		this.theme = theme;
 		this.languageId = languageId;
 		this.invitationData = invitationData;
+		this.showDesc = showDesc;
+		this.showGridMap = showGridMap;
+		this.showGallery = showGallery;
+		this.showPartners = showPartners;
+		this.showRecentObservation = showRecentObservation;
+		this.showStats = showStats;
+		this.mediaToggle = mediaToggle;
 	}
 
 	public Boolean getAllowUserToJoin() {
@@ -199,4 +214,59 @@ public class UserGroupCreateData {
 		this.invitationData = invitationData;
 	}
 
+	public Boolean getShowGallery() {
+		return showGallery;
+	}
+
+	public void setShowGallery(Boolean showGallery) {
+		this.showGallery = showGallery;
+	}
+	
+	public Boolean getShowStats() {
+		return showStats;
+	}
+
+	public void setShowStats(Boolean showStats) {
+		this.showStats = showStats;
+	}
+	
+	public Boolean getShowDesc() {
+		return showDesc;
+	}
+
+	public void setShowDesc(Boolean showDesc) {
+		this.showDesc = showDesc;
+	}
+	
+	public Boolean getShowRecentObservation() {
+		return showRecentObservation;
+	}
+
+	public void setShowRecentObservation(Boolean showRecentObservation) {
+		this.showRecentObservation = showRecentObservation;
+	}
+	
+	public Boolean getShowGridMap() {
+		return showGridMap;
+	}
+
+	public void setShowGridMap(Boolean showGridMap) {
+		this.showGridMap = showGridMap;
+	}
+	
+	public Boolean getShowPartners() {
+		return showPartners;
+	}
+
+	public void setShowPartners(Boolean showPartners) {
+		this.showPartners = showPartners;
+	}
+	
+	public String getMediaToggle() {
+		return mediaToggle;
+	}
+	
+	public void setMediaToggle(String mediaToggle) {
+		this.mediaToggle = mediaToggle;
+	}
 }

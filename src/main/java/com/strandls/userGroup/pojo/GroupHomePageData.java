@@ -4,6 +4,7 @@
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Abhishek Rudra
@@ -19,7 +20,7 @@ public class GroupHomePageData {
 	private Boolean showDesc;
 	private String description;
 	private Stats stats;
-	private List<GroupGallerySlider> gallerySlider;
+	private Map<String, Map<Long, List<GroupGallerySlider>>> gallerySlider;
 
 	/**
 	 * 
@@ -37,11 +38,11 @@ public class GroupHomePageData {
 	 * @param showDesc
 	 * @param description
 	 * @param stats
-	 * @param gallerySlider
+	 * @param groupedBySliderId
 	 */
 	public GroupHomePageData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation, Boolean showGridMap,
 			Boolean showPartners, Boolean showDesc, String description, Stats stats,
-			List<GroupGallerySlider> gallerySlider) {
+			Map<String, Map<Long, List<GroupGallerySlider>>> groupedBySliderId) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;
@@ -51,7 +52,7 @@ public class GroupHomePageData {
 		this.showDesc = showDesc;
 		this.description = description;
 		this.stats = stats;
-		this.gallerySlider = gallerySlider;
+		this.gallerySlider = groupedBySliderId;
 	}
 
 	public Boolean getShowGallery() {
@@ -118,11 +119,11 @@ public class GroupHomePageData {
 		this.stats = stats;
 	}
 
-	public List<GroupGallerySlider> getGallerySlider() {
+	public Map<String, Map<Long, List<GroupGallerySlider>>> getGallerySlider() {
 		return gallerySlider;
 	}
 
-	public void setGallerySlider(List<GroupGallerySlider> gallerySlider) {
+	public void setGallerySlider(Map<String, Map<Long, List<GroupGallerySlider>>> gallerySlider) {
 		this.gallerySlider = gallerySlider;
 	}
 

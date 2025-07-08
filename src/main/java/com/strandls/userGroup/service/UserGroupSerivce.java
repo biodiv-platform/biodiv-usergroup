@@ -123,7 +123,7 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> updateUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate);
 
-	public UserGroupHomePageEditData getGroupHomePageEditData(HttpServletRequest request, Long userGroupId);
+	//public UserGroupHomePageEditData getGroupHomePageEditData(HttpServletRequest request, Long userGroupId);
 
 	public GroupHomePageData getGroupHomePageData(Long userGroupId);
 
@@ -133,7 +133,7 @@ public interface UserGroupSerivce {
 	public GroupHomePageData removeHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
 
 	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
-			GroupGallerySlider editData);
+			Map<Long, List<GroupGallerySlider>> editData);
 
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage);

@@ -37,6 +37,8 @@ public class GroupGallerySlider {
 	private String readMoreText;
 	private String readMoreUIType;
 	private String gallerySidebar;
+	private Long sliderId;
+	private Long languageId;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -164,6 +166,24 @@ public class GroupGallerySlider {
 
 	public void setGallerySidebar(String gallerySidebar) {
 		this.gallerySidebar = gallerySidebar;
+	}
+	
+	@Column(name = "slider_id")
+	public Long getSliderId() {
+		return sliderId;
+	}
+
+	public void setSliderId(Long sliderId) {
+		this.sliderId = sliderId;
+	}
+	
+	@Column(name = "language_id")
+	public Long getLanguageId() {
+		return languageId;
+	}
+
+	public void setLanguageId(Long languageId) {
+		this.languageId = languageId;
 	}
 
 }
