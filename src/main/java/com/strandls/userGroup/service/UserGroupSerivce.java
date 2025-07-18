@@ -63,7 +63,7 @@ public interface UserGroupSerivce {
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups);
 
-	public List<UserGroupIbp> fetchAllUserGroup();
+	public List<UserGroupIbp> fetchAllUserGroup(Long langId);
 
 	public List<UserGroupExpanded> fetchAllUserGroupExpanded();
 
@@ -125,7 +125,7 @@ public interface UserGroupSerivce {
 
 	//public UserGroupHomePageEditData getGroupHomePageEditData(HttpServletRequest request, Long userGroupId);
 
-	public GroupHomePageData getGroupHomePageData(Long userGroupId);
+	public GroupHomePageData getGroupHomePageData(Long userGroupId, Long langId);
 
 	public GroupHomePageData updateGroupHomePage(HttpServletRequest request, Long userGroupId,
 			UserGroupHomePageEditData editData);

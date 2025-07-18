@@ -62,6 +62,7 @@ public class UserGroup implements Serializable {
 	private List<Long> habitatIds;
 	private List<Long> speciesGroupIds;
 	private String mediaToggle;
+	private Long groupId;
 
 	/**
 	 * 
@@ -104,7 +105,7 @@ public class UserGroup implements Serializable {
 			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, Double neLatitude,
 			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long visitCount, String webAddress,
 			Long languageId, Date startDate, Boolean showGallery, Boolean showStats, Boolean showRecentObservations,
-			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle) {
+			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle, Long groupId) {
 		super();
 		this.id = id;
 		this.allow_members_to_make_species_call = allow_members_to_make_species_call;
@@ -134,6 +135,7 @@ public class UserGroup implements Serializable {
 		this.showPartners = showPartners;
 		this.showDesc = showDesc;
 		this.mediaToggle = mediaToggle;
+		this.groupId = groupId;
 	}
 
 	@Id
@@ -407,6 +409,15 @@ public class UserGroup implements Serializable {
 
 	public void setMediaToggle(String mediaTogle) {
 		this.mediaToggle = mediaTogle;
+	}
+	
+	@Column(name = "group_id")
+	public Long getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Long groupId) {
+		this.groupId = groupId;
 	}
 
 }

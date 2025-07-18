@@ -4,6 +4,7 @@
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Abhishek Rudra
@@ -12,11 +13,10 @@ import java.util.List;
 public class UserGroupEditData {
 
 	private Boolean allowUserToJoin;
-	private String description;
 	private String homePage;
 	private String icon;
 	private String domainName;
-	private String name;
+	private List<Map<String,Object>> translation;
 	private Double neLatitude;
 	private Double neLongitude;
 	private Double swLatitude;
@@ -25,6 +25,7 @@ public class UserGroupEditData {
 	private Long languageId;
 	private List<Long> speciesGroupId;
 	private List<Long> habitatId;
+	private String webAddress;
 
 	/**
 	 * 
@@ -49,16 +50,15 @@ public class UserGroupEditData {
 	 * @param speciesGroupId
 	 * @param habitatId
 	 */
-	public UserGroupEditData(Boolean allowUserToJoin, String description, String homePage, String icon,
-			String domainName, String name, Double neLatitude, Double neLongitude, Double swLatitude,
+	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon,
+			String domainName, List<Map<String,Object>> translation, Double neLatitude, Double neLongitude, Double swLatitude,
 			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
-		this.description = description;
 		this.homePage = homePage;
 		this.icon = icon;
 		this.domainName = domainName;
-		this.name = name;
+		this.translation = translation;
 		this.neLatitude = neLatitude;
 		this.neLongitude = neLongitude;
 		this.swLatitude = swLatitude;
@@ -75,14 +75,6 @@ public class UserGroupEditData {
 
 	public void setAllowUserToJoin(Boolean allowUserToJoin) {
 		this.allowUserToJoin = allowUserToJoin;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getHomePage() {
@@ -109,12 +101,20 @@ public class UserGroupEditData {
 		this.domainName = domainName;
 	}
 
-	public String getName() {
-		return name;
+	public String getWebAddress() {
+		return webAddress;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setWebAddress(String webAddress) {
+		this.webAddress = webAddress;
+	}
+	
+	public List<Map<String,Object>> getTranslation() {
+		return translation;
+	}
+
+	public void setTranslation(List<Map<String,Object>> translation) {
+		this.translation = translation;
 	}
 
 	public Double getNeLatitude() {

@@ -133,5 +133,42 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserGroup> findByGroupId(Long ugId) {
+		Session session = sessionFactory.openSession();
+		List<UserGroup> result = null;
+		String qry = "from UserGroup where group_id = :ugId";
+		try {
+			Query<UserGroup> query = session.createQuery(qry);
+			query.setParameter("ugId", ugId);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public UserGroup findByGroupIdByLanguageId(Long ugId, Long langId) {
+		Session session = sessionFactory.openSession();
+		UserGroup result = null;
+		String qry = "from UserGroup where group_id = :ugId and language_id = :langId";
+		try {
+			Query<UserGroup> query = session.createQuery(qry);
+			query.setParameter("ugId", ugId);
+			query.setParameter("langId", langId);
+			result = query.getResultList().get(0);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
 
 }

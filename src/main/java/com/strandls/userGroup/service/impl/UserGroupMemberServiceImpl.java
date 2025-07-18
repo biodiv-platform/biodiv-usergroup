@@ -348,7 +348,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	@Override
 	public Map<Long, Boolean> groupListByUserId(Long userId) {
-		List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup();
+		List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup((long) 205);
 		Map<Long, Boolean> result = new HashMap<Long, Boolean>();
 
 		for (UserGroupIbp userGroup : userGroupList) {

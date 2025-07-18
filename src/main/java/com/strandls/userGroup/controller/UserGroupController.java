@@ -317,16 +317,17 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.ALL)
+	@Path(ApiConstants.ALL + "/{languageId}")
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ApiOperation(value = "Find all the UserGroups", notes = "Returns all the UserGroups", response = UserGroupIbp.class, responseContainer = "List")
 	@ApiResponses(value = {
 			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups", response = String.class) })
 
-	public Response getAllUserGroup() {
+	public Response getAllUserGroup(@PathParam("languageId") String languageId) {
 		try {
-			List<UserGroupIbp> result = ugServices.fetchAllUserGroup();
+			Long langId = Long.parseLong(languageId);
+			List<UserGroupIbp> result = ugServices.fetchAllUserGroup(langId);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -852,7 +853,7 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.HOMEPAGE + "/{userGroupId}")
+	@Path(ApiConstants.HOMEPAGE + "/{userGroupId}" + "/{languageId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 
@@ -860,10 +861,11 @@ public class UserGroupController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 
-	public Response getGroupHomePage(@PathParam("userGroupId") String ugId) {
+	public Response getGroupHomePage(@PathParam("userGroupId") String ugId, @PathParam("languageId") String languageId) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
-			GroupHomePageData result = ugServices.getGroupHomePageData(userGroupId);
+			Long langId = Long.parseLong(languageId);
+			GroupHomePageData result = ugServices.getGroupHomePageData(userGroupId, langId);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
