@@ -170,5 +170,30 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean isWebAddressAllowedForGroup(String webAddress) {
+	    Session session = sessionFactory.openSession();
+	    boolean isAllowed = true;
+
+	    String qry = "SELECT COUNT(*) FROM UserGroup WHERE webaddress = :webAddress";
+
+	    try {
+	        Query<Long> query = session.createQuery(qry);
+	        query.setParameter("webAddress", webAddress);
+
+	        Long count = query.uniqueResult();
+	        isAllowed = (count == 0); // allowed only if no conflict
+
+	    } catch (Exception e) {
+	        logger.error("Error checking webaddress uniqueness: {}", e.getMessage());
+	        isAllowed = false; // safest to assume false if there's an error
+	    } finally {
+	        session.close();
+	    }
+
+	    return isAllowed;
+	}
+
 
 }

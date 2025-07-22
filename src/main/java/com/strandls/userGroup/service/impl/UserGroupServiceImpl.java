@@ -1420,6 +1420,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			UserGroupCreateData ugCreateData) {
 		try {
 			String webAddress = ugCreateData.getName().replace(" ", "_");
+			
+			boolean isAllowed = userGroupDao.isWebAddressAllowedForGroup(webAddress); // pass null if it's a new group
+	        if (!isAllowed) {
+	            throw new IllegalArgumentException("Webaddress '" + webAddress + "' is already used by another group");
+	        }
 
 			UserGroup userGroup = new UserGroup(null, true, true, true, ugCreateData.getAllowUserToJoin(),
 					ugCreateData.getDescription(), ugCreateData.getDomainName(), new Date(), ugCreateData.getHomePage(),
