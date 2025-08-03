@@ -47,7 +47,7 @@ import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
  */
 public interface UserGroupSerivce {
 
-	public UserGroup fetchByGroupId(Long id);
+	public UserGroup fetchByGroupId(Long id, Long langId);
 
 	public UserGroupIbp fetchByGroupIdIbp(Long id);
 

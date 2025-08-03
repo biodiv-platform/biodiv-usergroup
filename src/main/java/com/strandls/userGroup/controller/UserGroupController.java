@@ -106,15 +106,16 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path("/{objectId}")
+	@Path("/{objectId}/{langaugeId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Find UserGroup by ID", notes = "Returns UserGroup details", response = UserGroup.class)
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-	public Response getUserGroup(@PathParam("objectId") String objectId) {
+	public Response getUserGroup(@PathParam("objectId") String objectId, @PathParam("languageId") String languageId) {
 		try {
 			Long id = Long.parseLong(objectId);
-			UserGroup userGroup = ugServices.fetchByGroupId(id);
+			Long langId = Long.parseLong(languageId);
+			UserGroup userGroup = ugServices.fetchByGroupId(id, langId);
 			return Response.status(Status.OK).entity(userGroup).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
