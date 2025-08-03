@@ -106,7 +106,7 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path("/{objectId}/{langaugeId}")
+	@Path("/{objectId}/{languageId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Find UserGroup by ID", notes = "Returns UserGroup details", response = UserGroup.class)

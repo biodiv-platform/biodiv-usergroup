@@ -193,10 +193,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	private static final String ROLE_PAGE_EDITOR = "ROLE_PAGE_EDITOR";
 
 	@Override
-	public UserGroup fetchByGroupId(Long id, Long langaugeId) {
-		UserGroup userGroup = userGroupDao.findByGroupIdByLanguageId(id,langaugeId);
+	public UserGroup fetchByGroupId(Long id, Long langId) {
+		UserGroup userGroup = userGroupDao.findByGroupIdByLanguageId(id, langId);
 		if (userGroup==null) {
-			userGroupDao.findByGroupIdByLanguageId(id, defaultLanguageId);
+			userGroup = userGroupDao.findByGroupIdByLanguageId(id, defaultLanguageId);
 		}
 		List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(id);
 		List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(id);
