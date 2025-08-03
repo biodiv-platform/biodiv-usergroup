@@ -473,23 +473,32 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Map<Long, UserGroupIbp> ugMap = new HashMap<Long, UserGroupIbp>();
 			UserGroupIbp ibp = null;
 			List<Long> groupIds = new ArrayList<>();
-			for (UserGroup userGroup : userGroupList) {
 
-				if ((userGroup.getLanguageId().equals(langId) && groupIds.contains(userGroup.getGroupId()))
-						|| !groupIds.contains(userGroup.getGroupId())) {
-					if (!groupIds.contains(userGroup.getGroupId())) {
-						groupIds.add(userGroup.getGroupId());
-					}
-					if (userGroup.getDomianName() != null)
-						ibp = new UserGroupIbp(userGroup.getId(), userGroup.getName(), userGroup.getIcon(),
-								userGroup.getDomianName(), userGroup.getAllowUserToJoin(), userGroup.getGroupId());
-					else {
-						String webAddress = "/group/" + userGroup.getWebAddress();
-						ibp = new UserGroupIbp(userGroup.getId(), userGroup.getName(), userGroup.getIcon(), webAddress,
-								userGroup.getAllowUserToJoin(), userGroup.getGroupId());
-					}
-					ugMap.put(userGroup.getGroupId(), ibp);
-				}
+			for (UserGroup userGroup : userGroupList) {
+			    Long groupId = userGroup.getGroupId();
+			    boolean alreadyAdded = groupIds.contains(groupId);
+			    boolean isPreferredLang = userGroup.getLanguageId().equals(langId);
+
+			    if (!alreadyAdded || isPreferredLang) {
+			        if (!alreadyAdded) {
+			            groupIds.add(groupId);
+			        }
+
+			        String webAddress = userGroup.getDomianName() != null
+			            ? userGroup.getDomianName()
+			            : "/group/" + userGroup.getWebAddress();
+
+			        ibp = new UserGroupIbp(
+			            userGroup.getId(),
+			            userGroup.getName(),
+			            userGroup.getIcon(),
+			            webAddress,
+			            userGroup.getAllowUserToJoin(),
+			            groupId
+			        );
+
+			        ugMap.put(groupId, ibp);
+			    }
 			}
 			for (UserGroupMembersCount ugm : count) {
 				if (ugMap.get(ugm.getUserGroupId()) != null) {
@@ -1421,7 +1430,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		try {
 			String webAddress = ugCreateData.getName().replace(" ", "_");
 			
-			boolean isAllowed = userGroupDao.isWebAddressAllowedForGroup(webAddress); // pass null if it's a new group
+			// Validate that the web address is unique before creating or updating a group
+			boolean isAllowed = userGroupDao.isWebAddressAllowedForGroup(webAddress);
 	        if (!isAllowed) {
 	            throw new IllegalArgumentException("Webaddress '" + webAddress + "' is already used by another group");
 	        }
@@ -1534,7 +1544,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				UserGroup ug = userGroupDao.findById(userGroupId);
 				for (Map<String, Object> translationData : ugEditData.getTranslation()) {
-					// String webAddress = translationData.get("name").toString().replace(" ", "_");
 					if (translationData.get("id") != null) {
 						UserGroup userGroup = new UserGroup(Long.parseLong(translationData.get("id").toString()),
 								ug.getAllow_members_to_make_species_call(), ug.getAllow_non_members_to_comment(),
@@ -1972,24 +1981,26 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		try {
 			UserGroup userGroup = userGroupDao.findByGroupIdByLanguageId(userGroupId, langId);
 			if (userGroup == null) {
-				userGroup = userGroupDao.findByGroupIdByLanguageId(userGroupId, (long) 205);
+				userGroup = userGroupDao.findByGroupIdByLanguageId(userGroupId, defaultLanguageId);
 			}
 
 			List<GroupGallerySlider> gallerySlider = groupGallerySliderDao.findByUsergroupId(userGroupId);
 			Map<String, Map<Long, List<GroupGallerySlider>>> groupedBySliderId = new HashMap<>();
+
 			for (GroupGallerySlider slider : gallerySlider) {
-				if (slider.getAuthorId() != null) {
-					UserIbp userIbp = userService.getUserIbp(slider.getAuthorId().toString());
-					if (userIbp != null) {
-						slider.setAuthorImage(userIbp.getProfilePic());
-						slider.setAuthorName(userIbp.getName());
-					}
-				}
-				Long sliderId = slider.getSliderId();
-				Long languageId = slider.getLanguageId();
-				groupedBySliderId
-						.computeIfAbsent(sliderId.toString() + "|" + slider.getDisplayOrder(), k -> new HashMap<>())
-						.computeIfAbsent(languageId, k -> new ArrayList<>()).add(slider);
+			    if (slider.getAuthorId() != null) {
+			        UserIbp userIbp = userService.getUserIbp(slider.getAuthorId().toString());
+			        if (userIbp != null) {
+			            slider.setAuthorImage(userIbp.getProfilePic());
+			            slider.setAuthorName(userIbp.getName());
+			        }
+			    }
+
+			    String compositeKey = slider.getSliderId() + "|" + slider.getDisplayOrder();
+			    groupedBySliderId
+			        .computeIfAbsent(compositeKey, k -> new HashMap<>())
+			        .computeIfAbsent(slider.getLanguageId(), k -> new ArrayList<>())
+			        .add(slider);
 			}
 
 			Stats stats = statsDao.fetchStats(userGroupId);
@@ -2001,7 +2012,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			return result;
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 		return null;
@@ -2033,26 +2043,39 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 //		update gallery slider
 
 				List<Map<Long, List<GroupGallerySlider>>> galleryData = editData.getGallerySlider();
-				if (galleryData != null && !galleryData.isEmpty())
-					for (Map<Long, List<GroupGallerySlider>> gallery : galleryData) {
-						Long sliderId = null;
-						for (Entry<Long, List<GroupGallerySlider>> translation : gallery.entrySet()) {
-							GroupGallerySlider temp = translation.getValue().get(0);
-							temp.setLanguageId(translation.getKey());
-							if (sliderId != null) {
-								temp.setSliderId(sliderId);
-							}
-							GroupGallerySlider temptranslation = groupGallerySliderDao.save(temp);
-							if (sliderId == null) {
-								sliderId = temptranslation.getId();
-								temptranslation.setSliderId(sliderId);
-								groupGallerySliderDao.update(temptranslation);
-							}
-						}
-						// groupGallerySliderDao.save(gallery);
-					}
 
-				return getGroupHomePageData(userGroupId, (long) 205);
+				if (galleryData != null && !galleryData.isEmpty()) {
+				    for (Map<Long, List<GroupGallerySlider>> galleryMap : galleryData) {
+				        Long sliderId = null;
+
+				        for (Map.Entry<Long, List<GroupGallerySlider>> entry : galleryMap.entrySet()) {
+				            Long languageId = entry.getKey();
+				            List<GroupGallerySlider> sliderList = entry.getValue();
+
+				            if (sliderList == null || sliderList.isEmpty()) {
+				                continue; // Skip if no sliders for this language
+				            }
+
+				            GroupGallerySlider slider = sliderList.get(0); // Use the first entry
+				            slider.setLanguageId(languageId);
+
+				            if (sliderId != null) {
+				                slider.setSliderId(sliderId);
+				            }
+
+				            GroupGallerySlider savedSlider = groupGallerySliderDao.save(slider);
+
+				            if (sliderId == null) {
+				                sliderId = savedSlider.getId();
+				                savedSlider.setSliderId(sliderId);
+				                groupGallerySliderDao.update(savedSlider); // Update with its own sliderId
+				            }
+				        }
+				    }
+				}
+
+
+				return getGroupHomePageData(userGroupId, defaultLanguageId);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -2070,10 +2093,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				List<GroupGallerySlider> translations = groupGallerySliderDao.findBySliderId(groupGalleryId);
 				for (GroupGallerySlider translation : translations) {
-					// GroupGallerySlider entity = groupGallerySliderDao.findById(groupGalleryId);
 					groupGallerySliderDao.delete(translation);
 				}
-				return getGroupHomePageData(userGroupId, (long) 205);
+				return getGroupHomePageData(userGroupId, defaultLanguageId);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -2091,29 +2113,42 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
-				for (Entry<Long, List<GroupGallerySlider>> translation : editData.entrySet()) {
-					GroupGallerySlider temp = translation.getValue().get(0);
-					if (temp.getId() != null) {
-						GroupGallerySlider gallerySliderEntity = groupGallerySliderDao.findById(temp.getId());
-						gallerySliderEntity.setId(temp.getId());
-						gallerySliderEntity.setUgId(temp.getUgId());
-						gallerySliderEntity.setFileName(temp.getFileName());
-						gallerySliderEntity.setTitle(temp.getTitle());
-						gallerySliderEntity.setCustomDescripition(temp.getCustomDescripition());
-						gallerySliderEntity.setMoreLinks(temp.getMoreLinks());
-						gallerySliderEntity.setDisplayOrder(temp.getDisplayOrder());
-						gallerySliderEntity.setReadMoreText(temp.getReadMoreText());
-						gallerySliderEntity.setReadMoreUIType(temp.getReadMoreUIType());
-						gallerySliderEntity.setGallerySidebar(temp.getGallerySidebar());
-						gallerySliderEntity.setLanguageId(translation.getKey());
-						gallerySliderEntity.setSliderId(groupGalleryId);
+				for (Map.Entry<Long, List<GroupGallerySlider>> entry : editData.entrySet()) {
+				    Long languageId = entry.getKey();
+				    List<GroupGallerySlider> sliderList = entry.getValue();
 
-						groupGallerySliderDao.update(gallerySliderEntity);
-					} else {
-						groupGallerySliderDao.save(temp);
-					}
+				    if (sliderList == null || sliderList.isEmpty()) {
+				        continue; // Skip empty or null lists
+				    }
+
+				    GroupGallerySlider slider = sliderList.get(0); // Use the first slider object
+				    slider.setLanguageId(languageId);
+				    slider.setSliderId(groupGalleryId); // Set parent sliderId
+
+				    if (slider.getId() != null) {
+				        GroupGallerySlider existingSlider = groupGallerySliderDao.findById(slider.getId());
+
+				        if (existingSlider != null) {
+				            existingSlider.setUgId(slider.getUgId());
+				            existingSlider.setFileName(slider.getFileName());
+				            existingSlider.setTitle(slider.getTitle());
+				            existingSlider.setCustomDescripition(slider.getCustomDescripition());
+				            existingSlider.setMoreLinks(slider.getMoreLinks());
+				            existingSlider.setDisplayOrder(slider.getDisplayOrder());
+				            existingSlider.setReadMoreText(slider.getReadMoreText());
+				            existingSlider.setReadMoreUIType(slider.getReadMoreUIType());
+				            existingSlider.setGallerySidebar(slider.getGallerySidebar());
+				            existingSlider.setLanguageId(languageId);
+				            existingSlider.setSliderId(groupGalleryId);
+
+				            groupGallerySliderDao.update(existingSlider);
+				        }
+				    } else {
+				        groupGallerySliderDao.save(slider);
+				    }
 				}
-				return getGroupHomePageData(userGroupId, (long) 205);
+
+				return getGroupHomePageData(userGroupId, defaultLanguageId);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -2136,16 +2171,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					for (GroupGallerySlider translation : gallery) {
 						translation.setDisplayOrder(reOrder.getDisplayOrder());
 						groupGallerySliderDao.update(translation);
-						/*
-						 * GroupGallerySlider gallery =
-						 * groupGallerySliderDao.findById(reOrder.getGalleryId());
-						 * gallery.setDisplayOrder(reOrder.getDisplayOrder());
-						 * groupGallerySliderDao.update(gallery);
-						 */
 					}
 				}
 
-				return getGroupHomePageData(userGroupId, (long) 205);
+				return getGroupHomePageData(userGroupId, defaultLanguageId);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -2320,7 +2349,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
 		if (roles.contains(roleAdmin)) {
 			result.setIsAdmin(true);
-			result.setUgList(fetchAllUserGroup((long) 205));
+			result.setUgList(fetchAllUserGroup(defaultLanguageId));
 			return result;
 		}
 		List<UserGroupMemberRole> ugMemberList = ugMemberDao.findUserGroupbyUserIdRole(userId);
