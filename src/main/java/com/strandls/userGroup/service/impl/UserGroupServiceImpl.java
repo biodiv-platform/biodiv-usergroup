@@ -1434,7 +1434,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			String webAddress = ugCreateData.getName().replace(" ", "_");
 			
 			// Validate that the web address is unique before creating or updating a group
-			boolean isAllowed = userGroupDao.isWebAddressAllowedForGroup(webAddress);
+			boolean isAllowed = userGroupDao.isWebAddressAllowedForGroup(webAddress, null);
 	        if (!isAllowed) {
 	            throw new IllegalArgumentException("Webaddress '" + webAddress + "' is already used by another group");
 	        }
@@ -1523,7 +1523,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							userGroupTranslations.get(0).getNeLatitude(), userGroupTranslations.get(0).getNeLongitude(),
 							userGroupTranslations.get(0).getSwLatitude(), userGroupTranslations.get(0).getSwLongitude(),
 							userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
-							speciesGroupId, habitatId);
+							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress());
 					return ugEditData;
 				}
 			}
@@ -1543,6 +1543,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
 			Long userId = Long.parseLong(profile.getId());
 			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
+			boolean isAllowed = userGroupDao.isWebAddressAllowedForGroup(ugEditData.getWebAddress(), userGroupId);
+	        if (!isAllowed) {
+	            throw new IllegalArgumentException("Webaddress '" + ugEditData.getWebAddress() + "' is already used by another group");
+	        }
 
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				UserGroup ug = userGroupDao.findById(userGroupId);
@@ -1555,7 +1559,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								ugEditData.getHomePage(), ugEditData.getIcon(), false,
 								translationData.get("name").toString(), ugEditData.getNeLatitude(),
 								ugEditData.getNeLongitude(), ugEditData.getSwLatitude(), ugEditData.getSwLongitude(),
-								ugEditData.getTheme(), ug.getVisitCount(), ug.getWebAddress(),
+								ugEditData.getTheme(), ug.getVisitCount(), ugEditData.getWebAddress(),
 								Long.parseLong(translationData.get("language").toString()), new Date(),
 								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
@@ -1569,7 +1573,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								ug.getDomianName(), new Date(), ugEditData.getHomePage(), ugEditData.getIcon(), false,
 								translationData.get("name").toString(), ugEditData.getNeLatitude(),
 								ugEditData.getNeLongitude(), ugEditData.getSwLatitude(), ugEditData.getSwLongitude(),
-								ugEditData.getTheme(), ug.getVisitCount(), ug.getWebAddress(),
+								ugEditData.getTheme(), ug.getVisitCount(), ugEditData.getWebAddress(),
 								Long.parseLong(translationData.get("language").toString()), new Date(),
 								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),

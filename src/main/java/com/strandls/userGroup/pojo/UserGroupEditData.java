@@ -52,7 +52,7 @@ public class UserGroupEditData {
 	 */
 	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon,
 			String domainName, List<Map<String,Object>> translation, Double neLatitude, Double neLongitude, Double swLatitude,
-			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId) {
+			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.homePage = homePage;
@@ -67,6 +67,7 @@ public class UserGroupEditData {
 		this.languageId = languageId;
 		this.speciesGroupId = speciesGroupId;
 		this.habitatId = habitatId;
+		this.webAddress = webAddress;
 	}
 
 	public Boolean getAllowUserToJoin() {
