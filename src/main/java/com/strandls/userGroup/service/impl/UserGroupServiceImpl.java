@@ -1526,7 +1526,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							userGroupTranslations.get(0).getNeLatitude(), userGroupTranslations.get(0).getNeLongitude(),
 							userGroupTranslations.get(0).getSwLatitude(), userGroupTranslations.get(0).getSwLongitude(),
 							userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
-							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(), userGroupTranslations.get(0).getSpatialData());
+							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(),userGroupTranslations.get(0).getSpatialData() );
 					return ugEditData;
 				}
 			}
@@ -1561,13 +1561,13 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								ug.getAllow_obv_cross_posting(), ugEditData.getAllowUserToJoin(),
 								translationData.get("description").toString(), ug.getDomianName(), new Date(),
 								ugEditData.getHomePage(), ugEditData.getIcon(), false,
-								translationData.get("name").toString(), ugEditData.getNeLatitude(),
-								ugEditData.getNeLongitude(), ugEditData.getSwLatitude(), ugEditData.getSwLongitude(),
+								translationData.get("name").toString(), ug.getNeLatitude(),
+								ug.getNeLongitude(), ug.getSwLatitude(), ug.getSwLongitude(),
 								ugEditData.getTheme(), ug.getVisitCount(), ugEditData.getWebAddress(),
 								Long.parseLong(translationData.get("language").toString()), new Date(),
 								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
-								ug.getGroupId(), null);
+								ug.getGroupId(), ugEditData.getSpatialData());
 
 						userGroup = userGroupDao.update(userGroup);
 					} else {
@@ -1575,13 +1575,13 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								ug.getAllow_non_members_to_comment(), ug.getAllow_obv_cross_posting(),
 								ugEditData.getAllowUserToJoin(), translationData.get("description").toString(),
 								ug.getDomianName(), new Date(), ugEditData.getHomePage(), ugEditData.getIcon(), false,
-								translationData.get("name").toString(), ugEditData.getNeLatitude(),
-								ugEditData.getNeLongitude(), ugEditData.getSwLatitude(), ugEditData.getSwLongitude(),
+								translationData.get("name").toString(), ug.getNeLatitude(),
+								ug.getNeLongitude(), ug.getSwLatitude(), ug.getSwLongitude(),
 								ugEditData.getTheme(), ug.getVisitCount(), ugEditData.getWebAddress(),
 								Long.parseLong(translationData.get("language").toString()), new Date(),
 								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
-								ug.getGroupId(), null);
+								ug.getGroupId(), ugEditData.getSpatialData());
 						userGroup = userGroupDao.save(userGroup);
 					}
 				}
