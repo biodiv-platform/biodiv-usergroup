@@ -63,6 +63,7 @@ public class UserGroup implements Serializable {
 	private List<Long> speciesGroupIds;
 	private String mediaToggle;
 	private Long groupId;
+	private String spatialData;
 
 	/**
 	 * 
@@ -105,7 +106,7 @@ public class UserGroup implements Serializable {
 			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, Double neLatitude,
 			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long visitCount, String webAddress,
 			Long languageId, Date startDate, Boolean showGallery, Boolean showStats, Boolean showRecentObservations,
-			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle, Long groupId) {
+			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle, Long groupId, String spatialData) {
 		super();
 		this.id = id;
 		this.allow_members_to_make_species_call = allow_members_to_make_species_call;
@@ -136,6 +137,7 @@ public class UserGroup implements Serializable {
 		this.showDesc = showDesc;
 		this.mediaToggle = mediaToggle;
 		this.groupId = groupId;
+		this.spatialData = spatialData;
 	}
 
 	@Id
@@ -193,6 +195,16 @@ public class UserGroup implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	@Column(name = "spatial_data")
+	@Type(type = "text")
+	public String getSpatialData() {
+		return spatialData;
+	}
+
+	public void setSpatialData(String spatialData) {
+		this.spatialData = spatialData;
 	}
 
 	@Column(name = "domain_name")

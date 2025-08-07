@@ -1450,7 +1450,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId, new Date(),
 					ugCreateData.getShowGallery(), ugCreateData.getShowStats(), ugCreateData.getShowRecentObservation(),
 					ugCreateData.getShowGridMap(), ugCreateData.getShowPartners(), ugCreateData.getShowDesc(),
-					ugCreateData.getMediaToggle(), null);
+					ugCreateData.getMediaToggle(), null, null);
 
 			userGroup = userGroupDao.save(userGroup);
 			userGroup.setGroupId(userGroup.getId());
@@ -1567,7 +1567,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								Long.parseLong(translationData.get("language").toString()), new Date(),
 								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
-								ug.getGroupId());
+								ug.getGroupId(), null);
 
 						userGroup = userGroupDao.update(userGroup);
 					} else {
@@ -1581,7 +1581,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								Long.parseLong(translationData.get("language").toString()), new Date(),
 								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
-								ug.getGroupId());
+								ug.getGroupId(), null);
 						userGroup = userGroupDao.save(userGroup);
 					}
 				}
