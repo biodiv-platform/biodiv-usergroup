@@ -20,6 +20,8 @@ public class UserGroupHomePageEditData {
 	private Boolean showDesc;
 	private String description;
 	private List<Map<Long, List<GroupGallerySlider>>> gallerySlider;
+	private Map<String, Map<Long, List<GroupGalleryConfig>>> miniGallery;
+	private List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> miniGallerySlider;
 
 	/**
 	 * 
@@ -40,7 +42,9 @@ public class UserGroupHomePageEditData {
 	 */
 	public UserGroupHomePageEditData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation,
 			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String description,
-			List<Map<Long, List<GroupGallerySlider>>> gallerySlider) {
+			List<Map<Long, List<GroupGallerySlider>>> gallerySlider,
+			Map<String, Map<Long, List<GroupGalleryConfig>>> miniGallery,
+			List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> miniGallerySlider) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;
@@ -50,6 +54,8 @@ public class UserGroupHomePageEditData {
 		this.showDesc = showDesc;
 		this.description = description;
 		this.gallerySlider = gallerySlider;
+		this.miniGallery = miniGallery;
+		this.miniGallerySlider = miniGallerySlider;
 	}
 
 	public Boolean getShowGallery() {
@@ -114,6 +120,22 @@ public class UserGroupHomePageEditData {
 
 	public void setGallerySlider(List<Map<Long, List<GroupGallerySlider>>> gallerySlider) {
 		this.gallerySlider = gallerySlider;
+	}
+	
+	public Map<String, Map<Long, List<GroupGalleryConfig>>> getMiniGallery() {
+		return miniGallery;
+	}
+
+	public void setMiniGallery(Map<String, Map<Long, List<GroupGalleryConfig>>> miniGallery) {
+		this.miniGallery = miniGallery;
+	}
+
+	public List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> getMiniGallerySlider() {
+		return miniGallerySlider;
+	}
+
+	public void setMiniGallerySlider(List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> miniGallerySlider) {
+		this.miniGallerySlider = miniGallerySlider;
 	}
 
 }

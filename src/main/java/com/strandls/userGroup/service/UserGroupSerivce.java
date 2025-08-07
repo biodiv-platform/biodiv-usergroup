@@ -17,8 +17,10 @@ import com.strandls.userGroup.pojo.BulkGroupPostingData;
 import com.strandls.userGroup.pojo.BulkGroupUnPostingData;
 import com.strandls.userGroup.pojo.Featured;
 import com.strandls.userGroup.pojo.FeaturedCreateData;
+import com.strandls.userGroup.pojo.GroupGalleryConfig;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.MiniGroupGallerySlider;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
@@ -172,5 +174,20 @@ public interface UserGroupSerivce {
 	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId, List<SpeciesFieldMetadata> metadata);
 	
 	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
+	
+	public Map<String, Map<Long, List<GroupGalleryConfig>>> createMiniGallery(HttpServletRequest request, Map<Long, List<GroupGalleryConfig>> miniGalleryData, Long ugId);
+
+	public Map<String, Map<Long, List<GroupGalleryConfig>>> editMiniGallery(HttpServletRequest request, Long ugId,
+			Long gId, Map<Long, List<GroupGalleryConfig>> editData);
+
+	public Boolean removeMiniGallery(HttpServletRequest request, Long ugId, Long gId);
+
+	public GroupHomePageData reorderMiniHomePageSlider(HttpServletRequest request, Long userGroupId,
+			List<ReorderingHomePage> reorderingHomePage);
+
+	public GroupHomePageData removeMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
+
+	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
+			Map<Long, List<MiniGroupGallerySlider>> editData);
 
 }
