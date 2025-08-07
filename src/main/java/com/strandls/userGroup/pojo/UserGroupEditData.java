@@ -26,6 +26,7 @@ public class UserGroupEditData {
 	private List<Long> speciesGroupId;
 	private List<Long> habitatId;
 	private String webAddress;
+	private String spatialData;
 
 	/**
 	 * 
@@ -52,7 +53,7 @@ public class UserGroupEditData {
 	 */
 	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon,
 			String domainName, List<Map<String,Object>> translation, Double neLatitude, Double neLongitude, Double swLatitude,
-			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress) {
+			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress, String spatialData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.homePage = homePage;
@@ -68,6 +69,7 @@ public class UserGroupEditData {
 		this.speciesGroupId = speciesGroupId;
 		this.habitatId = habitatId;
 		this.webAddress = webAddress;
+		this.spatialData = spatialData;
 	}
 
 	public Boolean getAllowUserToJoin() {
@@ -180,6 +182,14 @@ public class UserGroupEditData {
 
 	public void setHabitatId(List<Long> habitatId) {
 		this.habitatId = habitatId;
+	}
+	
+	public String getSpatialData() {
+		return spatialData;
+	}
+
+	public void setSpatialData(String spatialData) {
+		this.spatialData = spatialData;
 	}
 
 }

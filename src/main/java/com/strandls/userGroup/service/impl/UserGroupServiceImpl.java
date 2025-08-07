@@ -1526,7 +1526,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							userGroupTranslations.get(0).getNeLatitude(), userGroupTranslations.get(0).getNeLongitude(),
 							userGroupTranslations.get(0).getSwLatitude(), userGroupTranslations.get(0).getSwLongitude(),
 							userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
-							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress());
+							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(), userGroupTranslations.get(0).getSpatialData());
 					return ugEditData;
 				}
 			}
