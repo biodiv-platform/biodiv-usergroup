@@ -17,10 +17,6 @@ public class UserGroupEditData {
 	private String icon;
 	private String domainName;
 	private List<Map<String,Object>> translation;
-	private Double neLatitude;
-	private Double neLongitude;
-	private Double swLatitude;
-	private Double swLongitude;
 	private String theme;
 	private Long languageId;
 	private List<Long> speciesGroupId;
@@ -52,18 +48,13 @@ public class UserGroupEditData {
 	 * @param habitatId
 	 */
 	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon,
-			String domainName, List<Map<String,Object>> translation, Double neLatitude, Double neLongitude, Double swLatitude,
-			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress, String spatialData) {
+			String domainName, List<Map<String,Object>> translation, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress, String spatialData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.homePage = homePage;
 		this.icon = icon;
 		this.domainName = domainName;
 		this.translation = translation;
-		this.neLatitude = neLatitude;
-		this.neLongitude = neLongitude;
-		this.swLatitude = swLatitude;
-		this.swLongitude = swLongitude;
 		this.theme = theme;
 		this.languageId = languageId;
 		this.speciesGroupId = speciesGroupId;
@@ -118,38 +109,6 @@ public class UserGroupEditData {
 
 	public void setTranslation(List<Map<String,Object>> translation) {
 		this.translation = translation;
-	}
-
-	public Double getNeLatitude() {
-		return neLatitude;
-	}
-
-	public void setNeLatitude(Double neLatitude) {
-		this.neLatitude = neLatitude;
-	}
-
-	public Double getNeLongitude() {
-		return neLongitude;
-	}
-
-	public void setNeLongitude(Double neLongitude) {
-		this.neLongitude = neLongitude;
-	}
-
-	public Double getSwLatitude() {
-		return swLatitude;
-	}
-
-	public void setSwLatitude(Double swLatitude) {
-		this.swLatitude = swLatitude;
-	}
-
-	public Double getSwLongitude() {
-		return swLongitude;
-	}
-
-	public void setSwLongitude(Double swLongitude) {
-		this.swLongitude = swLongitude;
 	}
 
 	public String getTheme() {

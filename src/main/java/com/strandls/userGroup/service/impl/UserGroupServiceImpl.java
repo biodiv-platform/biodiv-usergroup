@@ -102,6 +102,9 @@ import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 import com.strandls.userGroup.util.PropertyFileUtil;
 import com.strandls.userGroup.util.RecordType;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.io.WKTWriter;
 
 import net.minidev.json.JSONArray;
 
@@ -1444,9 +1447,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 			UserGroup userGroup = new UserGroup(null, true, true, true, ugCreateData.getAllowUserToJoin(),
 					ugCreateData.getDescription(), ugCreateData.getDomainName(), new Date(), ugCreateData.getHomePage(),
-					ugCreateData.getIcon(), false, ugCreateData.getName(), ugCreateData.getNeLatitude(),
-					ugCreateData.getNeLongitude(), ugCreateData.getSwLatitude(), ugCreateData.getSwLongitude(),
-					ugCreateData.getTheme(), 1L, webAddress,
+					ugCreateData.getIcon(), false, ugCreateData.getName(), ugCreateData.getTheme(), 1L, webAddress,
 					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId, new Date(),
 					ugCreateData.getShowGallery(), ugCreateData.getShowStats(), ugCreateData.getShowRecentObservation(),
 					ugCreateData.getShowGridMap(), ugCreateData.getShowPartners(), ugCreateData.getShowDesc(),
@@ -1519,14 +1520,14 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					for (UserGroupHabitat ugHabitat : ugHabitats) {
 						habitatId.add(ugHabitat.getHabitatId());
 					}
+					WKTWriter writer = new WKTWriter();
+					String wktData = writer.write(userGroupTranslations.get(0).getSpatialCoverage());
 					UserGroupEditData ugEditData = new UserGroupEditData(
 							userGroupTranslations.get(0).getAllowUserToJoin(),
 							userGroupTranslations.get(0).getHomePage(), userGroupTranslations.get(0).getIcon(),
 							userGroupTranslations.get(0).getDomianName(), translation,
-							userGroupTranslations.get(0).getNeLatitude(), userGroupTranslations.get(0).getNeLongitude(),
-							userGroupTranslations.get(0).getSwLatitude(), userGroupTranslations.get(0).getSwLongitude(),
 							userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
-							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(),userGroupTranslations.get(0).getSpatialData() );
+							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(), wktData);
 					return ugEditData;
 				}
 			}
@@ -1554,6 +1555,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
 				UserGroup ug = userGroupDao.findById(userGroupId);
+				WKTReader reader = new WKTReader();
+	            Geometry geometry = reader.read(ugEditData.getSpatialData());
 				for (Map<String, Object> translationData : ugEditData.getTranslation()) {
 					if (translationData.get("id") != null) {
 						UserGroup userGroup = new UserGroup(Long.parseLong(translationData.get("id").toString()),
@@ -1561,13 +1564,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								ug.getAllow_obv_cross_posting(), ugEditData.getAllowUserToJoin(),
 								translationData.get("description").toString(), ug.getDomianName(), new Date(),
 								ugEditData.getHomePage(), ugEditData.getIcon(), false,
-								translationData.get("name").toString(), ug.getNeLatitude(),
-								ug.getNeLongitude(), ug.getSwLatitude(), ug.getSwLongitude(),
-								ugEditData.getTheme(), ug.getVisitCount(), ugEditData.getWebAddress(),
-								Long.parseLong(translationData.get("language").toString()), new Date(),
-								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
+								translationData.get("name").toString(), ugEditData.getTheme(), ug.getVisitCount(),
+								ugEditData.getWebAddress(), Long.parseLong(translationData.get("language").toString()),
+								new Date(), ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
-								ug.getGroupId(), ugEditData.getSpatialData());
+								ug.getGroupId(), geometry);
 
 						userGroup = userGroupDao.update(userGroup);
 					} else {
@@ -1575,13 +1576,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 								ug.getAllow_non_members_to_comment(), ug.getAllow_obv_cross_posting(),
 								ugEditData.getAllowUserToJoin(), translationData.get("description").toString(),
 								ug.getDomianName(), new Date(), ugEditData.getHomePage(), ugEditData.getIcon(), false,
-								translationData.get("name").toString(), ug.getNeLatitude(),
-								ug.getNeLongitude(), ug.getSwLatitude(), ug.getSwLongitude(),
-								ugEditData.getTheme(), ug.getVisitCount(), ugEditData.getWebAddress(),
-								Long.parseLong(translationData.get("language").toString()), new Date(),
-								ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
+								translationData.get("name").toString(), ugEditData.getTheme(), ug.getVisitCount(),
+								ugEditData.getWebAddress(), Long.parseLong(translationData.get("language").toString()),
+								new Date(), ug.getShowGallery(), ug.getShowStats(), ug.getShowRecentObservations(),
 								ug.getShowGridMap(), ug.getShowPartners(), ug.getShowDesc(), ug.getMediaToggle(),
-								ug.getGroupId(), ugEditData.getSpatialData());
+								ug.getGroupId(), geometry);
 						userGroup = userGroupDao.save(userGroup);
 					}
 				}
@@ -2258,7 +2257,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return null;
 	}
-	
+
 	@Override
 	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
 			Map<Long, List<MiniGroupGallerySlider>> editData) {
