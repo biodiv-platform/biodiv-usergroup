@@ -23,10 +23,6 @@ public class UserGroupCreateData {
 	private String name;
 	private List<Long> speciesGroup;
 	private List<Long> habitatId;
-	private Double neLatitude;
-	private Double neLongitude;
-	private Double swLatitude;
-	private Double swLongitude;
 	private String theme;
 	private Long languageId;
 	private Boolean showGallery;
@@ -36,6 +32,7 @@ public class UserGroupCreateData {
 	private Boolean showGridMap;
 	private Boolean showPartners;
 	private String mediaToggle;
+	private String spatialData;
 
 //	Founder and Moderator Invitation List
 	private UserGroupInvitationData invitationData;
@@ -65,10 +62,9 @@ public class UserGroupCreateData {
 	 * @param invitationData
 	 */
 	public UserGroupCreateData(Boolean allowUserToJoin, String description, String homePage, String icon,
-			String domainName, String name, List<Long> speciesGroup, List<Long> habitatId, Double neLatitude,
-			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long languageId,
+			String domainName, String name, List<Long> speciesGroup, List<Long> habitatId, String theme, Long languageId,
 			UserGroupInvitationData invitationData, Boolean showGallery, Boolean showStats, Boolean showDesc,
-			Boolean showRecentObservation, Boolean showGridMap, Boolean showPartners, String mediaToggle) {
+			Boolean showRecentObservation, Boolean showGridMap, Boolean showPartners, String mediaToggle, String spatialData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.description = description;
@@ -78,10 +74,6 @@ public class UserGroupCreateData {
 		this.name = name;
 		this.speciesGroup = speciesGroup;
 		this.habitatId = habitatId;
-		this.neLatitude = neLatitude;
-		this.neLongitude = neLongitude;
-		this.swLatitude = swLatitude;
-		this.swLongitude = swLongitude;
 		this.theme = theme;
 		this.languageId = languageId;
 		this.invitationData = invitationData;
@@ -92,6 +84,7 @@ public class UserGroupCreateData {
 		this.showRecentObservation = showRecentObservation;
 		this.showStats = showStats;
 		this.mediaToggle = mediaToggle;
+		this.spatialData = spatialData;
 	}
 
 	public Boolean getAllowUserToJoin() {
@@ -156,38 +149,6 @@ public class UserGroupCreateData {
 
 	public void setHabitatId(List<Long> habitatId) {
 		this.habitatId = habitatId;
-	}
-
-	public Double getNeLatitude() {
-		return neLatitude;
-	}
-
-	public void setNeLatitude(Double neLatitude) {
-		this.neLatitude = neLatitude;
-	}
-
-	public Double getNeLongitude() {
-		return neLongitude;
-	}
-
-	public void setNeLongitude(Double neLongitude) {
-		this.neLongitude = neLongitude;
-	}
-
-	public Double getSwLatitude() {
-		return swLatitude;
-	}
-
-	public void setSwLatitude(Double swLatitude) {
-		this.swLatitude = swLatitude;
-	}
-
-	public Double getSwLongitude() {
-		return swLongitude;
-	}
-
-	public void setSwLongitude(Double swLongitude) {
-		this.swLongitude = swLongitude;
 	}
 
 	public String getTheme() {
@@ -268,5 +229,13 @@ public class UserGroupCreateData {
 	
 	public void setMediaToggle(String mediaToggle) {
 		this.mediaToggle = mediaToggle;
+	}
+	
+	public String getSpatialData() {
+		return spatialData;
+	}
+	
+	public void setSpatialData(String spatialData) {
+		this.spatialData = spatialData;
 	}
 }

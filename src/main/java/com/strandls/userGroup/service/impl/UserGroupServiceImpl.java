@@ -1444,14 +1444,15 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			if (!isAllowed) {
 				throw new IllegalArgumentException("Webaddress '" + webAddress + "' is already used by another group");
 			}
-
+			WKTReader reader = new WKTReader();
+            Geometry geometry = reader.read(ugCreateData.getSpatialData());
 			UserGroup userGroup = new UserGroup(null, true, true, true, ugCreateData.getAllowUserToJoin(),
 					ugCreateData.getDescription(), ugCreateData.getDomainName(), new Date(), ugCreateData.getHomePage(),
 					ugCreateData.getIcon(), false, ugCreateData.getName(), ugCreateData.getTheme(), 1L, webAddress,
 					ugCreateData.getLanguageId() != null ? ugCreateData.getLanguageId() : defaultLanguageId, new Date(),
 					ugCreateData.getShowGallery(), ugCreateData.getShowStats(), ugCreateData.getShowRecentObservation(),
 					ugCreateData.getShowGridMap(), ugCreateData.getShowPartners(), ugCreateData.getShowDesc(),
-					ugCreateData.getMediaToggle(), null, null);
+					ugCreateData.getMediaToggle(), null, geometry);
 
 			userGroup = userGroupDao.save(userGroup);
 			userGroup.setGroupId(userGroup.getId());
