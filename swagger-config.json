@@ -1,14 +1,13 @@
 {
-  "modelPackage": "com.strandls.userGroup.pojo",
-  "apiPackage": "com.strandls.userGroup.controller",
-  "invokerPackage": "com.strandls.userGroup",
-  "groupId": "com.strandls.biodiv",
-  "artifactId": "userGroup-client",
-  "artifactVersion": "1.0.0",
-  "fullJavaUtil": true,
-  "dateLibrary": "legacy",
-  "library": "jersey2",
-  "developerName": "Abhishek Kumar Rudra",
-  "developerEmail": "abhishek.rudra@strandls.com",
-  "java8": true
+	"modelPackage": "com.strandls.userGroup.pojo",
+	"apiPackage": "com.strandls.userGroup.controller",
+	"invokerPackage": "com.strandls.userGroup",
+	"groupId": "com.strandls.biodiv",
+	"artifactId": "userGroup-client",
+	"artifactVersion": "0.0.21",
+	"fullJavaUtil": true,
+	"dateLibrary": "legacy",
+	"library": "jersey3",
+	"developerName": "Abhishek Kumar Rudra",
+	"developerEmail": "abhishek.rudra@strandls.com"
 }

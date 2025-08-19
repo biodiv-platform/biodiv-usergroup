@@ -3,10 +3,6 @@ package com.strandls.userGroup.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +18,10 @@ import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
 import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 import com.strandls.userGroup.service.UserGroupDatatableService;
+
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.HttpHeaders;
 
 public class UserGroupDatatableServiceImpl implements UserGroupDatatableService {
 
@@ -182,5 +182,4 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 
 		return result;
 	}
-
 }

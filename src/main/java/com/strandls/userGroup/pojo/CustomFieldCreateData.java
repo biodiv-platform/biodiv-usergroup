@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldCreateData {
 
@@ -18,7 +15,7 @@ public class CustomFieldCreateData {
 	private String notes;
 	private String units;
 
-//	userGroup specific Settings
+	// userGroup specific Settings
 
 	private Long userGroupId;
 	private String defaultValue;
@@ -26,12 +23,10 @@ public class CustomFieldCreateData {
 	private Boolean isMandatory;
 	private Boolean allowedParticipation;
 
-//	values
+	// values
 	private List<CustomFieldValuesCreateData> values;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldCreateData() {
 		super();
 	}
@@ -163,5 +158,4 @@ public class CustomFieldCreateData {
 	public void setValues(List<CustomFieldValuesCreateData> values) {
 		this.values = values;
 	}
-
 }

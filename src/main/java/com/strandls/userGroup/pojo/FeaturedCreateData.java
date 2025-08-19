@@ -7,9 +7,7 @@ public class FeaturedCreateData {
 	private FeaturedCreate featuredCreate;
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public FeaturedCreateData() {
 		super();
 	}
@@ -39,5 +37,4 @@ public class FeaturedCreateData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

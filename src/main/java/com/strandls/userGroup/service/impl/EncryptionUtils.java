@@ -8,16 +8,15 @@ import java.util.Properties;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.xml.bind.DatatypeConverter;
+
 /**
  * @author Abhishek Rudra
- *
  */
-
 public class EncryptionUtils {
 
 	private final Logger logger = LoggerFactory.getLogger(EncryptionUtils.class);
@@ -41,15 +40,14 @@ public class EncryptionUtils {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
 	}
 
 	public String encrypt(String plainText) {
 		String strData = "";
 
 		try {
-			SecretKeySpec skeyspec = new SecretKeySpec(key.getBytes("UTF-8"), "Blowfish");//NOSONAR
-			Cipher cipher = Cipher.getInstance("Blowfish");//NOSONAR
+			SecretKeySpec skeyspec = new SecretKeySpec(key.getBytes("UTF-8"), "Blowfish"); // NOSONAR
+			Cipher cipher = Cipher.getInstance("Blowfish"); // NOSONAR
 			cipher.init(Cipher.ENCRYPT_MODE, skeyspec);
 			byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
 			strData = DatatypeConverter.printBase64Binary(encrypted);
@@ -64,8 +62,8 @@ public class EncryptionUtils {
 		String strData = "";
 
 		try {
-			SecretKeySpec skeyspec = new SecretKeySpec(key.getBytes("UTF-8"), "Blowfish");//NOSONAR
-			Cipher cipher = Cipher.getInstance("Blowfish");//NOSONAR
+			SecretKeySpec skeyspec = new SecretKeySpec(key.getBytes("UTF-8"), "Blowfish"); // NOSONAR
+			Cipher cipher = Cipher.getInstance("Blowfish"); // NOSONAR
 			cipher.init(Cipher.DECRYPT_MODE, skeyspec);
 			byte[] decrypted = cipher.doFinal(DatatypeConverter.parseBase64Binary(encryptedText));
 			strData = new String(decrypted, "UTF-8");
@@ -75,5 +73,4 @@ public class EncryptionUtils {
 		}
 		return strData;
 	}
-
 }

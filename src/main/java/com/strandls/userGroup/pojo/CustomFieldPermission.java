@@ -1,22 +1,17 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldPermission {
 
 	private Long userGroupId;
 	private List<Long> allowedCfId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldPermission() {
 		super();
 	}
@@ -46,5 +41,4 @@ public class CustomFieldPermission {
 	public void setAllowedCfId(List<Long> allowedCfId) {
 		this.allowedCfId = allowedCfId;
 	}
-
 }

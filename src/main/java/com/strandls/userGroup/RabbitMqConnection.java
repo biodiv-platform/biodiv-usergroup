@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup;
 
 import java.io.IOException;
@@ -17,22 +15,21 @@ import com.rabbitmq.client.ConnectionFactory;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class RabbitMqConnection {
 
 	private static final Logger logger = LoggerFactory.getLogger(RabbitMqConnection.class);
-	public final static String EXCHANGE_BIODIV = "biodiv";
-	private final static String OBSERVATION_QUEUE = "observationQueue";
-	private final static String ROUTING_OBSERVATION = "observation";
+	public static final String EXCHANGE_BIODIV = "biodiv";
+	private static final String OBSERVATION_QUEUE = "observationQueue";
+	private static final String ROUTING_OBSERVATION = "observation";
 
-	public final static String MAILING_QUEUE;
-	public final static String MAILING_ROUTINGKEY;
+	public static final String MAILING_QUEUE;
+	public static final String MAILING_ROUTINGKEY;
 
-	private final static String RABBITMQ_HOST;
-	private final static Integer RABBITMQ_PORT;
-	private final static String RABBITMQ_USERNAME;
-	private final static String RABBITMQ_PASSWORD;
+	private static final String RABBITMQ_HOST;
+	private static final Integer RABBITMQ_PORT;
+	private static final String RABBITMQ_USERNAME;
+	private static final String RABBITMQ_PASSWORD;
 
 	static {
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties");
@@ -74,6 +71,5 @@ public class RabbitMqConnection {
 		channel.queueBind(MAILING_QUEUE, EXCHANGE_BIODIV, MAILING_ROUTINGKEY);
 
 		return channel;
-
 	}
 }

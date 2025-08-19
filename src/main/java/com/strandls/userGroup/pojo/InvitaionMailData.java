@@ -11,9 +11,7 @@ public class InvitaionMailData {
 	private String role;
 	private String token;
 
-	/**
-	 * 
-	 */
+	/** */
 	public InvitaionMailData() {
 		super();
 	}
@@ -84,5 +82,4 @@ public class InvitaionMailData {
 	public void setToken(String token) {
 		this.token = token;
 	}
-
 }

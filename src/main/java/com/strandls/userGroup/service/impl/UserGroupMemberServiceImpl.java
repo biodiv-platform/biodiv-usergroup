@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service.impl;
 
 import java.io.IOException;
@@ -11,10 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +30,12 @@ import com.strandls.userGroup.pojo.UserUgRoleMapping;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.HttpHeaders;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
@@ -125,7 +122,6 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 		}
 
 		return null;
-
 	}
 
 	@Override
@@ -236,7 +232,6 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 					groupUserEsUpdate(userId);
 					mappedUser.add(userId);
 				}
-
 			}
 			return mappedUser;
 		} catch (Exception e) {
@@ -256,7 +251,6 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 			if (!groupList.isEmpty()) {
 				ugRoleMapping.add(groupRoleMapping);
 			}
-
 		});
 		Map<String, Object> doc = new HashMap<String, Object>();
 		doc.put("userGroup", ugRoleMapping);
@@ -265,7 +259,6 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 		} catch (com.strandls.esmodule.ApiException e) {
 			logger.error("Unable to update Es User Details " + e.getMessage());
 		}
-
 	}
 
 	@Override
@@ -281,7 +274,6 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 			logger.error(e.getMessage());
 		}
 		return null;
-
 	}
 
 	@Override

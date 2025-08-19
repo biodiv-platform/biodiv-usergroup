@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupEditData {
 
@@ -26,9 +23,7 @@ public class UserGroupEditData {
 	private List<Long> speciesGroupId;
 	private List<Long> habitatId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupEditData() {
 		super();
 	}
@@ -180,5 +175,4 @@ public class UserGroupEditData {
 	public void setHabitatId(List<Long> habitatId) {
 		this.habitatId = habitatId;
 	}
-
 }

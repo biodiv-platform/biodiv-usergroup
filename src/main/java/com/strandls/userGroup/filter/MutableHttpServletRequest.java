@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 public class MutableHttpServletRequest extends HttpServletRequestWrapper {
 
@@ -44,5 +44,4 @@ public class MutableHttpServletRequest extends HttpServletRequestWrapper {
 
 		return Collections.enumeration(set);
 	}
-
 }

@@ -1,15 +1,12 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ApiConstants {
 
-//	<--------------VERSIONING------------->
+	// <--------------VERSIONING------------->
 	public static final String V1 = "/v1";
 
 	public static final String GROUP = "/group";
@@ -62,5 +59,4 @@ public class ApiConstants {
 	public static final String SPECIES = "/species";
 	public static final String MEDIATOGGLE = "/mediaToggle";
 	public static final String OBSERVATIONCUSTOMISATIONS = "/observationCustomisations";
-
 }

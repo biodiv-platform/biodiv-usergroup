@@ -1,14 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.inject.Inject;
 
 import com.strandls.userGroup.dao.NewsletterDao;
 import com.strandls.userGroup.pojo.Newsletter;
@@ -18,10 +14,10 @@ import com.strandls.userGroup.service.NewsletterSerivce;
 import com.strandls.userGroup.util.AbstractService;
 import com.strandls.userGroup.util.PropertyFileUtil;
 
+import jakarta.inject.Inject;
+
 /**
- * 
  * @author vilay
- *
  */
 public class NewsletterServiceImpl extends AbstractService<Newsletter> implements NewsletterSerivce {
 

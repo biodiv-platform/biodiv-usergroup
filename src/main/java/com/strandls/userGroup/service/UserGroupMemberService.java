@@ -1,12 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service;
 
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
@@ -15,9 +11,10 @@ import com.strandls.userGroup.pojo.UserGroupMemberRole;
 import com.strandls.userGroup.pojo.UserGroupMembersCount;
 import com.strandls.userGroup.pojo.UserGroupPermissions;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public interface UserGroupMemberService {
 
@@ -48,5 +45,4 @@ public interface UserGroupMemberService {
 	public UserGroupPermissions getUserGroupObservationPermissions(Long userId);
 
 	public Map<Long, Boolean> groupListByUserId(Long userId);
-
 }

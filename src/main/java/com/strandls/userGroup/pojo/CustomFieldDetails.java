@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldDetails {
 
@@ -18,9 +15,7 @@ public class CustomFieldDetails {
 	private Boolean isMandatory;
 	private Boolean allowedParticipation;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldDetails() {
 		super();
 	}
@@ -91,5 +86,4 @@ public class CustomFieldDetails {
 	public void setAllowedParticipation(Boolean allowedParticipation) {
 		this.allowedParticipation = allowedParticipation;
 	}
-
 }

@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup;
 
 import java.util.HashSet;
@@ -13,7 +11,6 @@ import com.strandls.user.pojo.User;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class TokenGenerator {
 
@@ -49,7 +46,6 @@ public class TokenGenerator {
 			r.setAuthority(role.getAuthority());
 			r.setId(role.getId());
 			r1.add(r);
-
 		}
 		u1.setRoles(r1);
 		u1.setSendNotification(user.getSendNotification());
@@ -67,5 +63,4 @@ public class TokenGenerator {
 
 		return accessToken;
 	}
-
 }

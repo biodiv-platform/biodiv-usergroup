@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import java.io.IOException;
@@ -8,8 +6,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,9 +17,10 @@ import com.strandls.userGroup.pojo.UserGroupMemberRole;
 import com.strandls.userGroup.pojo.UserGroupMembersCount;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Long> {
 
@@ -32,7 +29,6 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 	/**
 	 * @param sessionFactory
 	 */
-
 	@Inject
 	protected UserGroupMemberRoleDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -71,7 +67,6 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 			session.close();
 		}
 		return result;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,7 +102,6 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 			session.close();
 		}
 		return null;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -257,7 +251,6 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 			}
 		}
 		return result;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -301,5 +294,4 @@ public class UserGroupMemberRoleDao extends AbstractDAO<UserGroupMemberRole, Lon
 
 		return result;
 	}
-
 }

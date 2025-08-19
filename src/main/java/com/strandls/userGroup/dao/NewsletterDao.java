@@ -1,11 +1,7 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import java.util.List;
-
-import javax.persistence.NoResultException;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,15 +9,14 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.userGroup.pojo.Newsletter;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
+
 /**
- * 
  * @author vilay
- *
  */
 public class NewsletterDao extends AbstractDAO<Newsletter, Long> {
 
@@ -67,5 +62,4 @@ public class NewsletterDao extends AbstractDAO<Newsletter, Long> {
 		session.close();
 		return resultList;
 	}
-
 }

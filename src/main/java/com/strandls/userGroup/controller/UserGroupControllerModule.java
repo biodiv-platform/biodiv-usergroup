@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.controller;
 
 import com.google.inject.AbstractModule;
@@ -8,7 +6,6 @@ import com.google.inject.Scopes;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupControllerModule extends AbstractModule {
 
@@ -18,5 +15,4 @@ public class UserGroupControllerModule extends AbstractModule {
 		bind(CustomFieldController.class).in(Scopes.SINGLETON);
 		bind(NewsletterController.class).in(Scopes.SINGLETON);
 	}
-
 }

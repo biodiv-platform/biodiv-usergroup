@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldValuesCreateData {
 
@@ -13,9 +10,7 @@ public class CustomFieldValuesCreateData {
 	private String iconURL;
 	private String notes;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldValuesCreateData() {
 		super();
 	}
@@ -55,5 +50,4 @@ public class CustomFieldValuesCreateData {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-
 }

@@ -1,20 +1,15 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
- * 
  */
-
 @Entity
 @Table(name = "user_group_species")
 @IdClass(UserGroupSpeciesCompositeKey.class)
@@ -23,9 +18,7 @@ public class UserGroupSpecies {
 	private Long userGroupId;
 	private Long speciesId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupSpecies() {
 		super();
 	}
@@ -59,5 +52,4 @@ public class UserGroupSpecies {
 	public void setSpeciesId(Long speciesId) {
 		this.speciesId = speciesId;
 	}
-
 }

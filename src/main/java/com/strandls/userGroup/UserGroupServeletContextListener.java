@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup;
 
 import java.io.File;
@@ -22,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletContextEvent;
-
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -37,7 +33,7 @@ import com.google.inject.Scopes;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.rabbitmq.client.Channel;
-import com.strandls.activity.controller.ActivitySerivceApi;
+import com.strandls.activity.controller.ActivityServiceApi;
 import com.strandls.esmodule.controllers.EsServicesApi;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.user.controller.UserServiceApi;
@@ -45,9 +41,10 @@ import com.strandls.userGroup.controller.UserGroupControllerModule;
 import com.strandls.userGroup.dao.UserGroupDaoModule;
 import com.strandls.userGroup.service.impl.UserGroupServiceModule;
 
+import jakarta.servlet.ServletContextEvent;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupServeletContextListener extends GuiceServletContextListener {
 
@@ -73,7 +70,7 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 				configuration = configuration.configure();
 				SessionFactory sessionFactory = configuration.buildSessionFactory();
 
-//				Rabbit MQ initialization
+				// Rabbit MQ initialization
 				RabbitMqConnection rabbitConnetion = new RabbitMqConnection();
 				Channel channel = null;
 				try {
@@ -85,7 +82,7 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 				bind(Channel.class).toInstance(channel);
 
 				Map<String, String> props = new HashMap<String, String>();
-				props.put("javax.ws.rs.Application", ApplicationConfig.class.getName());
+				props.put("jakarta.ws.rs.Application", ApplicationConfig.class.getName());
 				props.put("jersey.config.server.provider.packages", "com");
 				props.put("jersey.config.server.wadl.disableWadl", "true");
 
@@ -95,7 +92,7 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 				bind(RabbitMQProducer.class).toInstance(producer);
 
 				bind(SessionFactory.class).toInstance(sessionFactory);
-				bind(ActivitySerivceApi.class).in(Scopes.SINGLETON);
+				bind(ActivityServiceApi.class).in(Scopes.SINGLETON);
 				bind(UserServiceApi.class).in(Scopes.SINGLETON);
 
 				bind(EsServicesApi.class).in(Scopes.SINGLETON);
@@ -108,7 +105,6 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 		}, new UserGroupControllerModule(), new UserGroupServiceModule(), new UserGroupDaoModule());
 
 		return injector;
-
 	}
 
 	protected List<Class<?>> getEntityClassesFromPackage(String packageName)
@@ -121,7 +117,7 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 			Annotation[] annotations = cls.getAnnotations();
 
 			for (Annotation annotation : annotations) {
-				if (annotation instanceof javax.persistence.Entity) {
+				if (annotation instanceof jakarta.persistence.Entity) {
 					classes.add(cls);
 				}
 			}
@@ -197,6 +193,5 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 						driver);
 			}
 		}
-
 	}
 }

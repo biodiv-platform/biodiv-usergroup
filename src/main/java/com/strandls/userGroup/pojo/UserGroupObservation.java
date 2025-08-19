@@ -1,19 +1,15 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "user_group_observations")
 @IdClass(UserGroupObservationCompositeKey.class)
@@ -22,9 +18,7 @@ public class UserGroupObservation {
 	private Long userGroupId;
 	private Long observationId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupObservation() {
 		super();
 	}
@@ -58,5 +52,4 @@ public class UserGroupObservation {
 	public void setObservationId(Long observationId) {
 		this.observationId = observationId;
 	}
-
 }

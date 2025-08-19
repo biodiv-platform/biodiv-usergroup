@@ -29,7 +29,6 @@ public abstract class AbstractService<T> {
 		} catch (RuntimeException re) {
 			throw re;
 		}
-
 	}
 
 	public T delete(Long id) {
@@ -69,5 +68,4 @@ public abstract class AbstractService<T> {
 			throw re;
 		}
 	}
-
 }

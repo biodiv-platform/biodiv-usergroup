@@ -1,14 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +22,10 @@ import com.strandls.userGroup.RabbitMqConnection;
 import com.strandls.userGroup.pojo.InvitaionMailData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class MailUtils {
 
@@ -56,20 +53,18 @@ public class MailUtils {
 					inviteData.put(INVITATION_DATA.ROLE.getAction(), mailData.getRole());
 
 					data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(inviteData));
-					
+
 					Map<String, Object> mData = new HashMap<String, Object>();
 					mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.SEND_INVITE.getAction());
 					mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 
-					producer.produceMail(RabbitMqConnection.EXCHANGE_BIODIV,
-							RabbitMqConnection.MAILING_ROUTINGKEY, null, JsonUtil.mapToJSON(mData));
+					producer.produceMail(RabbitMqConnection.EXCHANGE_BIODIV, RabbitMqConnection.MAILING_ROUTINGKEY,
+							null, JsonUtil.mapToJSON(mData));
 				}
-
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
 	}
 
 	public void sendRequest(List<User> requesteeDetails, UserIbp requesterObject, UserGroupIbp userGroupIbp,
@@ -90,21 +85,18 @@ public class MailUtils {
 					requestData.put(REQUEST_DATA.ENCRYPTED_KEY.getAction(), encryptionKey);
 
 					data.put(FIELDS.DATA.getAction(), JsonUtil.unflattenJSON(requestData));
-					
+
 					Map<String, Object> mData = new HashMap<String, Object>();
 					mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.SEND_REQUEST.getAction());
 					mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 
-					producer.produceMail(RabbitMqConnection.EXCHANGE_BIODIV,
-							RabbitMqConnection.MAILING_ROUTINGKEY, null, JsonUtil.mapToJSON(mData));
-
+					producer.produceMail(RabbitMqConnection.EXCHANGE_BIODIV, RabbitMqConnection.MAILING_ROUTINGKEY,
+							null, JsonUtil.mapToJSON(mData));
 				}
-
 			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 	}
-
 }

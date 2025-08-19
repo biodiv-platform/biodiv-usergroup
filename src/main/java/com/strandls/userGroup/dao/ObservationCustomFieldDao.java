@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import java.util.List;
@@ -11,14 +9,13 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.userGroup.pojo.ObservationCustomField;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class ObservationCustomFieldDao extends AbstractDAO<ObservationCustomField, Long> {
 
@@ -27,7 +24,6 @@ public class ObservationCustomFieldDao extends AbstractDAO<ObservationCustomFiel
 	/**
 	 * @param sessionFactory
 	 */
-
 	@Inject
 	protected ObservationCustomFieldDao(SessionFactory sessionFactory) {
 		super(sessionFactory);
@@ -67,5 +63,4 @@ public class ObservationCustomFieldDao extends AbstractDAO<ObservationCustomFiel
 		}
 		return result;
 	}
-
 }

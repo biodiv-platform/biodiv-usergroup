@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service.impl;
 
 import com.google.inject.AbstractModule;
@@ -13,7 +11,6 @@ import com.strandls.userGroup.service.UserGroupSerivce;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupServiceModule extends AbstractModule {
 

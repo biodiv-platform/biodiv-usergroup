@@ -1,7 +1,5 @@
 package com.strandls.userGroup.dao;
 
-import javax.inject.Inject;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -10,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.pojo.UserGroupUserJoinRequest;
 import com.strandls.userGroup.util.AbstractDAO;
+
+import jakarta.inject.Inject;
 
 public class UserGroupUserRequestDAO extends AbstractDAO<UserGroupUserJoinRequest, Long> {
 
@@ -68,5 +68,4 @@ public class UserGroupUserRequestDAO extends AbstractDAO<UserGroupUserJoinReques
 		}
 		return entity;
 	}
-
 }

@@ -39,5 +39,4 @@ public class UserGroupDatatableFetch {
 	public void setOffset(Integer offset) {
 		this.offset = offset;
 	}
-
 }

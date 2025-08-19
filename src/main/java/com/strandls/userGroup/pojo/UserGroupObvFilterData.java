@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.Date;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupObvFilterData {
 
@@ -19,9 +16,7 @@ public class UserGroupObvFilterData {
 	private Long taxonomyId;
 	private Long authorId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupObvFilterData() {
 		super();
 	}
@@ -93,5 +88,4 @@ public class UserGroupObvFilterData {
 	public void setAuthorId(Long authorId) {
 		this.authorId = authorId;
 	}
-
 }

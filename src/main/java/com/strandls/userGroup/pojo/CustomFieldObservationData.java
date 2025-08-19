@@ -1,22 +1,17 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldObservationData {
 
 	private Long userGroupId;
 	private List<CustomFieldData> customField;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldObservationData() {
 		super();
 	}
@@ -46,5 +41,4 @@ public class CustomFieldObservationData {
 	public void setCustomField(List<CustomFieldData> customField) {
 		this.customField = customField;
 	}
-
 }

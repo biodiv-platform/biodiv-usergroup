@@ -1,16 +1,13 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service.impl;
-
-import javax.inject.Inject;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class RabbitMQProducer {
 
@@ -25,7 +22,5 @@ public class RabbitMQProducer {
 				updateType, null, null, null);
 		channel.basicPublish(EXCHANGE_BIODIV, routingKey, properties, message.getBytes("UTF-8"));
 		System.out.println(" [RABBITMQ] Sent Observation Id: '" + message + "'");
-
 	}
-
 }

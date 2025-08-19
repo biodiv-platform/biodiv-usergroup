@@ -1,11 +1,7 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service;
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.pac4j.core.profile.CommonProfile;
 
@@ -20,9 +16,10 @@ import com.strandls.userGroup.pojo.CustomFieldUGData;
 import com.strandls.userGroup.pojo.CustomFieldValues;
 import com.strandls.userGroup.pojo.CustomFieldValuesCreateData;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public interface CustomFieldServices {
 
@@ -56,7 +53,6 @@ public interface CustomFieldServices {
 	public List<CustomFieldDetails> addCustomFieldValues(HttpServletRequest request, Long customFieldId,
 			Long userGroupId, CustomFieldValuesCreateData cfVCreateData);
 
-	public List<CustomFieldDetails> editCustomFieldById(HttpServletRequest request, CommonProfile profile,Long ugID,
-			Long cfId,CustomFieldEditData customFieldEditData);
-
+	public List<CustomFieldDetails> editCustomFieldById(HttpServletRequest request, CommonProfile profile, Long ugID,
+			Long cfId, CustomFieldEditData customFieldEditData);
 }

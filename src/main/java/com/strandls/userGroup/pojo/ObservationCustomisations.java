@@ -29,5 +29,4 @@ public class ObservationCustomisations {
 	public void setMediaToggle(String mediaToggle) {
 		this.mediaToggle = mediaToggle;
 	}
-
 }

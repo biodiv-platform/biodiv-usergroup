@@ -1,41 +1,34 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "ug_spatial_data")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupSpatialData implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -129602292900457373L;
+
 	private Long id;
 	private Long userGroupId;
 	private String spatialData;
 	private Boolean isEnabled;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupSpatialData() {
 		super();
 	}
@@ -91,5 +84,4 @@ public class UserGroupSpatialData implements Serializable {
 	public void setIsEnabled(Boolean isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-
 }

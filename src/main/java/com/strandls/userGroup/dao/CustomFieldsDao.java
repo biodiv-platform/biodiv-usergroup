@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import org.hibernate.Session;
@@ -8,14 +6,13 @@ import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.userGroup.pojo.CustomFields;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldsDao extends AbstractDAO<CustomFields, Long> {
 
@@ -42,5 +39,4 @@ public class CustomFieldsDao extends AbstractDAO<CustomFields, Long> {
 		}
 		return result;
 	}
-
 }

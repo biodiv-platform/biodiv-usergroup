@@ -1,20 +1,15 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ReorderingHomePage {
 
 	private Long galleryId;
 	private Long displayOrder;
 
-	/**
-	 * 
-	 */
+	/** */
 	public ReorderingHomePage() {
 		super();
 	}
@@ -44,5 +39,4 @@ public class ReorderingHomePage {
 	public void setDisplayOrder(Long displayOrder) {
 		this.displayOrder = displayOrder;
 	}
-
 }

@@ -1,10 +1,10 @@
 package com.strandls.userGroup.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_group_data_tables")
@@ -14,15 +14,12 @@ public class UserGroupDataTable {
 	private Long userGroupId;
 	private Long dataTableId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupDataTable() {
 		super();
 	}
 
 	/**
-	 * 
 	 * @param userGroupId
 	 * @param dataTableId
 	 */
@@ -51,5 +48,4 @@ public class UserGroupDataTable {
 	public void setUserGroupId(Long userGroupId) {
 		this.userGroupId = userGroupId;
 	}
-
 }

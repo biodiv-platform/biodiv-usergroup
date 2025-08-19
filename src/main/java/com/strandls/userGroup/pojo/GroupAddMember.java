@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class GroupAddMember {
 
@@ -15,9 +12,7 @@ public class GroupAddMember {
 	private Long roleId;
 	private List<Long> memberList;
 
-	/**
-	 * 
-	 */
+	/** */
 	public GroupAddMember() {
 		super();
 	}
@@ -57,5 +52,4 @@ public class GroupAddMember {
 	public void setMemberList(List<Long> memberList) {
 		this.memberList = memberList;
 	}
-
 }

@@ -1,30 +1,31 @@
 package com.strandls.userGroup.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usergroup_user_join_request")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupUserJoinRequest {
-	
+
 	private Long id;
 	private Long userGroupId;
 	private Long userId;
-	
+
 	public UserGroupUserJoinRequest(Long userGroupId, Long userId) {
 		this.userId = userId;
 		this.userGroupId = userGroupId;
 	}
-	
-	public UserGroupUserJoinRequest() {}
-	
+
+	public UserGroupUserJoinRequest() {
+	}
+
 	public UserGroupUserJoinRequest(Long id, Long userGroupId, Long userId) {
 		super();
 		this.id = id;
@@ -102,5 +103,4 @@ public class UserGroupUserJoinRequest {
 	public String toString() {
 		return "UserGroupUserJoinRequest [id=" + id + ", userGroupId=" + userGroupId + ", userId=" + userId + "]";
 	}
-
 }

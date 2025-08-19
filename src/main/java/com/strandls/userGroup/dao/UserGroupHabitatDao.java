@@ -1,12 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,9 +13,10 @@ import org.slf4j.LoggerFactory;
 import com.strandls.userGroup.pojo.UserGroupHabitat;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupHabitatDao extends AbstractDAO<UserGroupHabitat, Long> {
 
@@ -63,5 +60,4 @@ public class UserGroupHabitatDao extends AbstractDAO<UserGroupHabitat, Long> {
 		}
 		return result;
 	}
-
 }

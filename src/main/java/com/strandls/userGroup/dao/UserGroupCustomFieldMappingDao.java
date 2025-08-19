@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import java.util.List;
@@ -11,14 +9,13 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.userGroup.pojo.UserGroupCustomFieldMapping;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupCustomFieldMappingDao extends AbstractDAO<UserGroupCustomFieldMapping, Long> {
 
@@ -80,14 +77,14 @@ public class UserGroupCustomFieldMappingDao extends AbstractDAO<UserGroupCustomF
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<UserGroupCustomFieldMapping> findBycustomfieldId(Long customFieldId) {
 		Session session = sessionFactory.openSession();
 		List<UserGroupCustomFieldMapping> result = null;
-		
+
 		String qry = "from UserGroupCustomFieldMapping where customFieldId = :id";
-		
+
 		try {
 			Query<UserGroupCustomFieldMapping> query = session.createQuery(qry);
 			query.setParameter("id", customFieldId);

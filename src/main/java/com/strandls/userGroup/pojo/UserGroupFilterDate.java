@@ -1,22 +1,17 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.Date;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupFilterDate {
 
 	private Date fromDate;
 	private Date toDate;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupFilterDate() {
 		super();
 	}
@@ -46,5 +41,4 @@ public class UserGroupFilterDate {
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
 	}
-
 }

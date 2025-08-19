@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import java.util.List;
@@ -11,14 +9,13 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.userGroup.pojo.UserGroupObservedonDateRule;
 import com.strandls.userGroup.util.AbstractDAO;
 
+import jakarta.inject.Inject;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupObservedOnDateRuleDao extends AbstractDAO<UserGroupObservedonDateRule, Long> {
 
@@ -79,5 +76,4 @@ public class UserGroupObservedOnDateRuleDao extends AbstractDAO<UserGroupObserve
 		}
 		return result;
 	}
-
 }

@@ -1,34 +1,29 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "observation_custom_field")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ObservationCustomField implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 3708196921054966277L;
+
 	private Long id;
 	private Long authorId;
 	private Long observationId;
@@ -41,9 +36,7 @@ public class ObservationCustomField implements Serializable {
 	private Double valueNumeric;
 	private Date valueDate;
 
-	/**
-	 * 
-	 */
+	/** */
 	public ObservationCustomField() {
 		super();
 	}
@@ -178,5 +171,4 @@ public class ObservationCustomField implements Serializable {
 	public void setValueDate(Date valueDate) {
 		this.valueDate = valueDate;
 	}
-
 }

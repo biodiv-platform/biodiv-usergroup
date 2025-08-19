@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
@@ -9,7 +7,6 @@ import com.strandls.activity.pojo.MailData;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupDocCreateData {
 
@@ -17,9 +14,7 @@ public class UserGroupDocCreateData {
 	private List<Long> userGroupIds;
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupDocCreateData() {
 		super();
 	}
@@ -59,5 +54,4 @@ public class UserGroupDocCreateData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
@@ -9,12 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Abhishek Rudra
- *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupCreateData {
 
-//	core userGroup data
+	// core userGroup data
 	private Boolean allowUserToJoin;
 	private String description;
 	private String homePage;
@@ -30,12 +27,10 @@ public class UserGroupCreateData {
 	private String theme;
 	private Long languageId;
 
-//	Founder and Moderator Invitation List
+	// Founder and Moderator Invitation List
 	private UserGroupInvitationData invitationData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupCreateData() {
 		super();
 	}
@@ -198,5 +193,4 @@ public class UserGroupCreateData {
 	public void setInvitationData(UserGroupInvitationData invitationData) {
 		this.invitationData = invitationData;
 	}
-
 }

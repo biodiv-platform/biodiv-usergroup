@@ -3,8 +3,6 @@ package com.strandls.userGroup.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -13,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.pojo.UserGroupDataTable;
 import com.strandls.userGroup.util.AbstractDAO;
+
+import jakarta.inject.Inject;
 
 public class UserGroupDataTableDao extends AbstractDAO<UserGroupDataTable, Long> {
 
@@ -66,8 +66,8 @@ public class UserGroupDataTableDao extends AbstractDAO<UserGroupDataTable, Long>
 		try {
 			Query query = session.createQuery(qry);
 			query.setParameter("ugId", ugId);
-			total = (Long)query.uniqueResult();
-			
+			total = (Long) query.uniqueResult();
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
@@ -115,5 +115,4 @@ public class UserGroupDataTableDao extends AbstractDAO<UserGroupDataTable, Long>
 		}
 		return result;
 	}
-
 }

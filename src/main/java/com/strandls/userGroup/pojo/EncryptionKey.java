@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class EncryptionKey {
 
@@ -18,5 +15,4 @@ public class EncryptionKey {
 	public void setToken(String token) {
 		this.token = token;
 	}
-
 }

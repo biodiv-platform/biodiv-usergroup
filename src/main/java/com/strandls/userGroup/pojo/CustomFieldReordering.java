@@ -1,19 +1,14 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldReordering {
 	private Long cfId;
 	private Long displayOrder;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldReordering() {
 		super();
 	}
@@ -43,5 +38,4 @@ public class CustomFieldReordering {
 	public void setDisplayOrder(Long displayOrder) {
 		this.displayOrder = displayOrder;
 	}
-
 }

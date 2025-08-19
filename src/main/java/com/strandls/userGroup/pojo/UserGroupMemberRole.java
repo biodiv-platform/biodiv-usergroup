@@ -1,22 +1,19 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 /**
  * @author Abhishek Rudra
- *
  */
 @Entity
 @Table(name = "user_group_member_role", uniqueConstraints = @UniqueConstraint(columnNames = { "user_group_id",
@@ -25,17 +22,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupMemberRole implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -5160519423395168068L;
+
 	private Long userGroupId;
 	private Long roleId;
 	private Long sUserId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupMemberRole() {
 		super();
 	}
@@ -81,5 +75,4 @@ public class UserGroupMemberRole implements Serializable {
 	public void setsUserId(Long sUserId) {
 		this.sUserId = sUserId;
 	}
-
 }

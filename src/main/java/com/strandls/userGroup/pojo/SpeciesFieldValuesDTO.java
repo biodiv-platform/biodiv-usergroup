@@ -43,5 +43,4 @@ public class SpeciesFieldValuesDTO {
 	public void setValues(Map<String, List<Long>> values) {
 		this.values = values;
 	}
-
 }

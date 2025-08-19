@@ -1,22 +1,17 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupPermissions {
 
 	private List<UserGroupMemberRole> userMemberRole;
 	private List<UserGroupMemberRole> userFeatureRole;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupPermissions() {
 		super();
 	}
@@ -46,5 +41,4 @@ public class UserGroupPermissions {
 	public void setUserFeatureRole(List<UserGroupMemberRole> userFeatureRole) {
 		this.userFeatureRole = userFeatureRole;
 	}
-
 }

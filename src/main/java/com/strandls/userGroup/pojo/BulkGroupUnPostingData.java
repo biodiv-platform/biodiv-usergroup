@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class BulkGroupUnPostingData {
 
@@ -19,11 +16,12 @@ public class BulkGroupUnPostingData {
 		super();
 	}
 
-	public BulkGroupUnPostingData(List<Long> userGroupList, List<UserGroupObvFilterData> ugFilterDataList,String recordType) {
+	public BulkGroupUnPostingData(List<Long> userGroupList, List<UserGroupObvFilterData> ugFilterDataList,
+			String recordType) {
 		super();
 		this.userGroupList = userGroupList;
-		this.ugFilterDataList  = ugFilterDataList;
-		this.recordType  = recordType;
+		this.ugFilterDataList = ugFilterDataList;
+		this.recordType = recordType;
 	}
 
 	public List<Long> getUserGroupList() {
@@ -49,5 +47,4 @@ public class BulkGroupUnPostingData {
 	public void setUgFilterDataList(List<UserGroupObvFilterData> ugFilterDataList) {
 		this.ugFilterDataList = ugFilterDataList;
 	}
-
 }

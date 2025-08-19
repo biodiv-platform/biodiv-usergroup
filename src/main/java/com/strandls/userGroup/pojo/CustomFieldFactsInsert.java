@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
@@ -9,30 +7,26 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomFieldFactsInsert {
 
 	private Long userGroupId;
 	private Long customFieldId;
 	private Long observationId;
-//	single categorical
+	// single categorical
 	private Long singleCategorical;
-//	multiple categorical
+	// multiple categorical
 	private List<Long> multipleCategorical;
 
-//	Range Data
+	// Range Data
 	private String minValue;
 	private String maxValue;
 
-//	Field text Box
+	// Field text Box
 	private String textBoxValue;
 
-	/**
-	* 
-	*/
+	/** */
 	public CustomFieldFactsInsert() {
 		super();
 	}
@@ -123,5 +117,4 @@ public class CustomFieldFactsInsert {
 	public void setTextBoxValue(String textBoxValue) {
 		this.textBoxValue = textBoxValue;
 	}
-
 }

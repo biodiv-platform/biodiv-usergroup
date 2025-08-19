@@ -2,12 +2,12 @@ package com.strandls.userGroup.service;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.strandls.userGroup.pojo.UserGroupCreateDatatable;
 import com.strandls.userGroup.pojo.UserGroupDatatableFetch;
 import com.strandls.userGroup.pojo.UserGroupDatatableMapping;
 import com.strandls.userGroup.pojo.UserGroupIbp;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserGroupDatatableService {
 
@@ -19,7 +19,5 @@ public interface UserGroupDatatableService {
 			List<Long> userGroups);
 
 	public List<UserGroupIbp> updateUserGroupDatatableMapping(HttpServletRequest request, Long datatableId,
-			UserGroupCreateDatatable userGroupDataTableData );
-
-
+			UserGroupCreateDatatable userGroupDataTableData);
 }

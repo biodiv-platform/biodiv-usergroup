@@ -55,5 +55,4 @@ public class UserGroupMappingCreateData {
 	public void setHasActivity(Boolean hasActivity) {
 		this.hasActivity = hasActivity;
 	}
-
 }

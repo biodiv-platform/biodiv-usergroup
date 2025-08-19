@@ -1,20 +1,15 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class FilterRule {
 	private String fieldName;
 	private String ruleName;
 	private String ruleValues;
 
-	/**
-	 * 
-	 */
+	/** */
 	public FilterRule() {
 		super();
 	}
@@ -54,5 +49,4 @@ public class FilterRule {
 	public void setRuleValues(String ruleValues) {
 		this.ruleValues = ruleValues;
 	}
-
 }

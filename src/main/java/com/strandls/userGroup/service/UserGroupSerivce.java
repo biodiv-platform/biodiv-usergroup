@@ -1,12 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.service;
 
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.pac4j.core.profile.CommonProfile;
 
@@ -41,9 +37,10 @@ import com.strandls.userGroup.pojo.UserGroupSpeciesFieldMeta;
 import com.strandls.userGroup.pojo.UserGroupSpeciesGroup;
 import com.strandls.userGroup.pojo.UsergroupSpeciesFieldMapping;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * @author Abhishek Rudra
- *
  */
 public interface UserGroupSerivce {
 
@@ -166,11 +163,10 @@ public interface UserGroupSerivce {
 
 	public List<SpeciesFieldValuesDTO> fetchSpeciesFieldsWithValuesByUgId(Long ugId);
 
-	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId,
-			List<SField> speciesFields);
-	
-	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId, List<SpeciesFieldMetadata> metadata);
-	
-	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
+	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields);
 
+	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId,
+			List<SpeciesFieldMetadata> metadata);
+
+	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
 }

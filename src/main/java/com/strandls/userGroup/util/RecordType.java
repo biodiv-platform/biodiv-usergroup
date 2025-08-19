@@ -1,7 +1,6 @@
 package com.strandls.userGroup.util;
 
 public enum RecordType {
-
 	DOCUMENT("document"), OBSERVATION("observation"), DATATABLE("datatable"), SPECIES("species");
 
 	private String field;

@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupInvitationData {
 
@@ -19,9 +17,7 @@ public class UserGroupInvitationData {
 	private List<String> founderEmail;
 	private List<String> moderatorsEmail;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupInvitationData() {
 		super();
 	}
@@ -92,5 +88,4 @@ public class UserGroupInvitationData {
 	public void setModeratorsEmail(List<String> moderatorsEmail) {
 		this.moderatorsEmail = moderatorsEmail;
 	}
-
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 /**
  * @author Harsh Zalavadiya
- *
  */
 public class UserGroupExpanded {
 
@@ -20,9 +19,7 @@ public class UserGroupExpanded {
 	private List<Long> speciesGroupIds;
 	private List<Long> habitatIds;
 
-	/**
-	 *
-	 */
+	/** */
 	public UserGroupExpanded() {
 		super();
 	}
@@ -133,5 +130,4 @@ public class UserGroupExpanded {
 	public void setHabitatIds(List<Long> habitatIds) {
 		this.habitatIds = habitatIds;
 	}
-
 }

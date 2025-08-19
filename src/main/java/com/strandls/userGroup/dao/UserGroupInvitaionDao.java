@@ -6,10 +6,10 @@ import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 import com.strandls.userGroup.pojo.UserGroupInvitation;
 import com.strandls.userGroup.util.AbstractDAO;
+
+import jakarta.inject.Inject;
 
 public class UserGroupInvitaionDao extends AbstractDAO<UserGroupInvitation, Long> {
 
@@ -50,7 +50,6 @@ public class UserGroupInvitaionDao extends AbstractDAO<UserGroupInvitation, Long
 			session.close();
 		}
 		return result;
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -70,5 +69,4 @@ public class UserGroupInvitaionDao extends AbstractDAO<UserGroupInvitation, Long
 		}
 		return result;
 	}
-
 }

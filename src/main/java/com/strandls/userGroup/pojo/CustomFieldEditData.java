@@ -2,14 +2,11 @@ package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
-public class CustomFieldEditData extends CustomFieldDetails  {
+public class CustomFieldEditData extends CustomFieldDetails {
 
 	private Long userGroupId;
-	
-	
-	/**
-	 * 
-	 */
+
+	/** */
 	public CustomFieldEditData() {
 		super();
 	}
@@ -23,11 +20,9 @@ public class CustomFieldEditData extends CustomFieldDetails  {
 	 * @param allowedParticipation
 	 */
 	public CustomFieldEditData(CustomFields customFields, List<CustomFieldValues> cfValues, String defaultValue,
-			Integer displayOrder, Boolean isMandatory, Boolean allowedParticipation,Long userGroupId) {
-		super(customFields,  cfValues,  defaultValue,
-				 displayOrder,  isMandatory,  allowedParticipation);
+			Integer displayOrder, Boolean isMandatory, Boolean allowedParticipation, Long userGroupId) {
+		super(customFields, cfValues, defaultValue, displayOrder, isMandatory, allowedParticipation);
 		this.userGroupId = userGroupId;
-		
 	}
 
 	public Long getUserGroupId() {
@@ -37,5 +32,4 @@ public class CustomFieldEditData extends CustomFieldDetails  {
 	public void setUserGroupId(Long userGroupId) {
 		this.userGroupId = userGroupId;
 	}
-
 }

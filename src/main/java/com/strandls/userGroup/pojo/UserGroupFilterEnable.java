@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupFilterEnable {
 
@@ -13,9 +10,7 @@ public class UserGroupFilterEnable {
 	private Boolean isEnabled;
 	private String filterType;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupFilterEnable() {
 		super();
 	}
@@ -55,5 +50,4 @@ public class UserGroupFilterEnable {
 	public void setFilterType(String filterType) {
 		this.filterType = filterType;
 	}
-
 }

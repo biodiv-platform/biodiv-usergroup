@@ -1,32 +1,26 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "user_group_cf_mapping")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupCustomFieldMapping implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 7236264523162316728L;
 
 	private Long id;
@@ -38,9 +32,7 @@ public class UserGroupCustomFieldMapping implements Serializable {
 	private Boolean isMandatory;
 	private Boolean allowedParticipation;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupCustomFieldMapping() {
 		super();
 	}
@@ -141,5 +133,4 @@ public class UserGroupCustomFieldMapping implements Serializable {
 	public void setAllowedParticipation(Boolean allowedParticipation) {
 		this.allowedParticipation = allowedParticipation;
 	}
-
 }

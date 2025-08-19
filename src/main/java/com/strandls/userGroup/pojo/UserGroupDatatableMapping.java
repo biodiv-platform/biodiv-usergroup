@@ -31,5 +31,4 @@ public class UserGroupDatatableMapping {
 	public void setUserGroupDataTableList(List<UserGroupDataTable> userGroupDataTableList) {
 		this.userGroupDataTableList = userGroupDataTableList;
 	}
-
 }

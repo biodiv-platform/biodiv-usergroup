@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldUGData {
 
@@ -15,9 +12,7 @@ public class CustomFieldUGData {
 	private Boolean isMandatory;
 	private Boolean allowedParticipation;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldUGData() {
 		super();
 	}
@@ -78,5 +73,4 @@ public class CustomFieldUGData {
 	public void setAllowedParticipation(Boolean allowedParticipation) {
 		this.allowedParticipation = allowedParticipation;
 	}
-
 }

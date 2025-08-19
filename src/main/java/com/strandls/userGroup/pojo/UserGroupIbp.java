@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupIbp {
 
@@ -15,9 +12,7 @@ public class UserGroupIbp {
 	private String webAddress;
 	private Boolean isParticipatory;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupIbp() {
 		super();
 	}
@@ -77,5 +72,4 @@ public class UserGroupIbp {
 	public void setIsParticipatory(Boolean isParticipatory) {
 		this.isParticipatory = isParticipatory;
 	}
-
 }

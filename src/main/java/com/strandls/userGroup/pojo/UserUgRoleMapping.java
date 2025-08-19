@@ -9,7 +9,6 @@ public class UserUgRoleMapping {
 	private List<Long> usergroupids;
 
 	/**
-	 * 
 	 * @param userid
 	 * @param roleid
 	 * @param role
@@ -58,5 +57,4 @@ public class UserUgRoleMapping {
 	public void setUsergroupids(List<Long> usergroupids) {
 		this.usergroupids = usergroupids;
 	}
-
 }

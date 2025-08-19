@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class ShowFilterRule {
 
@@ -21,9 +18,7 @@ public class ShowFilterRule {
 	private Boolean hasObservedOnDateRule;
 	private List<UserGroupObservedonDateRule> observedOnDateRule;
 
-	/**
-	 * 
-	 */
+	/** */
 	public ShowFilterRule() {
 		super();
 	}
@@ -126,5 +121,4 @@ public class ShowFilterRule {
 	public void setObservedOnDateRule(List<UserGroupObservedonDateRule> observedOnDateRule) {
 		this.observedOnDateRule = observedOnDateRule;
 	}
-
 }

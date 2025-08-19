@@ -1,7 +1,5 @@
 package com.strandls.userGroup.dao;
 
-import javax.inject.Inject;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -9,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.strandls.userGroup.pojo.Stats;
+
+import jakarta.inject.Inject;
 
 public class StatsDao {
 
@@ -53,5 +53,4 @@ public class StatsDao {
 
 		return stats;
 	}
-
 }

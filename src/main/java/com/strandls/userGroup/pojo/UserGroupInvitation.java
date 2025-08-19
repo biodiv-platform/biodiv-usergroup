@@ -2,29 +2,26 @@ package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "user_group_invitaion")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupInvitation implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 1663810459714154970L;
+
 	private Long id;
 	private Long inviterId;
 	private Long inviteeId;
@@ -32,9 +29,7 @@ public class UserGroupInvitation implements Serializable {
 	private Long roleId;
 	private String email;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupInvitation() {
 		super();
 	}
@@ -167,5 +162,4 @@ public class UserGroupInvitation implements Serializable {
 			return false;
 		return true;
 	}
-
 }

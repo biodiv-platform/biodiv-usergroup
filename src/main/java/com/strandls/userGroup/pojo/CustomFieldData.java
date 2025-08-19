@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldData {
 
@@ -21,9 +18,7 @@ public class CustomFieldData {
 	private Boolean allowedParticipation;
 	private CustomFieldValuesData customFieldValues;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldData() {
 		super();
 	}
@@ -145,5 +140,4 @@ public class CustomFieldData {
 	public void setCustomFieldValues(CustomFieldValuesData customFieldValues) {
 		this.customFieldValues = customFieldValues;
 	}
-
 }

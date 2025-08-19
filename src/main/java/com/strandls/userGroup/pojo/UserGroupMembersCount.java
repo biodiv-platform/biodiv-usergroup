@@ -5,9 +5,7 @@ public class UserGroupMembersCount {
 	private Long userGroupId;
 	private Long count;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupMembersCount() {
 		super();
 	}
@@ -37,5 +35,4 @@ public class UserGroupMembersCount {
 	public void setCount(Long count) {
 		this.count = count;
 	}
-
 }

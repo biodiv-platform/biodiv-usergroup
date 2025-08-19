@@ -1,43 +1,36 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "ug_obv_obsered_date_rule")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupObservedonDateRule implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 218208600259121809L;
+
 	private Long id;
 	private Long userGroupId;
 	private Date fromDate;
 	private Date toDate;
 	private Boolean isEnabled;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupObservedonDateRule() {
 		super();
 	}
@@ -104,5 +97,4 @@ public class UserGroupObservedonDateRule implements Serializable {
 	public void setIsEnabled(Boolean isEnabled) {
 		this.isEnabled = isEnabled;
 	}
-
 }

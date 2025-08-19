@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
@@ -9,9 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Abhishek Rudra
- *
  */
-@JsonIgnoreProperties(ignoreUnknown =  true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FeaturedCreate {
 
 	private String notes;
@@ -20,9 +17,7 @@ public class FeaturedCreate {
 	private List<Long> userGroup;
 	private Long languageId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public FeaturedCreate() {
 		super();
 	}
@@ -82,5 +77,4 @@ public class FeaturedCreate {
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
 	}
-
 }

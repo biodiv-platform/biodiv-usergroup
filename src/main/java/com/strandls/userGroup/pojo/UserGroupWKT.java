@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupWKT {
 
@@ -18,5 +15,4 @@ public class UserGroupWKT {
 	public void setWkt(String wkt) {
 		this.wkt = wkt;
 	}
-
 }

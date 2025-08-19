@@ -1,23 +1,19 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "group_gallery_slider")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -165,5 +161,4 @@ public class GroupGallerySlider {
 	public void setGallerySidebar(String gallerySidebar) {
 		this.gallerySidebar = gallerySidebar;
 	}
-
 }

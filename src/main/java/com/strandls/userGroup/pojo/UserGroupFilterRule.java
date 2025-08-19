@@ -1,33 +1,28 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "ug_filter_rule")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroupFilterRule implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 1403882258555241910L;
+
 	private Long id;
 	private Long userGroupId;
 	private Boolean hasSpatialRule;
@@ -36,12 +31,9 @@ public class UserGroupFilterRule implements Serializable {
 	private Boolean hasCreatedOnDateRule;
 	private Boolean hasObservedOnDateRule;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupFilterRule() {
 		super();
-
 	}
 
 	/**
@@ -129,5 +121,4 @@ public class UserGroupFilterRule implements Serializable {
 	public void setHasObservedOnDateRule(Boolean hasObservedOnDateRule) {
 		this.hasObservedOnDateRule = hasObservedOnDateRule;
 	}
-
 }

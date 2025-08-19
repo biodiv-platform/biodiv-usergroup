@@ -1,33 +1,28 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
 @Entity
 @Table(name = "custom_field_values")
 @JsonIgnoreProperties(ignoreUnknown = true, value = { "authorId" })
 public class CustomFieldValues implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -6046908308080401523L;
+
 	private Long id;
 	private Long customFieldId;
 	private String values;
@@ -35,9 +30,7 @@ public class CustomFieldValues implements Serializable {
 	private String iconURL;
 	private String notes;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldValues() {
 		super();
 	}
@@ -115,5 +108,4 @@ public class CustomFieldValues implements Serializable {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-
 }

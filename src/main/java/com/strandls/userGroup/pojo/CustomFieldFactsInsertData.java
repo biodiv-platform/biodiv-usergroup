@@ -7,9 +7,7 @@ public class CustomFieldFactsInsertData {
 	private CustomFieldFactsInsert factsCreateData;
 	private MailData mailData;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldFactsInsertData() {
 		super();
 	}
@@ -39,5 +37,4 @@ public class CustomFieldFactsInsertData {
 	public void setMailData(MailData mailData) {
 		this.mailData = mailData;
 	}
-
 }

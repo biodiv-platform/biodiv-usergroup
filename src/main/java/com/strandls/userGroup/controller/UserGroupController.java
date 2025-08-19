@@ -1,31 +1,9 @@
-/**
- *
- */
+/** */
 package com.strandls.userGroup.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 
 import org.pac4j.core.profile.CommonProfile;
 
@@ -71,20 +49,40 @@ import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 import com.strandls.userGroup.util.AppUtil;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.Response.Status;
 import net.minidev.json.JSONArray;
 
 /**
  * @author Abhishek Rudra
- *
  */
-
-@Api("UserGroup Serivce")
+@Tag(name = "UserGroup Service", description = "APIs for user group operations")
 @Path(ApiConstants.V1 + ApiConstants.GROUP)
+@Produces(MediaType.APPLICATION_JSON)
 public class UserGroupController {
 
 	@Inject
@@ -100,7 +98,7 @@ public class UserGroupController {
 	@GET
 	@Path("/ping")
 	@Produces(MediaType.TEXT_PLAIN)
-
+	@Operation(summary = "Ping endpoint for the user group service", description = "Returns 'PONG' if the service is running", responses = @ApiResponse(responseCode = "200", description = "pong", content = @Content(schema = @Schema(implementation = String.class))))
 	public Response pong() {
 		return Response.status(Status.OK).entity("PONG").build();
 	}
@@ -108,10 +106,11 @@ public class UserGroupController {
 	@GET
 	@Path("/{objectId}")
 	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Find UserGroup by ID", notes = "Returns UserGroup details", response = UserGroup.class)
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-	public Response getUserGroup(@PathParam("objectId") String objectId) {
+	@Operation(summary = "Find UserGroup by ID", description = "Returns UserGroup details", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup details", content = @Content(schema = @Schema(implementation = UserGroup.class))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response getUserGroup(
+			@Parameter(description = "UserGroup object ID", required = true) @PathParam("objectId") String objectId) {
 		try {
 			Long id = Long.parseLong(objectId);
 			UserGroup userGroup = ugServices.fetchByGroupId(id);
@@ -124,10 +123,11 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.MEDIATOGGLE + "/{ugId}")
 	@Consumes(MediaType.TEXT_PLAIN)
-	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Find media toggle value of a UserGroup by ID", notes = "Returns all observations customisation for ug as response", response = ObservationCustomisations.class)
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-	public Response getUserGroupMediaToggle(@PathParam("ugId") String ugId) {
+	@Operation(summary = "Find media toggle value of a UserGroup by ID", description = "Returns all observations customisation for ug as response", responses = {
+			@ApiResponse(responseCode = "200", description = "Observation customisations", content = @Content(schema = @Schema(implementation = ObservationCustomisations.class))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response getUserGroupMediaToggle(
+			@Parameter(description = "UserGroup ID", required = true) @PathParam("ugId") String ugId) {
 		try {
 			ObservationCustomisations ugObsCustomisations = ugServices.fetchMediaToggle(Long.parseLong(ugId));
 			return Response.status(Status.OK).entity(ugObsCustomisations).build();
@@ -139,14 +139,11 @@ public class UserGroupController {
 	@PUT
 	@Path(ApiConstants.OBSERVATIONCUSTOMISATIONS + ApiConstants.UPDATE)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-
-	@ValidateUser
-	@ApiOperation(value = "Update media toggle value of a UserGroup", response = UserGroup.class)
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-
+	@Operation(summary = "Update media toggle value of a UserGroup", description = "Update media toggle value of a UserGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup updated", content = @Content(schema = @Schema(implementation = UserGroup.class))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response updateGroupObservationCustomisations(@Context HttpServletRequest request,
-			@ApiParam(name = "observationCustomisations") ObservationCustomisations observationCustomisations) {
+			@Parameter(description = "Observation customisations") ObservationCustomisations observationCustomisations) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
@@ -166,8 +163,9 @@ public class UserGroupController {
 	@Path(ApiConstants.IBP + "/{objectId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Find UserGroup by ID", notes = "Returns UserGroup details for IBP", response = UserGroupIbp.class)
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
+	@Operation(summary = "Find UserGroup by ID", description = "Returns UserGroup details for IBP", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup details for IBP", content = @Content(schema = @Schema(implementation = UserGroupIbp.class))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getIbpData(@PathParam("objectId") String objectId) {
 		try {
 			Long id = Long.parseLong(objectId);
@@ -182,10 +180,9 @@ public class UserGroupController {
 	@Path(ApiConstants.OBSERVATION + "/{observationId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find UserGroup by observation ID", notes = "Returns UserGroup Details", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-
+	@Operation(summary = "Find UserGroup by observation ID", description = "Returns UserGroup Details", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup Details", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getObservationUserGroup(@PathParam("observationId") String observationId) {
 		try {
 			Long id = Long.parseLong(observationId);
@@ -194,16 +191,15 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-
 	}
 
 	@GET
 	@Path(ApiConstants.ALL + ApiConstants.OBSERVATION + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find all observation related to a userGroup", notes = "Return list of observation associated with a userGroup", response = Long.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Observation list not found", response = String.class) })
+	@Operation(summary = "Find all observation related to a userGroup", description = "Return list of observation associated with a userGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "Observation list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Long.class)))),
+			@ApiResponse(responseCode = "400", description = "Observation list not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getAllObservation(@PathParam("userGroupId") String groupId) {
 		try {
 			Long userGroupId = Long.parseLong(groupId);
@@ -219,12 +215,11 @@ public class UserGroupController {
 	@Path(ApiConstants.GROUPLIST)
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find list of UserGroup based on List of UserGroupId", notes = "Return UserGroup Details", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class) })
-
+	@Operation(summary = "Find list of UserGroup based on List of UserGroupId", description = "Return UserGroup Details", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroupList(
-			@ApiParam(name = "userGroupMember") @QueryParam("userGroupMember") String userGroupMember) {
+			@Parameter(description = "Comma separated list of UserGroup member IDs") @QueryParam("userGroupMember") String userGroupMember) {
 		try {
 			String[] userGroupRole = userGroupMember.split(",");
 			List<Long> memberList = new ArrayList<Long>();
@@ -236,22 +231,20 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-
 	}
 
 	@POST
 	@Path(ApiConstants.CREATE + "/{obsId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns List of UserGroup", response = Long.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
-
+	@Operation(summary = "Create Observation UserGroup Mapping", description = "Returns List of UserGroup", responses = {
+			@ApiResponse(responseCode = "201", description = "UserGroup mapping created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Long.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "409", description = "UserGroup-Observation Mapping Cannot be Created", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createObservationUserGroupMapping(@Context HttpServletRequest request,
 			@PathParam("obsId") String obsId,
-			@ApiParam(name = "userGroupData") UserGroupMappingCreateData userGroupData) {
+			@Parameter(description = "UserGroup data") UserGroupMappingCreateData userGroupData) {
 		try {
 
 			Long observationId = Long.parseLong(obsId);
@@ -270,15 +263,14 @@ public class UserGroupController {
 	@Path(ApiConstants.CREATE + "/datatable" + "/{obsId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns List of UserGroup", response = Long.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
-
+	@Operation(summary = "Create Observation UserGroup Mapping", description = "Returns List of UserGroup", responses = {
+			@ApiResponse(responseCode = "201", description = "UserGroup mapping created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Long.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "409", description = "UserGroup-Observation Mapping Cannot be Created", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createObservationUserGroupMappingDatatable(@Context HttpServletRequest request,
 			@PathParam("obsId") String obsId,
-			@ApiParam(name = "userGroupData") UserGroupMappingCreateData userGroupData) {
+			@Parameter(description = "UserGroup data") UserGroupMappingCreateData userGroupData) {
 		try {
 
 			Long observationId = Long.parseLong(obsId);
@@ -297,15 +289,13 @@ public class UserGroupController {
 	@Path(ApiConstants.UPDATE + ApiConstants.OBSERVATION + "/{observationId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Update the UserGroup Observation Mapping", notes = "Returns the List of UserGroup Linked", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Observation Mapping", response = String.class) })
-
+	@Operation(summary = "Update the UserGroup Observation Mapping", description = "Returns the List of UserGroup Linked", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup mapping updated", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "Unable to Update the UserGroup Observation Mapping", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response updateUserGroupMapping(@Context HttpServletRequest request,
 			@PathParam("observationId") String observationId,
-			@ApiParam(name = "userGroups") UserGroupMappingCreateData userGroup) {
+			@Parameter(description = "UserGroup data") UserGroupMappingCreateData userGroup) {
 		try {
 			Long obvId = Long.parseLong(observationId);
 
@@ -319,11 +309,9 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.ALL)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find all the UserGroups", notes = "Returns all the UserGroups", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups", response = String.class) })
-
+	@Operation(summary = "Find all the UserGroups", description = "Returns all the UserGroups", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "Unable to fetch the UserGroups", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getAllUserGroup() {
 		try {
 			List<UserGroupIbp> result = ugServices.fetchAllUserGroup();
@@ -336,11 +324,9 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.LIST)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find all the UserGroups for list page", notes = "Returns all the UserGroups for list page", response = UserGroupExpanded.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups list", response = String.class) })
-
+	@Operation(summary = "Find all the UserGroups for list page", description = "Returns all the UserGroups for list page", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroupExpanded list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupExpanded.class)))),
+			@ApiResponse(responseCode = "404", description = "Unable to fetch the UserGroups list", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getAllUserGroupList() {
 		try {
 			List<UserGroupExpanded> result = ugServices.fetchAllUserGroupExpanded();
@@ -354,10 +340,9 @@ public class UserGroupController {
 	@Path(ApiConstants.FEATURED + "/{objectType}/{objectId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find Featured", notes = "Return list Featured", response = Featured.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Featured not Found", response = String.class) })
-
+	@Operation(summary = "Find Featured", description = "Return list Featured", responses = {
+			@ApiResponse(responseCode = "200", description = "Featured list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Featured.class)))),
+			@ApiResponse(responseCode = "400", description = "Featured not Found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getAllFeatured(@PathParam("objectType") String objectType, @PathParam("objectId") String objectId) {
 
 		try {
@@ -374,12 +359,11 @@ public class UserGroupController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ValidateUser
-
-	@ApiOperation(value = "Posting of Featured to a Group", notes = "Returns the Details of Featured", response = Featured.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 404, message = "Unable to Feature in a Group", response = String.class) })
+	@Operation(summary = "Posting of Featured to a Group", description = "Returns the Details of Featured", responses = {
+			@ApiResponse(responseCode = "200", description = "Featured posted", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Featured.class)))),
+			@ApiResponse(responseCode = "404", description = "Unable to Feature in a Group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createFeatured(@Context HttpServletRequest request,
-			@ApiParam(name = "featuredCreate") FeaturedCreateData featuredCreate) {
+			@Parameter(description = "Featured create data") FeaturedCreateData featuredCreate) {
 
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -389,20 +373,19 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@PUT
 	@Path(ApiConstants.UNFEATURED + "/{objectType}/{objectId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "UnFeatures a Object from a UserGroup", notes = "Returns the Current Featured", response = Featured.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "Unable to Unfeature", response = String.class) })
+	@Operation(summary = "UnFeatures a Object from a UserGroup", description = "Returns the Current Featured", responses = {
+			@ApiResponse(responseCode = "200", description = "Featured unfeatured", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Featured.class)))),
+			@ApiResponse(responseCode = "404", description = "Unable to Unfeature", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response unFeatured(@Context HttpServletRequest request, @PathParam("objectType") String objectType,
 			@PathParam("objectId") String objectId,
-			@ApiParam("userGroupList") UserGroupMappingCreateData userGroupList) {
+			@Parameter(description = "UserGroup list") UserGroupMappingCreateData userGroupList) {
 		try {
 
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -419,11 +402,9 @@ public class UserGroupController {
 	@Path(ApiConstants.SPECIESGROUP + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Get the species Group for a userGroup", notes = "Returns the species Group for a userGroup", response = UserGroupSpeciesGroup.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to retireve the data", response = String.class) })
-
+	@Operation(summary = "Get the species Group for a userGroup", description = "Returns the species Group for a userGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "Species group list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupSpeciesGroup.class)))),
+			@ApiResponse(responseCode = "400", description = "Unable to retireve the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroupSGroup(@PathParam("userGroupId") String userGroupId) {
 		try {
 			Long ugId = Long.parseLong(userGroupId);
@@ -438,16 +419,12 @@ public class UserGroupController {
 	@Path(ApiConstants.ADD + ApiConstants.MEMBERS)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Sends out invitaions for founder and moedrators", notes = "Returns the success and failur", response = String.class)
-	@ApiResponses(value = {
-
-			@ApiResponse(code = 400, message = "Unable to send the invitaions", response = String.class) })
-
+	@Operation(summary = "Sends out invitaions for founder and moedrators", description = "Returns the success and failur", responses = {
+			@ApiResponse(responseCode = "200", description = "Invitations sent", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to send the invitaions", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response addUserGroupMember(@Context HttpServletRequest request,
-			@ApiParam(name = "userGroupInvitations") UserGroupInvitationData userGroupInvitations) {
+			@Parameter(description = "UserGroup invitations data") UserGroupInvitationData userGroupInvitations) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Boolean result = ugServices.addMemberRoleInvitaions(request, profile, userGroupInvitations);
@@ -457,17 +434,15 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@GET
 	@Path(ApiConstants.ADMINSTRATION + ApiConstants.MEMBERS + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "find the founder and moderator list", notes = "Return the founder and moderator list", response = AdministrationList.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to find the data", response = String.class) })
-
+	@Operation(summary = "find the founder and moderator list", description = "Return the founder and moderator list", responses = {
+			@ApiResponse(responseCode = "200", description = "Administration member list", content = @Content(schema = @Schema(implementation = AdministrationList.class))),
+			@ApiResponse(responseCode = "400", description = "unable to find the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getAdminstrationMember(@PathParam("userGroupId") String groupId) {
 		try {
 			AdministrationList result = ugServices.getAdminMembers(groupId);
@@ -477,22 +452,18 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@POST
 	@Path(ApiConstants.VALIDATE + ApiConstants.REQUEST)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "validate the join request for closed groups", notes = "In success returns the usergroup data", response = UserGroupIbp.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to validate the request", response = String.class) })
-
+	@Operation(summary = "validate the join request for closed groups", description = "In success returns the usergroup data", responses = {
+			@ApiResponse(responseCode = "200", description = "Join request validated", content = @Content(schema = @Schema(implementation = UserGroupIbp.class))),
+			@ApiResponse(responseCode = "400", description = "unable to validate the request", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response validateJoinRequest(@Context HttpServletRequest request,
-			@ApiParam(name = "encryptionKey") EncryptionKey encryptionKey) {
+			@Parameter(description = "Encryption key data") EncryptionKey encryptionKey) {
 		try {
 			UserGroupIbp result = ugServices.validateJoinRequest(request, encryptionKey.getToken());
 			if (result != null)
@@ -508,12 +479,10 @@ public class UserGroupController {
 	@Path(ApiConstants.REMOVE + ApiConstants.MEMBERS)
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
-
 	@ValidateUser
-
-	@ApiOperation(value = "remove a existing user from the group", notes = "remove existing user", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to remove the user", response = String.class) })
-
+	@Operation(summary = "remove a existing user from the group", description = "remove existing user", responses = {
+			@ApiResponse(responseCode = "200", description = "User removed", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "unable to remove the user", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response removeUserUG(@Context HttpServletRequest request, @QueryParam("userId") String userId,
 			@QueryParam("userGroupId") String userGroupId) {
 		try {
@@ -524,19 +493,16 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@PUT
 	@Path(ApiConstants.REMOVE + ApiConstants.BULK + ApiConstants.MEMBERS)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "remove list of existing users from the group", notes = "remove existing users", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to remove the users", response = String.class) })
-
+	@Operation(summary = "remove list of existing users from the group", description = "remove existing users", responses = {
+			@ApiResponse(responseCode = "200", description = "Users removed", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "unable to remove the users", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response removeBulkUserUG(@Context HttpServletRequest request,
 			@DefaultValue("false") @QueryParam("selectAll") Boolean selectAll, @QueryParam("userIds") String userIds,
 			@QueryParam("userGroupId") String userGroupId) {
@@ -549,19 +515,16 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@DELETE
 	@Path(ApiConstants.LEAVE + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
-
 	@ValidateUser
-
-	@ApiOperation(value = "endpoint to leave a group", notes = "leave group", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to leave the group", response = String.class) })
-
+	@Operation(summary = "endpoint to leave a group", description = "leave group", responses = {
+			@ApiResponse(responseCode = "200", description = "User left the group", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "unable to leave the group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response leaveUserGroup(@Context HttpServletRequest request, @PathParam("userGroupId") String userGroupId) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -573,20 +536,16 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@GET
 	@Path(ApiConstants.JOIN + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.TEXT_PLAIN)
-
 	@ValidateUser
-
-	@ApiOperation(value = "endpoint to join open group", notes = "User can join open group without invitation", response = String.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to join the userGroup", response = String.class) })
-
+	@Operation(summary = "endpoint to join open group", description = "User can join open group without invitation", responses = {
+			@ApiResponse(responseCode = "200", description = "User joined the Group", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "unable to join the userGroup", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response joinUserGroup(@Context HttpServletRequest request, @PathParam("userGroupId") String userGroupId) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -605,40 +564,36 @@ public class UserGroupController {
 	@Path(ApiConstants.SEND + ApiConstants.INVITES + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Send invites for Role Member in UserGroup", notes = "Sends Invitation mails for joining group as Member role", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to send invites", response = String.class) })
-
+	@io.swagger.v3.oas.annotations.Operation(summary = "Send invites for Role Member in UserGroup", description = "Sends invitation mails for joining group as Member role", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "List of user IDs to invite", content = @io.swagger.v3.oas.annotations.media.Content(array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(type = "integer", format = "int64")))), responses = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Invitations sent", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "406", description = "Invitation sending caused problem", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Unable to send invites (bad request or error)", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))) })
 	public Response sendInvitesForMemberRole(@Context HttpServletRequest request,
-			@PathParam("userGroupId") String userGroupId, @ApiParam(name = "userList") List<Long> userList) {
+			@io.swagger.v3.oas.annotations.Parameter(description = "User Group ID", required = true) @PathParam("userGroupId") String userGroupId,
+			List<Long> userList) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long ugId = Long.parseLong(userGroupId);
 			Boolean result = ugServices.sendInvitesForMemberRole(request, profile, ugId, userList);
 			if (result != null)
-				return Response.status(Status.OK).entity("Invitaion Sent out").build();
-			return Response.status(Status.NOT_ACCEPTABLE).entity("Invitation Sending caused Problem").build();
-
+				return Response.status(Response.Status.OK).entity("Invitation Sent out").build();
+			return Response.status(Response.Status.NOT_ACCEPTABLE).entity("Invitation Sending caused Problem").build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@POST
 	@Path(ApiConstants.BULK + ApiConstants.POSTING)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Bulk Posting of observation in a UserGroup", notes = "Returns the success failuer result", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to do Bulk Posting", response = String.class) })
-
+	@Operation(summary = "Bulk Posting of observation in a UserGroup", description = "Returns the success failuer result", responses = {
+			@ApiResponse(responseCode = "200", description = "Bulk Posting completed", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to do Bulk Posting", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response bulkPostingObservationUG(@Context HttpServletRequest request,
-			@ApiParam(name = "bulkGroupPosting") BulkGroupPostingData bulkGroupPostingData) {
+			@Parameter(name = "bulkGroupPosting") BulkGroupPostingData bulkGroupPostingData) {
 
 		try {
 
@@ -651,21 +606,18 @@ public class UserGroupController {
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
-
 	}
 
 	@POST
 	@Path(ApiConstants.BULK + ApiConstants.REMOVING)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Bulk removing of observation in a UserGroup", notes = "Returns the success failuer result", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "Unable to do Bulk removing", response = String.class) })
-
+	@Operation(summary = "Bulk removing of observation in a UserGroup", description = "Returns the success failuer result", responses = {
+			@ApiResponse(responseCode = "200", description = "Bulk Removing Completed", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to do Bulk removing", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response bulkRemovingObservation(@Context HttpServletRequest request,
-			@ApiParam(name = "bulkgroupUnPosting") BulkGroupUnPostingData bulkGroupUnPostingData) {
+			@Parameter(name = "bulkgroupUnPosting") BulkGroupUnPostingData bulkGroupUnPostingData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Boolean result = ugServices.bulkRemoving(request, profile, bulkGroupUnPostingData);
@@ -681,15 +633,13 @@ public class UserGroupController {
 	@Path(ApiConstants.ADD + ApiConstants.DIRECT + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Adds the user directly to usergroup", notes = "Add all the user", response = String.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to add the user", response = String.class) })
-
+	@Operation(summary = "Adds the user directly to usergroup", description = "Add all the user", responses = {
+			@ApiResponse(responseCode = "200", description = "Users added", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "400", description = "unable to add the user", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response addMembersDirectly(@Context HttpServletRequest request,
 			@PathParam("userGroupId") String userGroupId,
-			@ApiParam(name = "memberList") UserGroupAddMemebr memberList) {
+			@Parameter(name = "memberList") UserGroupAddMemebr memberList) {
 		try {
 
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -712,14 +662,12 @@ public class UserGroupController {
 	@Path(ApiConstants.CREATE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Create the userGroup", notes = "Returns the userGroupIBP data", response = UserGroupIbp.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to create the group", response = String.class) })
-
+	@Operation(summary = "Create the userGroup", description = "Returns the userGroupIBP data", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup created", content = @Content(schema = @Schema(implementation = UserGroupIbp.class))),
+			@ApiResponse(responseCode = "400", description = "unable to create the group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createUserGroup(@Context HttpServletRequest request,
-			@ApiParam(name = "userGroupCreateData") UserGroupCreateData ugCreateDate) {
+			@Parameter(description = "UserGroup create data") UserGroupCreateData ugCreateDate) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
@@ -740,12 +688,10 @@ public class UserGroupController {
 	@Path(ApiConstants.EDIT + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "find the userGroup edit data", notes = "Returns the edit data of userGroup", response = UserGroupEditData.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to read the data", response = String.class) })
-
+	@Operation(summary = "find the userGroup edit data", description = "Returns the edit data of userGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup edit data", content = @Content(schema = @Schema(implementation = UserGroupEditData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to read the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getEditData(@Context HttpServletRequest request, @PathParam("userGroupId") String userGroupId) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -763,15 +709,12 @@ public class UserGroupController {
 	@Path(ApiConstants.EDIT + ApiConstants.SAVE + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Save the editied data of UserGroup", notes = "Saves the edit of UserGroup", response = UserGroupIbp.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to edit the userGroup", response = String.class) })
-
+	@Operation(summary = "Save the editied data of UserGroup", description = "Saves the edit of UserGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup updated", content = @Content(schema = @Schema(implementation = UserGroupIbp.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to edit the userGroup", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response saveEdit(@Context HttpServletRequest request, @PathParam("userGroupId") String userGroupId,
-			@ApiParam("ugEditData") UserGroupEditData ugEditData) {
+			@Parameter(description = "UserGroup edit data") UserGroupEditData ugEditData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			Long ugId = Long.parseLong(userGroupId);
@@ -855,11 +798,9 @@ public class UserGroupController {
 	@Path(ApiConstants.HOMEPAGE + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "find group homepage data", notes = "return group home page data", response = GroupHomePageData.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
-
+	@Operation(summary = "find group homepage data", description = "return group home page data", responses = {
+			@ApiResponse(responseCode = "200", description = "Group home page data", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getGroupHomePage(@PathParam("userGroupId") String ugId) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
@@ -877,12 +818,10 @@ public class UserGroupController {
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "find group edit homepage data", notes = "return group home page data", response = UserGroupHomePageEditData.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
-
+	@Operation(summary = "find group edit homepage data", description = "return group home page data", responses = {
+			@ApiResponse(responseCode = "200", description = "Group home page edit data", content = @Content(schema = @Schema(implementation = UserGroupHomePageEditData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getGroupHomePageEditData(@Context HttpServletRequest request,
 			@PathParam("userGroupId") String ugId) {
 		try {
@@ -899,12 +838,10 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.PERMISSION + ApiConstants.OBSERVATION)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "get usergroup observation permission", notes = "returns the usergroup for each user", response = UserGroupPermissions.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to get the usergroup", response = String.class) })
-
+	@Operation(summary = "get usergroup observation permission", description = "returns the usergroup for each user", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup observation permissions", content = @Content(schema = @Schema(implementation = UserGroupPermissions.class))),
+			@ApiResponse(responseCode = "400", description = "unable to get the usergroup", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroupObservationPermission(@Context HttpServletRequest request) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -920,11 +857,9 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.PERMISSION + ApiConstants.OBSERVATION + "/{userGroupId}/{observationId}")
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "get usergroup observation permission", notes = "returns the usergroup for each user", response = UserGroupObservation.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to get the usergroup", response = String.class) })
-
+	@Operation(summary = "get usergroup observation permission", description = "returns the usergroup for each user", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup observation permission", content = @Content(schema = @Schema(implementation = UserGroupObservation.class))),
+			@ApiResponse(responseCode = "400", description = "unable to get the usergroup", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response checkUserGroupObservationPermission(@PathParam("userGroupId") String userGroupId,
 			@PathParam("observationId") String observationId) {
 		try {
@@ -943,13 +878,10 @@ public class UserGroupController {
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.REMOVE + "/{userGroupId}/{galleryId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Delete group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
-
+	@Operation(summary = "Delete group homepage gallery data", description = "return group home page data", responses = {
+			@ApiResponse(responseCode = "200", description = "Gallery data removed", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response removeGalleryData(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
 			@PathParam("galleryId") String galleryId) {
 		try {
@@ -969,15 +901,12 @@ public class UserGroupController {
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "Edit group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
-
+	@Operation(summary = "Edit group homepage gallery data", description = "return group home page data", responses = {
+			@ApiResponse(responseCode = "200", description = "Gallery data updated", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response editHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
-			@PathParam("galleryId") String galleryId, @ApiParam(name = "editData") GroupGallerySlider editData) {
+			@PathParam("galleryId") String galleryId, @Parameter(name = "editData") GroupGallerySlider editData) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			Long groupGalleryId = Long.parseLong(galleryId);
@@ -994,12 +923,10 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.PERMISSION)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "get usergroup observation permission", notes = "returns the usergroup for each user", response = UserGroupPermissions.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to get the usergroup", response = String.class) })
-
+	@Operation(summary = "get usergroup observation permission", description = "returns the usergroup for each user", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup observation permissions", content = @Content(schema = @Schema(implementation = UserGroupPermissions.class))),
+			@ApiResponse(responseCode = "400", description = "unable to get the usergroup", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroupPermission(@Context HttpServletRequest request) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -1016,15 +943,12 @@ public class UserGroupController {
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.UPDATE + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "update group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
-	@ApiResponses(value = {
-
-			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+	@Operation(summary = "update group homepage gallery data", description = "return group home page data", responses = {
+			@ApiResponse(responseCode = "200", description = "Gallery data updated", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response updateGalleryData(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
-			@ApiParam(name = "editData") UserGroupHomePageEditData editData) {
+			@Parameter(name = "editData") UserGroupHomePageEditData editData) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			GroupHomePageData result = ugServices.updateGroupHomePage(request, userGroupId, editData);
@@ -1040,11 +964,10 @@ public class UserGroupController {
 	@GET
 	@Path(ApiConstants.MEMBER + ApiConstants.LIST)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "list all groups by membership status", notes = "returns true and false", response = Boolean.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to fetch the data", response = String.class) })
-
+	@Operation(summary = "list all groups by membership status", description = "returns true and false", responses = {
+			@ApiResponse(responseCode = "200", description = "Group list by membership status", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response userGroupMemberList(@Context HttpServletRequest request) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
@@ -1061,10 +984,9 @@ public class UserGroupController {
 	@Path(ApiConstants.MEMBER + ApiConstants.LIST + "/{userId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "list all groups by membership status", notes = "returns true and false", response = Boolean.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to fetch the data", response = String.class) })
-
+	@Operation(summary = "list all groups by membership status", description = "returns true and false", responses = {
+			@ApiResponse(responseCode = "200", description = "Group list by membership status", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response userGroupMemberListByUserId(@PathParam("userId") String userId) {
 		try {
 			if (userId.isEmpty()) {
@@ -1082,11 +1004,10 @@ public class UserGroupController {
 	@Path(ApiConstants.MEMBER + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "check user is a member of the group or not", notes = "returns true and false", response = Boolean.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to fetch the data", response = String.class) })
-
+	@Operation(summary = "check user is a member of the group or not", description = "returns true and false", responses = {
+			@ApiResponse(responseCode = "200", description = "Membership status", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response checkUserMember(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId) {
 		try {
 
@@ -1107,12 +1028,13 @@ public class UserGroupController {
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.REORDERING + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
+	@Operation(summary = "Reorder the homepage gallery slider", description = "Reorders the homepage gallery slider for a userGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "Homepage gallery slider reordered", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "unable to reorder the slider", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response reorderingHomePageGallerySlider(@Context HttpServletRequest request,
 			@PathParam("userGroupId") String ugId,
-			@ApiParam(name = "reorderingHomePage") List<ReorderingHomePage> reorderingHomePage) {
+			@Parameter(name = "reorderingHomePage") List<ReorderingHomePage> reorderingHomePage) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			GroupHomePageData result = ugServices.reorderingHomePageSlider(request, userGroupId, reorderingHomePage);
@@ -1129,11 +1051,10 @@ public class UserGroupController {
 	@Path(ApiConstants.ENABLE + ApiConstants.EDIT + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "check eligiblity for edit button", notes = "Returns true and false", response = Boolean.class)
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to find the data", response = String.class) })
-
+	@Operation(summary = "check eligiblity for edit button", description = "Returns true and false", responses = {
+			@ApiResponse(responseCode = "200", description = "Edit button eligibility", content = @Content(schema = @Schema(implementation = Boolean.class))),
+			@ApiResponse(responseCode = "400", description = "unable to find the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response enableEdit(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
@@ -1149,10 +1070,9 @@ public class UserGroupController {
 	@Path(ApiConstants.DATATABLE + "/{dataTableId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find UserGroup by dataTable ID", notes = "Returns UserGroup Details", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-
+	@Operation(summary = "Find UserGroup by dataTable ID", description = "Returns UserGroup Details", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup details", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getDataTableUserGroup(@PathParam("dataTableId") String dataTableId) {
 		try {
 			Long id = Long.parseLong(dataTableId);
@@ -1167,12 +1087,11 @@ public class UserGroupController {
 	@Path(ApiConstants.USERGROUPDATATABLE)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Find dataTable by UserGroup ID", notes = "Returns Datatable list by userGroup", response = UserGroupDatatableMapping.class)
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "Datatable not found", response = String.class) })
-
+	@Operation(summary = "Find dataTable by UserGroup ID", description = "Returns Datatable list by userGroup", responses = {
+			@ApiResponse(responseCode = "200", description = "Datatable list", content = @Content(schema = @Schema(implementation = UserGroupDatatableMapping.class))),
+			@ApiResponse(responseCode = "404", description = "Datatable not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getDataTablebyUserGroupId(
-			@ApiParam(name = "groupDatatableFetch") UserGroupDatatableFetch groupDatatableFetch) {
+			@Parameter(name = "groupDatatableFetch") UserGroupDatatableFetch groupDatatableFetch) {
 		try {
 			UserGroupDatatableMapping userGroup = udDatatableService.fetchDataTableByUserGroup(groupDatatableFetch);
 			return Response.status(Status.OK).entity(userGroup).build();
@@ -1185,10 +1104,9 @@ public class UserGroupController {
 	@Path(ApiConstants.DOCUMENT + "/{documentId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "finds all the usergroup for a document", notes = "returns the usergroup in which the document is posted", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-
+	@Operation(summary = "finds all the usergroup for a document", description = "returns the usergroup in which the document is posted", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup list by document", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroupByDocId(@PathParam("documentId") String documentId) {
 		try {
 			Long docId = Long.parseLong(documentId);
@@ -1205,15 +1123,12 @@ public class UserGroupController {
 	@Path(ApiConstants.DOCUMENT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "create usegroup to doc mapping", notes = "returns all the group in which document is posted", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to create the mapping", response = String.class) })
-
+	@Operation(summary = "create usegroup to doc mapping", description = "returns all the group in which document is posted", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup-Document mapping created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "unable to create the mapping", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createUGDocMapping(@Context HttpServletRequest request,
-			@ApiParam(name = "groupDocCreateData") UserGroupDocCreateData groupDocCreateData) {
+			@Parameter(name = "groupDocCreateData") UserGroupDocCreateData groupDocCreateData) {
 		try {
 			List<UserGroupIbp> result = ugServices.createUGDocMapping(request, groupDocCreateData);
 			if (result != null)
@@ -1228,14 +1143,12 @@ public class UserGroupController {
 	@Path(ApiConstants.UPDATE + ApiConstants.DOCUMENT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "update the usergroup document mapping", notes = "returns the udpate set of usergroup", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to update the data", response = String.class) })
-
+	@Operation(summary = "update the usergroup document mapping", description = "returns the udpate set of usergroup", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup-Document mapping updated", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "unable to update the data", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response updateUGDocMapping(@Context HttpServletRequest request,
-			@ApiParam(name = "ugDocMapping") UserGroupDocCreateData ugDocMapping) {
+			@Parameter(name = "ugDocMapping") UserGroupDocCreateData ugDocMapping) {
 		try {
 
 			List<UserGroupIbp> result = ugServices.updateUGDocMapping(request, ugDocMapping);
@@ -1251,11 +1164,9 @@ public class UserGroupController {
 	@Path(ApiConstants.SPECIES + "/{speciesId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "fetch by speciesId", notes = "return the usergroup associated with the species", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to fetch the user group", response = String.class) })
-
+	@Operation(summary = "fetch by speciesId", description = "return the usergroup associated with the species", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup list by species", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the user group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getSpeciesUserGroup(@PathParam("speciesId") String speciesId) {
 		try {
 			Long SpeciesId = Long.parseLong(speciesId);
@@ -1271,16 +1182,13 @@ public class UserGroupController {
 	@Path(ApiConstants.SPECIES + ApiConstants.CREATE + "/{speciesId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "post species to usergroup", notes = "return the usergroup associated with the species", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to fetch the user group", response = String.class) })
-
+	@Operation(summary = "post species to usergroup", description = "return the usergroup associated with the species", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup-species mapping created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the user group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createUserGroupSpeciesMapping(@Context HttpServletRequest request,
 			@PathParam("speciesId") String speciesId,
-			@ApiParam(name = "ugSpeciesCreateData") UserGroupSpeciesCreateData ugSpeciesCreateData) {
+			@Parameter(description = "UserGroup species create data") UserGroupSpeciesCreateData ugSpeciesCreateData) {
 		try {
 			Long spId = Long.parseLong(speciesId);
 			List<UserGroupIbp> result = ugServices.createUGSpeciesMapping(request, spId, ugSpeciesCreateData);
@@ -1294,16 +1202,13 @@ public class UserGroupController {
 	@Path(ApiConstants.SPECIES + ApiConstants.UPDATE + "/{speciesId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-
-	@ApiOperation(value = "update userGroup in species Page", notes = "return the usergroup associated with the species", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to fetch the user group", response = String.class) })
-
+	@Operation(summary = "update userGroup in species Page", description = "return the usergroup associated with the species", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup-species mapping updated", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the user group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response updateUserGroupSpeciesMapping(@Context HttpServletRequest request,
 			@PathParam("speciesId") String speciesId,
-			@ApiParam(name = "ugSpeciesCreateData") UserGroupSpeciesCreateData ugSpeciesCreateData) {
+			@Parameter(description = "UserGroup species create data") UserGroupSpeciesCreateData ugSpeciesCreateData) {
 		try {
 			Long spId = Long.parseLong(speciesId);
 			List<UserGroupIbp> result = ugServices.updateUGSpeciesMapping(request, spId, ugSpeciesCreateData);
@@ -1317,15 +1222,14 @@ public class UserGroupController {
 	@Path(ApiConstants.CREATE + ApiConstants.DATATABLE + "/{datatableId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Create Datatable UserGroup Mapping", notes = "Returns List of UserGroup", response = Long.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
-
+	@Operation(summary = "Create Datatable UserGroup Mapping", description = "Returns List of UserGroup", responses = {
+			@ApiResponse(responseCode = "201", description = "UserGroup datatable mapping created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Long.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "409", description = "UserGroup-Observation Mapping Cannot be Created", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createDatatableUserGroupMapping(@Context HttpServletRequest request,
 			@PathParam("datatableId") String dataTableId,
-			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupData) {
+			@Parameter(description = "UserGroup data") UserGroupCreateDatatable userGroupData) {
 		try {
 			Long datatableId = Long.parseLong(dataTableId);
 			List<Long> result = udDatatableService.createUserGroupDatatableMapping(request, datatableId,
@@ -1343,15 +1247,13 @@ public class UserGroupController {
 	@Path(ApiConstants.UPDATE + ApiConstants.DATATABLE + "/{datatableId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Update the UserGroup Datatable Mapping", notes = "Returns the List of UserGroup Linked", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Datatable Mapping", response = String.class) })
-
+	@Operation(summary = "Update the UserGroup Datatable Mapping", description = "Returns the List of UserGroup Linked", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup datatable mapping updated", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "400", description = "Unable to Update the UserGroup Datatable Mapping", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response updateDatatableUserGroupMapping(@Context HttpServletRequest request,
 			@PathParam("datatableId") String dataTableId,
-			@ApiParam(name = "userGroupData") UserGroupCreateDatatable userGroupDataTableData) {
+			@Parameter(description = "UserGroup data") UserGroupCreateDatatable userGroupDataTableData) {
 		try {
 			Long datatableId = Long.parseLong(dataTableId);
 			List<UserGroupIbp> result = udDatatableService.updateUserGroupDatatableMapping(request, datatableId,
@@ -1366,12 +1268,10 @@ public class UserGroupController {
 	@Path(ApiConstants.GROUPLIST_ADMIN)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "fetch by speciesId", notes = "return the usergroup associated with the species", response = UserGroupAdminList.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to fetch the user group", response = String.class) })
-
+	@Operation(summary = "fetch by speciesId", description = "return the usergroup associated with the species", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup admin list", content = @Content(schema = @Schema(implementation = UserGroupAdminList.class))),
+			@ApiResponse(responseCode = "400", description = "unable to fetch the user group", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroupAdminListByUserId(@Context HttpServletRequest request) {
 		try {
 			UserGroupAdminList result = ugServices.getUserGroupAdminListByUserId(request);
@@ -1386,12 +1286,11 @@ public class UserGroupController {
 	@Path(ApiConstants.CREATE + "/{obsId}/{ugId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
-
+	@Operation(summary = "Create Observation UserGroup Mapping", description = "Returns UserGroup Observation", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup observation mapping created", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "409", description = "UserGroup-Observation Mapping Cannot be Created", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response createObservationUserGroup(@Context HttpServletRequest request, @PathParam("obsId") String obsId,
 			@PathParam("ugId") String ugId) {
 		try {
@@ -1411,12 +1310,11 @@ public class UserGroupController {
 	@Path(ApiConstants.REMOVE + "/{obsId}/{ugId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
-
+	@Operation(summary = "Create Observation UserGroup Mapping", description = "Returns UserGroup Observation", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup observation mapping removed", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "409", description = "UserGroup-Observation Mapping Cannot be Created", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response removeObservationUserGroup(@Context HttpServletRequest request, @PathParam("obsId") String obsId,
 			@PathParam("ugId") String ugId) {
 		try {
@@ -1436,12 +1334,11 @@ public class UserGroupController {
 	@Path(ApiConstants.REMOVE + "/datatable" + "/{obsId}/{ugId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	@ValidateUser
-	@ApiOperation(value = "Create Observation UserGroup Mapping", notes = "Returns UserGroup Observation", response = UserGroupIbp.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-Observation Mapping Cannot be Created", response = String.class) })
-
+	@Operation(summary = "Create Observation UserGroup Mapping", description = "Returns UserGroup Observation", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup observation mapping removed", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGroupIbp.class)))),
+			@ApiResponse(responseCode = "404", description = "UserGroup Not Found ", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "409", description = "UserGroup-Observation Mapping Cannot be Created", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response removeObservationUserGroupDatatable(@Context HttpServletRequest request,
 			@PathParam("obsId") String obsId, @PathParam("ugId") String ugId) {
 		try {
@@ -1462,11 +1359,9 @@ public class UserGroupController {
 	@Path("/userGroupSpeciesFields" + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
-	@ApiOperation(value = "Get species fields By user Group id", notes = "Returns the List of usergroup to species fields mappings", response = SpeciesFieldValuesDTO.class, responseContainer = "List")
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Unable to Update the UserGroup Datatable Mapping", response = String.class) })
-
+	@Operation(summary = "Get species fields By user Group id", description = "Returns the List of usergroup to species fields mappings", responses = {
+			@ApiResponse(responseCode = "200", description = "UserGroup to species fields mappings", content = @Content(array = @ArraySchema(schema = @Schema(implementation = SpeciesFieldValuesDTO.class)))),
+			@ApiResponse(responseCode = "400", description = "Unable to Update the UserGroup Datatable Mapping", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getSpeciesFieldsByUserGroupId(@PathParam("userGroupId") String userGroupId) {
 		try {
 			Long ugId = Long.parseLong(userGroupId);
@@ -1478,27 +1373,26 @@ public class UserGroupController {
 	}
 
 	@POST
-	@Path(ApiConstants.UPDATE + "/speciesFieldsMapping" + "/{ugId}")
+	@Path(ApiConstants.UPDATE + "/speciesFieldsMapping/{ugId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-
 	// @ValidateUser
-	@ApiOperation(value = "Create UserGroup species fields Mapping", notes = "Returns List of UserGroup specied fields mappings", response = UsergroupSpeciesFieldMapping.class, responseContainer = "List")
-	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup Not Found ", response = String.class),
-			@ApiResponse(code = 409, message = "UserGroup-speciesFields Mapping Cannot be Created", response = String.class) })
-
+	@io.swagger.v3.oas.annotations.Operation(summary = "Create UserGroup species fields Mapping", description = "Returns List of UserGroup species fields mappings", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "List of species fields to map", content = @io.swagger.v3.oas.annotations.media.Content(array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = SField.class)))), responses = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "UserGroup species fields mapping created/updated", content = @io.swagger.v3.oas.annotations.media.Content(array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = UsergroupSpeciesFieldMapping.class)))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "UserGroup not found", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "UserGroup-speciesFields Mapping cannot be created", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))) })
 	public Response updateUserGroupSpeciesFieldsMapping(@Context HttpServletRequest request,
-			@PathParam("ugId") String ugId, @ApiParam(name = "speciesFields") List<SField> speciesFields) {
+			@io.swagger.v3.oas.annotations.Parameter(description = "UserGroup ID", required = true) @PathParam("ugId") String ugId,
+			List<SField> speciesFields) {
 		try {
-
 			List<UsergroupSpeciesFieldMapping> result = ugServices
 					.updateSpeciesFieldsMappingByUgId(Long.parseLong(ugId), speciesFields);
 			if (result == null)
-				return Response.status(Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
-			return Response.status(Status.CREATED).entity(result).build();
-
+				return Response.status(Response.Status.CONFLICT).entity(ERROR_OCCURED_IN_TRANSACTION).build();
+			return Response.status(Response.Status.CREATED).entity(result).build();
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
@@ -1506,23 +1400,24 @@ public class UserGroupController {
 	@Path("/speciesField/metadata/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Update Species Field Metadata for User Group", notes = "Returns list of updated metadata", response = UserGroupSpeciesFieldMeta.class, responseContainer = "List")
-//	@ValidateUser
+	// @ValidateUser
+	@io.swagger.v3.oas.annotations.Operation(summary = "Update Species Field Metadata for User Group", description = "Returns list of updated metadata", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "List of species field metadata objects", required = true, content = @io.swagger.v3.oas.annotations.media.Content(array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = SpeciesFieldMetadata.class)))), responses = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "List of updated species field metadata", content = @io.swagger.v3.oas.annotations.media.Content(array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = UserGroupSpeciesFieldMeta.class)))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Could not update species field metadata", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))) })
 	public Response updateSpeciesFieldMetadata(@Context HttpServletRequest request,
-			@PathParam("userGroupId") Long userGroupId,
-			@ApiParam(name = "speciesFieldMetadata") List<SpeciesFieldMetadata> metadata) {
+			@io.swagger.v3.oas.annotations.Parameter(description = "User group ID", required = true) @PathParam("userGroupId") Long userGroupId,
+			List<SpeciesFieldMetadata> metadata) {
 		try {
-
 			List<UserGroupSpeciesFieldMeta> result = ugServices.updateSpeciesFieldMetadata(userGroupId, metadata);
-
 			if (result != null) {
 				return Response.ok().entity(result).build();
 			} else {
-				return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not update species field metadata")
-						.build();
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+						.entity("Could not update species field metadata").build();
 			}
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
 
@@ -1530,19 +1425,22 @@ public class UserGroupController {
 	@Path("/speciesField/metadata/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "get Species Field Metadata for User Group", notes = "Returns list of species fields metadata mapped for the usergroup", response = UserGroupSpeciesFieldMeta.class, responseContainer = "List")
-	public Response getSpeciesFieldMetadata(@PathParam("userGroupId") Long userGroupId) {
+	@io.swagger.v3.oas.annotations.Operation(summary = "Get Species Field Metadata for User Group", description = "Returns list of species fields metadata mapped for the usergroup", responses = {
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "List of species fields metadata", content = @io.swagger.v3.oas.annotations.media.Content(array = @io.swagger.v3.oas.annotations.media.ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = UserGroupSpeciesFieldMeta.class)))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Could not get species field metadata", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))),
+			@io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request", content = @io.swagger.v3.oas.annotations.media.Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class))) })
+	public Response getSpeciesFieldMetadata(
+			@io.swagger.v3.oas.annotations.Parameter(description = "User group ID", required = true) @PathParam("userGroupId") Long userGroupId) {
 		try {
 			List<UserGroupSpeciesFieldMeta> result = ugServices.getSpeciesFieldMetaData(userGroupId);
 			if (result != null) {
 				return Response.ok().entity(result).build();
 			} else {
-				return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Could not get species field metadata")
-						.build();
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+						.entity("Could not get species field metadata").build();
 			}
 		} catch (Exception e) {
-			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
-
 }

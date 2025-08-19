@@ -1,20 +1,15 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupFilterRemove {
 
 	private String filterName;
 	private Long filterId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroupFilterRemove() {
 		super();
 	}
@@ -44,5 +39,4 @@ public class UserGroupFilterRemove {
 	public void setFilterId(Long filterId) {
 		this.filterId = filterId;
 	}
-
 }

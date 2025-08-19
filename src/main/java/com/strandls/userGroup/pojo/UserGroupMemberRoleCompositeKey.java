@@ -1,20 +1,16 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupMemberRoleCompositeKey implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -1230885753143316138L;
+
 	private Long userGroupId;
 	private Long roleId;
 	private Long sUserId;
@@ -42,5 +38,4 @@ public class UserGroupMemberRoleCompositeKey implements Serializable {
 	public void setsUserId(Long sUserId) {
 		this.sUserId = sUserId;
 	}
-
 }

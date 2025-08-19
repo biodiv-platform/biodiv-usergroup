@@ -1,35 +1,28 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Type;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 /**
  * @author Abhishek Rudra
- *
  */
 @Entity
 @Table(name = "user_group")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserGroup implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 9177200176991398786L;
 
 	private Long id;
@@ -63,9 +56,7 @@ public class UserGroup implements Serializable {
 	private List<Long> speciesGroupIds;
 	private String mediaToggle;
 
-	/**
-	 * 
-	 */
+	/** */
 	public UserGroup() {
 		super();
 	}
@@ -184,7 +175,6 @@ public class UserGroup implements Serializable {
 	}
 
 	@Column(name = "description")
-	@Type(type = "text")
 	public String getDescription() {
 		return description;
 	}
@@ -408,5 +398,4 @@ public class UserGroup implements Serializable {
 	public void setMediaToggle(String mediaTogle) {
 		this.mediaToggle = mediaTogle;
 	}
-
 }

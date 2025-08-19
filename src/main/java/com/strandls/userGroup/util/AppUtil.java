@@ -1,9 +1,9 @@
 package com.strandls.userGroup.util;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
-
 import com.google.common.net.InternetDomainName;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.HttpHeaders;
 
 public class AppUtil {
 
@@ -15,5 +15,4 @@ public class AppUtil {
 		}
 		return domain;
 	}
-
 }

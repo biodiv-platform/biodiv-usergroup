@@ -1,11 +1,8 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class Stats {
 
@@ -16,9 +13,7 @@ public class Stats {
 	private Long discussions;
 	private Long activeUser;
 
-	/**
-	 * 
-	 */
+	/** */
 	public Stats() {
 		super();
 	}
@@ -88,5 +83,4 @@ public class Stats {
 	public void setActiveUser(Long activeUser) {
 		this.activeUser = activeUser;
 	}
-
 }

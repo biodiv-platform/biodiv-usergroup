@@ -1,33 +1,29 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * @author Abhishek Rudra
- *
  */
 @Entity
 @Table(name = "featured")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Featured implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -3585218408042488760L;
+
 	private Long id;
 	private Long authorId;
 	private Date createdOn;
@@ -37,9 +33,7 @@ public class Featured implements Serializable {
 	private Long userGroup;
 	private Long languageId;
 
-	/**
-	 * 
-	 */
+	/** */
 	public Featured() {
 		super();
 	}
@@ -140,5 +134,4 @@ public class Featured implements Serializable {
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
 	}
-
 }

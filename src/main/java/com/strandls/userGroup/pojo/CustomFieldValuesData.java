@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class CustomFieldValuesData {
 
@@ -17,9 +14,7 @@ public class CustomFieldValuesData {
 	private String minRange;
 	private String maxRange;
 
-	/**
-	 * 
-	 */
+	/** */
 	public CustomFieldValuesData() {
 		super();
 	}
@@ -80,5 +75,4 @@ public class CustomFieldValuesData {
 	public void setMaxRange(String maxRange) {
 		this.maxRange = maxRange;
 	}
-
 }

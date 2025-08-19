@@ -3,33 +3,29 @@ package com.strandls.userGroup.pojo;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
- * This pojo represent the page structure from newsletter.
- * TODO  : Need to move this to appropriate location after independant pages service being deployed.
- * @author vilay
+ * This pojo represent the page structure from newsletter. TODO : Need to move
+ * this to appropriate location after independant pages service being deployed.
  *
+ * @author vilay
  */
 @Entity
 @Table(name = "newsletter")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Newsletter implements Serializable{
+public class Newsletter implements Serializable {
 
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = -3955248341059248359L;
-	
+
 	private Long id;
 	private Long version;
 	private Timestamp date;
@@ -92,7 +88,6 @@ public class Newsletter implements Serializable{
 	}
 
 	@Column(name = "newsitem")
-	@Type(type = "text")
 	@JsonIgnore
 	public String getNewsitem() {
 		return newsitem;

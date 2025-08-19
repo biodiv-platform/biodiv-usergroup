@@ -1,11 +1,11 @@
 package com.strandls.userGroup.pojo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_group_species_fields")
@@ -53,5 +53,4 @@ public class UsergroupSpeciesFieldMapping {
 	public void setSpeciesFieldId(Long speciesFieldId) {
 		this.speciesFieldId = speciesFieldId;
 	}
-
 }

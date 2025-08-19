@@ -23,5 +23,4 @@ public class UserGroupDataTableCompositeKey implements Serializable {
 	public void setDataTableId(Long dataTableId) {
 		this.dataTableId = dataTableId;
 	}
-
 }

@@ -1,13 +1,10 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class GroupHomePageData {
 
@@ -21,9 +18,7 @@ public class GroupHomePageData {
 	private Stats stats;
 	private List<GroupGallerySlider> gallerySlider;
 
-	/**
-	 * 
-	 */
+	/** */
 	public GroupHomePageData() {
 		super();
 	}
@@ -125,5 +120,4 @@ public class GroupHomePageData {
 	public void setGallerySlider(List<GroupGallerySlider> gallerySlider) {
 		this.gallerySlider = gallerySlider;
 	}
-
 }

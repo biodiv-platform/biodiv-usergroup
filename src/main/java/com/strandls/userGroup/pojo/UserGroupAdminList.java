@@ -31,5 +31,4 @@ public class UserGroupAdminList {
 	public void setUgList(List<UserGroupIbp> ugList) {
 		this.ugList = ugList;
 	}
-
 }

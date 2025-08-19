@@ -1,6 +1,4 @@
-/**
- * 
- */
+/** */
 package com.strandls.userGroup.dao;
 
 import com.google.inject.AbstractModule;
@@ -8,7 +6,6 @@ import com.google.inject.Scopes;
 
 /**
  * @author Abhishek Rudra
- *
  */
 public class UserGroupDaoModule extends AbstractModule {
 
@@ -38,5 +35,4 @@ public class UserGroupDaoModule extends AbstractModule {
 		bind(UserGroupSpeciesFieldMappingDao.class).in(Scopes.SINGLETON);
 		bind(UserGroupSpeciesFieldMetaDao.class).in(Scopes.SINGLETON);
 	}
-
 }

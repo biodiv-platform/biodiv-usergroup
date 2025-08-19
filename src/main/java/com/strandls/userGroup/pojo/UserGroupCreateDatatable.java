@@ -5,10 +5,9 @@ import java.util.List;
 
 public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData {
 
-	/**
-	 * 
-	 */
+	/** */
 	private String title;
+
 	private Date createdOn;
 	private String location;
 	private String contributor;
@@ -55,5 +54,4 @@ public class UserGroupCreateDatatable extends UserGroupSpeciesCreateData {
 	public void setContributor(String contributor) {
 		this.contributor = contributor;
 	}
-
 }
