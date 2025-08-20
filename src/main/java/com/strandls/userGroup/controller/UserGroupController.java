@@ -890,11 +890,11 @@ public class UserGroupController {
 			@ApiResponse(code = 400, message = "Unable to create mini gallery", response = String.class) })
 
 	public Response createMiniGallery(@Context HttpServletRequest request,
-			@ApiParam(name = "miniGalleryData") Map<Long, List<GroupGalleryConfig>> miniGalleryData,
+			@ApiParam(name = "miniGalleryData") GroupGalleryConfig miniGalleryData,
 			@PathParam("groupId") String groupId) {
 		try {
 			Long ugId = Long.parseLong(groupId);
-			Map<String, Map<Long, List<GroupGalleryConfig>>> result = ugServices.createMiniGallery(request,
+			GroupGalleryConfig result = ugServices.createMiniGallery(request,
 					miniGalleryData, ugId);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
@@ -918,14 +918,14 @@ public class UserGroupController {
 
 	public Response editMiniGallery(@Context HttpServletRequest request, @PathParam("galleryId") String galleryId,
 			@PathParam("groupId") String groupId,
-			@ApiParam(name = "editData") Map<Long, List<GroupGalleryConfig>> editData) {
+			@ApiParam(name = "editData") GroupGalleryConfig editData) {
 		try {
 			if (galleryId == null) {
 				return Response.status(Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
 			}
 			Long gId = Long.parseLong(galleryId);
 			Long ugId = Long.parseLong(groupId);
-			Map<String, Map<Long, List<GroupGalleryConfig>>> result = ugServices.editMiniGallery(request, ugId ,gId, editData);
+			GroupGalleryConfig result = ugServices.editMiniGallery(request, ugId ,gId, editData);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
@@ -962,35 +962,6 @@ public class UserGroupController {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
-
-	/*
-	 * @GET
-	 * 
-	 * @Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}")
-	 * 
-	 * @Consumes(MediaType.TEXT_PLAIN)
-	 * 
-	 * @Produces(MediaType.APPLICATION_JSON)
-	 * 
-	 * @ValidateUser
-	 * 
-	 * @ApiOperation(value = "find group edit homepage data", notes =
-	 * "return group home page data", response = UserGroupHomePageEditData.class)
-	 * 
-	 * @ApiResponses(value = {
-	 * 
-	 * @ApiResponse(code = 400, message = "unable to retrieve the data", response =
-	 * String.class) })
-	 * 
-	 * public Response getGroupHomePageEditData(@Context HttpServletRequest request,
-	 * 
-	 * @PathParam("userGroupId") String ugId) { try { Long userGroupId =
-	 * Long.parseLong(ugId); UserGroupHomePageEditData result =
-	 * ugServices.getGroupHomePageEditData(request, userGroupId); if (result !=
-	 * null) return Response.status(Status.OK).entity(result).build(); return
-	 * Response.status(Status.NOT_FOUND).build(); } catch (Exception e) { return
-	 * Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build(); } }
-	 */
 
 	@GET
 	@Path(ApiConstants.PERMISSION + ApiConstants.OBSERVATION)
@@ -1100,7 +1071,7 @@ public class UserGroupController {
 
 	public Response editHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
 			@PathParam("galleryId") String galleryId,
-			@ApiParam(name = "editData") Map<Long, List<GroupGallerySlider>> editData) {
+			@ApiParam(name = "editData") GroupGallerySlider editData) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			Long groupGalleryId = Long.parseLong(galleryId);
@@ -1127,7 +1098,7 @@ public class UserGroupController {
 
 	public Response editMiniHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
 			@PathParam("galleryId") String galleryId,
-			@ApiParam(name = "editData") Map<Long, List<MiniGroupGallerySlider>> editData) {
+			@ApiParam(name = "editData") MiniGroupGallerySlider editData) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			Long groupGalleryId = Long.parseLong(galleryId);

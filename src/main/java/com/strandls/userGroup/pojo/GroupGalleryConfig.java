@@ -5,13 +5,15 @@ package com.strandls.userGroup.pojo;
 
 
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -35,6 +37,8 @@ public class GroupGalleryConfig {
    private Long languageId;
    private Long galleryId;
    private Long ugId;
+   private List<Translation> translations;
+   private List<MiniGroupGallerySlider> gallerySlider;
 
 
 
@@ -117,4 +121,23 @@ public class GroupGalleryConfig {
        this.ugId = ugId;
    }
    
+   @Transient
+   public List<Translation> getTranslations() {
+       return translations;
+   }
+
+
+   public void setTranslations(List<Translation> translations) {
+       this.translations = translations;
+   }
+   
+   @Transient
+   public List<MiniGroupGallerySlider> getGallerySlider() {
+       return gallerySlider;
+   }
+
+
+   public void setGallerySlider(List<MiniGroupGallerySlider> gallerySlider) {
+       this.gallerySlider = gallerySlider;
+   }
 }

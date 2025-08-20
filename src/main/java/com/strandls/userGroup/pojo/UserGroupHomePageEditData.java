@@ -19,9 +19,8 @@ public class UserGroupHomePageEditData {
 	private Boolean showPartners;
 	private Boolean showDesc;
 	private String description;
-	private List<Map<Long, List<GroupGallerySlider>>> gallerySlider;
-	private Map<String, Map<Long, List<GroupGalleryConfig>>> miniGallery;
-	private List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> miniGallerySlider;
+	private List<GroupGallerySlider> gallerySlider;
+	private List<GroupGalleryConfig> miniGallery;
 
 	/**
 	 * 
@@ -42,9 +41,7 @@ public class UserGroupHomePageEditData {
 	 */
 	public UserGroupHomePageEditData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation,
 			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String description,
-			List<Map<Long, List<GroupGallerySlider>>> gallerySlider,
-			Map<String, Map<Long, List<GroupGalleryConfig>>> miniGallery,
-			List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> miniGallerySlider) {
+			List<GroupGallerySlider> gallerySlider,List<GroupGalleryConfig> miniGallery) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;
@@ -55,7 +52,6 @@ public class UserGroupHomePageEditData {
 		this.description = description;
 		this.gallerySlider = gallerySlider;
 		this.miniGallery = miniGallery;
-		this.miniGallerySlider = miniGallerySlider;
 	}
 
 	public Boolean getShowGallery() {
@@ -114,28 +110,20 @@ public class UserGroupHomePageEditData {
 		this.description = description;
 	}
 
-	public List<Map<Long, List<GroupGallerySlider>>> getGallerySlider() {
+	public List<GroupGallerySlider> getGallerySlider() {
 		return gallerySlider;
 	}
 
-	public void setGallerySlider(List<Map<Long, List<GroupGallerySlider>>> gallerySlider) {
+	public void setGallerySlider(List<GroupGallerySlider> gallerySlider) {
 		this.gallerySlider = gallerySlider;
 	}
 	
-	public Map<String, Map<Long, List<GroupGalleryConfig>>> getMiniGallery() {
+	public List<GroupGalleryConfig> getMiniGallery() {
 		return miniGallery;
 	}
 
-	public void setMiniGallery(Map<String, Map<Long, List<GroupGalleryConfig>>> miniGallery) {
+	public void setMiniGallery(List<GroupGalleryConfig> miniGallery) {
 		this.miniGallery = miniGallery;
-	}
-
-	public List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> getMiniGallerySlider() {
-		return miniGallerySlider;
-	}
-
-	public void setMiniGallerySlider(List<Map<String, Map<Long, List<MiniGroupGallerySlider>>>> miniGallerySlider) {
-		this.miniGallerySlider = miniGallerySlider;
 	}
 
 }

@@ -125,8 +125,6 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> updateUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate);
 
-	//public UserGroupHomePageEditData getGroupHomePageEditData(HttpServletRequest request, Long userGroupId);
-
 	public GroupHomePageData getGroupHomePageData(Long userGroupId, Long langId);
 
 	public GroupHomePageData updateGroupHomePage(HttpServletRequest request, Long userGroupId,
@@ -135,7 +133,7 @@ public interface UserGroupSerivce {
 	public GroupHomePageData removeHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
 
 	public GroupHomePageData editHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
-			Map<Long, List<GroupGallerySlider>> editData);
+			GroupGallerySlider editData);
 
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
 			List<ReorderingHomePage> reorderingHomePage);
@@ -175,10 +173,10 @@ public interface UserGroupSerivce {
 	
 	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
 	
-	public Map<String, Map<Long, List<GroupGalleryConfig>>> createMiniGallery(HttpServletRequest request, Map<Long, List<GroupGalleryConfig>> miniGalleryData, Long ugId);
+	public GroupGalleryConfig createMiniGallery(HttpServletRequest request, GroupGalleryConfig miniGalleryData, Long ugId);
 
-	public Map<String, Map<Long, List<GroupGalleryConfig>>> editMiniGallery(HttpServletRequest request, Long ugId,
-			Long gId, Map<Long, List<GroupGalleryConfig>> editData);
+	public GroupGalleryConfig editMiniGallery(HttpServletRequest request, Long ugId,
+			Long gId, GroupGalleryConfig editData);
 
 	public Boolean removeMiniGallery(HttpServletRequest request, Long ugId, Long gId);
 
@@ -188,6 +186,6 @@ public interface UserGroupSerivce {
 	public GroupHomePageData removeMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
 
 	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
-			Map<Long, List<MiniGroupGallerySlider>> editData);
+			MiniGroupGallerySlider editData);
 
 }
