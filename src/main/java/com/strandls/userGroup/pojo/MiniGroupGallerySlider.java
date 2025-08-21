@@ -16,14 +16,14 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * @author Abhishek Rudra
+ * @author Mekala Rishitha Ravi
  *
  */
 
 @Entity
-@Table(name = "group_gallery_slider")
+@Table(name = "mini_group_gallery_slider")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GroupGallerySlider {
+public class MiniGroupGallerySlider {
 
 	private Long id;
 	private Long ugId;
@@ -38,14 +38,16 @@ public class GroupGallerySlider {
 	private Long displayOrder;
 	private String readMoreText;
 	private String readMoreUIType;
-	private String gallerySidebar;
-	private Long sliderId;
+	private Long galleryId;
 	private Long languageId;
+	private String color;
+	private String bgColor;
+	private Long sliderId;
 	private List<Translation> translations;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id", columnDefinition = "BIGINT")
 	public Long getId() {
 		return id;
 	}
@@ -53,8 +55,8 @@ public class GroupGallerySlider {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	@Column(name = "ug_id")
+	
+	@Column(name = "ug_id", columnDefinition = "BIGINT")
 	public Long getUgId() {
 		return ugId;
 	}
@@ -72,7 +74,7 @@ public class GroupGallerySlider {
 		this.fileName = fileName;
 	}
 
-	@Column(name = "observation_id")
+	@Column(name = "observation_id", columnDefinition = "BIGINT")
 	public Long getObservationId() {
 		return observationId;
 	}
@@ -81,7 +83,7 @@ public class GroupGallerySlider {
 		this.observationId = observationId;
 	}
 
-	@Column(name = "author_id")
+	@Column(name = "author_id", columnDefinition = "BIGINT")
 	public Long getAuthorId() {
 		return authorId;
 	}
@@ -135,7 +137,7 @@ public class GroupGallerySlider {
 		this.moreLinks = moreLinks;
 	}
 
-	@Column(name = "display_order", nullable = false)
+	@Column(name = "display_order", nullable = false, columnDefinition = "BIGINT")
 	public Long getDisplayOrder() {
 		return displayOrder;
 	}
@@ -144,7 +146,7 @@ public class GroupGallerySlider {
 		this.displayOrder = displayOrder;
 	}
 
-	@Column(name = "read_more_text")
+	@Column(name = "read_more_text", columnDefinition = "TEXT")
 	public String getReadMoreText() {
 		return readMoreText;
 	}
@@ -162,16 +164,16 @@ public class GroupGallerySlider {
 		this.readMoreUIType = readMoreUIType;
 	}
 
-	@Column(name = "gallery_sidebar", columnDefinition = "text default 'opaque'")
-	public String getGallerySidebar() {
-		return gallerySidebar;
+	@Column(name = "gallery_id", columnDefinition = "BIGINT")
+	public Long getGalleryId() {
+		return galleryId;
 	}
 
-	public void setGallerySidebar(String gallerySidebar) {
-		this.gallerySidebar = gallerySidebar;
+	public void setGalleryId(Long galleryId) {
+		this.galleryId = galleryId;
 	}
-	
-	@Column(name = "slider_id")
+
+	@Column(name = "slider_id", columnDefinition = "BIGINT")
 	public Long getSliderId() {
 		return sliderId;
 	}
@@ -179,8 +181,8 @@ public class GroupGallerySlider {
 	public void setSliderId(Long sliderId) {
 		this.sliderId = sliderId;
 	}
-	
-	@Column(name = "language_id")
+
+	@Column(name = "language_id", columnDefinition = "BIGINT")
 	public Long getLanguageId() {
 		return languageId;
 	}
@@ -188,7 +190,25 @@ public class GroupGallerySlider {
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
 	}
-	
+
+	@Column(name = "color")
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	@Column(name = "bg_color")
+	public String getBgColor() {
+		return bgColor;
+	}
+
+	public void setBgColor(String bgColor) {
+		this.bgColor = bgColor;
+	}
+
 	@Transient
 	public List<Translation> getTranslations() {
 		return translations;
@@ -197,5 +217,4 @@ public class GroupGallerySlider {
 	public void setTranslations(List<Translation> translations) {
 		this.translations = translations;
 	}
-
 }

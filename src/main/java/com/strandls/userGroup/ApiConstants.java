@@ -62,5 +62,7 @@ public class ApiConstants {
 	public static final String SPECIES = "/species";
 	public static final String MEDIATOGGLE = "/mediaToggle";
 	public static final String OBSERVATIONCUSTOMISATIONS = "/observationCustomisations";
+	public static final String MINI_GALLERY = "/miniGallery";
+	public static final String MINI_SLIDER = "/miniSlider";
 
 }

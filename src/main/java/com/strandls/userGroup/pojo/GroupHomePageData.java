@@ -20,7 +20,7 @@ public class GroupHomePageData {
 	private String description;
 	private Stats stats;
 	private List<GroupGallerySlider> gallerySlider;
-
+	private List<GroupGalleryConfig> miniGallery;
 	/**
 	 * 
 	 */
@@ -37,11 +37,11 @@ public class GroupHomePageData {
 	 * @param showDesc
 	 * @param description
 	 * @param stats
-	 * @param gallerySlider
+	 * @param groupedBySliderId
 	 */
 	public GroupHomePageData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation, Boolean showGridMap,
 			Boolean showPartners, Boolean showDesc, String description, Stats stats,
-			List<GroupGallerySlider> gallerySlider) {
+			List<GroupGallerySlider> gallerySlider,List<GroupGalleryConfig> miniGallery) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;
@@ -52,6 +52,7 @@ public class GroupHomePageData {
 		this.description = description;
 		this.stats = stats;
 		this.gallerySlider = gallerySlider;
+		this.miniGallery = miniGallery;
 	}
 
 	public Boolean getShowGallery() {
@@ -124,6 +125,14 @@ public class GroupHomePageData {
 
 	public void setGallerySlider(List<GroupGallerySlider> gallerySlider) {
 		this.gallerySlider = gallerySlider;
+	}
+	
+	public List<GroupGalleryConfig> getMiniGallery() {
+		return miniGallery;
+	}
+
+	public void setMiniGallery(List<GroupGalleryConfig> miniGallery) {
+		this.miniGallery = miniGallery;
 	}
 
 }

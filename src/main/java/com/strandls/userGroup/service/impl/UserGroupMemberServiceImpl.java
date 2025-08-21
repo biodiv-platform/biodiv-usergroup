@@ -35,6 +35,7 @@ import com.strandls.userGroup.pojo.UserGroupPermissions;
 import com.strandls.userGroup.pojo.UserUgRoleMapping;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
+import com.strandls.userGroup.util.PropertyFileUtil;
 
 /**
  * @author Abhishek Rudra
@@ -64,6 +65,9 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	@Inject
 	private LogActivities logActivity;
+	
+	private Long defaultLanguageId = Long
+			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 
 	@Override
 	public Boolean checkUserGroupMember(Long userId, Long userGroupId) {
@@ -348,7 +352,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	@Override
 	public Map<Long, Boolean> groupListByUserId(Long userId) {
-		List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup();
+		List<UserGroupIbp> userGroupList = ugServices.fetchAllUserGroup(defaultLanguageId);
 		Map<Long, Boolean> result = new HashMap<Long, Boolean>();
 
 		for (UserGroupIbp userGroup : userGroupList) {

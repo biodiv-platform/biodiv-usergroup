@@ -39,8 +39,10 @@ import com.strandls.userGroup.pojo.BulkGroupUnPostingData;
 import com.strandls.userGroup.pojo.EncryptionKey;
 import com.strandls.userGroup.pojo.Featured;
 import com.strandls.userGroup.pojo.FeaturedCreateData;
+import com.strandls.userGroup.pojo.GroupGalleryConfig;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.MiniGroupGallerySlider;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
@@ -106,15 +108,16 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path("/{objectId}")
+	@Path("/{objectId}/{languageId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Find UserGroup by ID", notes = "Returns UserGroup details", response = UserGroup.class)
 	@ApiResponses(value = { @ApiResponse(code = 404, message = "UserGroup not found", response = String.class) })
-	public Response getUserGroup(@PathParam("objectId") String objectId) {
+	public Response getUserGroup(@PathParam("objectId") String objectId, @PathParam("languageId") String languageId) {
 		try {
 			Long id = Long.parseLong(objectId);
-			UserGroup userGroup = ugServices.fetchByGroupId(id);
+			Long langId = Long.parseLong(languageId);
+			UserGroup userGroup = ugServices.fetchByGroupId(id, langId);
 			return Response.status(Status.OK).entity(userGroup).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).build();
@@ -317,16 +320,17 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.ALL)
+	@Path(ApiConstants.ALL + "/{languageId}")
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ApiOperation(value = "Find all the UserGroups", notes = "Returns all the UserGroups", response = UserGroupIbp.class, responseContainer = "List")
 	@ApiResponses(value = {
 			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups", response = String.class) })
 
-	public Response getAllUserGroup() {
+	public Response getAllUserGroup(@PathParam("languageId") String languageId) {
 		try {
-			List<UserGroupIbp> result = ugServices.fetchAllUserGroup();
+			Long langId = Long.parseLong(languageId);
+			List<UserGroupIbp> result = ugServices.fetchAllUserGroup(langId);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -852,7 +856,7 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.HOMEPAGE + "/{userGroupId}")
+	@Path(ApiConstants.HOMEPAGE + "/{userGroupId}" + "/{languageId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 
@@ -860,10 +864,12 @@ public class UserGroupController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 
-	public Response getGroupHomePage(@PathParam("userGroupId") String ugId) {
+	public Response getGroupHomePage(@PathParam("userGroupId") String ugId,
+			@PathParam("languageId") String languageId) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
-			GroupHomePageData result = ugServices.getGroupHomePageData(userGroupId);
+			Long langId = Long.parseLong(languageId);
+			GroupHomePageData result = ugServices.getGroupHomePageData(userGroupId, langId);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
@@ -873,24 +879,85 @@ public class UserGroupController {
 		}
 	}
 
-	@GET
-	@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}")
+	@POST
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.CREATE + "/{groupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+
+	@ApiOperation(value = "Creates a new mini gallery", notes = "Return created mini gallery", response = Map.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "Unable to create mini gallery", response = String.class) })
+
+	public Response createMiniGallery(@Context HttpServletRequest request,
+			@ApiParam(name = "miniGalleryData") GroupGalleryConfig miniGalleryData,
+			@PathParam("groupId") String groupId) {
+		try {
+			Long ugId = Long.parseLong(groupId);
+			GroupGalleryConfig result = ugServices.createMiniGallery(request,
+					miniGalleryData, ugId);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.EDIT + "/{groupId}" + "/{galleryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Edit mini gallery data", notes = "return mini gallery data", response = Map.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+
+	public Response editMiniGallery(@Context HttpServletRequest request, @PathParam("galleryId") String galleryId,
+			@PathParam("groupId") String groupId,
+			@ApiParam(name = "editData") GroupGalleryConfig editData) {
+		try {
+			if (galleryId == null) {
+				return Response.status(Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
+			}
+			Long gId = Long.parseLong(galleryId);
+			Long ugId = Long.parseLong(groupId);
+			GroupGalleryConfig result = ugServices.editMiniGallery(request, ugId ,gId, editData);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
+	@DELETE
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.REMOVE + "/{groupId}" + "/{galleryId}")
 	@Consumes(MediaType.TEXT_PLAIN)
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ValidateUser
-	@ApiOperation(value = "find group edit homepage data", notes = "return group home page data", response = UserGroupHomePageEditData.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 
-	public Response getGroupHomePageEditData(@Context HttpServletRequest request,
-			@PathParam("userGroupId") String ugId) {
+	@ApiOperation(value = "Delete mini gallery data", notes = "returns null", response = Void.class)
+	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to delete the data", response = String.class) })
+
+	public Response removeMiniGalleryData(@Context HttpServletRequest request,
+			@PathParam("groupId") String groupId,@PathParam("galleryId") String galleryId) {
 		try {
-			Long userGroupId = Long.parseLong(ugId);
-			UserGroupHomePageEditData result = ugServices.getGroupHomePageEditData(request, userGroupId);
-			if (result != null)
-				return Response.status(Status.OK).entity(result).build();
+			if (galleryId == null) {
+				return Response.status(Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
+			}
+			Long gId = Long.parseLong(galleryId);
+			Long ugId = Long.parseLong(groupId);
+			Boolean result = ugServices.removeMiniGallery(request, ugId ,gId);
+			if (Boolean.TRUE.equals(result))
+				return Response.status(Status.OK).build();
 			return Response.status(Status.NOT_FOUND).build();
+
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
@@ -964,6 +1031,32 @@ public class UserGroupController {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
+	
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER +ApiConstants.REMOVE + "/{userGroupId}/{galleryId}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Delete group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+
+	public Response removeMiniSliderGalleryData(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
+			@PathParam("galleryId") String galleryId) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			Long groupGalleryId = Long.parseLong(galleryId);
+			GroupHomePageData result = ugServices.removeMiniHomePage(request, userGroupId, groupGalleryId);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 	@PUT
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
@@ -977,11 +1070,39 @@ public class UserGroupController {
 			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 
 	public Response editHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
-			@PathParam("galleryId") String galleryId, @ApiParam(name = "editData") GroupGallerySlider editData) {
+			@PathParam("galleryId") String galleryId,
+			@ApiParam(name = "editData") GroupGallerySlider editData) {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			Long groupGalleryId = Long.parseLong(galleryId);
 			GroupHomePageData result = ugServices.editHomePage(request, userGroupId, groupGalleryId, editData);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER +ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Edit group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+
+	public Response editMiniHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
+			@PathParam("galleryId") String galleryId,
+			@ApiParam(name = "editData") MiniGroupGallerySlider editData) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			Long groupGalleryId = Long.parseLong(galleryId);
+			GroupHomePageData result = ugServices.editMiniHomePage(request, userGroupId, groupGalleryId, editData);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
@@ -1116,6 +1237,28 @@ public class UserGroupController {
 		try {
 			Long userGroupId = Long.parseLong(ugId);
 			GroupHomePageData result = ugServices.reorderingHomePageSlider(request, userGroupId, reorderingHomePage);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.REORDERING + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	public Response reorderingMiniHomePageGallerySlider(@Context HttpServletRequest request,
+			@PathParam("userGroupId") String ugId,
+			@ApiParam(name = "reorderingHomePage") List<ReorderingHomePage> reorderingHomePage) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			GroupHomePageData result = ugServices.reorderMiniHomePageSlider(request, userGroupId ,reorderingHomePage);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
