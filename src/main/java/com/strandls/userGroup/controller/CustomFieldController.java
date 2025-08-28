@@ -204,8 +204,6 @@ public class CustomFieldController {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 
-	@ValidateUser
-
 	@ApiOperation(value = "Find all the custom field related with a userGroup", notes = "Returns all the customField related with a userGroup", response = CustomFieldDetails.class, responseContainer = "List")
 	@ApiResponses(value = { @ApiResponse(code = 400, message = "unable to retrive the data", response = String.class) })
 
