@@ -72,6 +72,7 @@ import com.strandls.userGroup.service.UserGroupDatatableService;
 import com.strandls.userGroup.service.UserGroupMemberService;
 import com.strandls.userGroup.service.UserGroupSerivce;
 import com.strandls.userGroup.util.AppUtil;
+import com.strandls.userGroup.util.PropertyFileUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -320,15 +321,18 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.ALL + "/{languageId}")
+	@Path(ApiConstants.ALL)
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ApiOperation(value = "Find all the UserGroups", notes = "Returns all the UserGroups", response = UserGroupIbp.class, responseContainer = "List")
 	@ApiResponses(value = {
 			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups", response = String.class) })
 
-	public Response getAllUserGroup(@PathParam("languageId") String languageId) {
+	public Response getAllUserGroup(@QueryParam("languageId") String languageId) {
 		try {
+			if (languageId == null || languageId.isEmpty()) {
+	            languageId = PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId");
+	        }
 			Long langId = Long.parseLong(languageId);
 			List<UserGroupIbp> result = ugServices.fetchAllUserGroup(langId);
 			return Response.status(Status.OK).entity(result).build();
