@@ -338,16 +338,17 @@ public class UserGroupController {
 	}
 
 	@GET
-	@Path(ApiConstants.LIST)
+	@Path(ApiConstants.LIST + "/{languageId}")
 	@Produces(MediaType.APPLICATION_JSON)
 
 	@ApiOperation(value = "Find all the UserGroups for list page", notes = "Returns all the UserGroups for list page", response = UserGroupExpanded.class, responseContainer = "List")
 	@ApiResponses(value = {
 			@ApiResponse(code = 404, message = "Unable to fetch the UserGroups list", response = String.class) })
 
-	public Response getAllUserGroupList() {
+	public Response getAllUserGroupList(@PathParam("languageId") String languageId) {
 		try {
-			List<UserGroupExpanded> result = ugServices.fetchAllUserGroupExpanded();
+			Long langId = Long.parseLong(languageId);
+			List<UserGroupExpanded> result = ugServices.fetchAllUserGroupExpanded(langId);
 			return Response.status(Status.OK).entity(result).build();
 		} catch (Exception e) {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
