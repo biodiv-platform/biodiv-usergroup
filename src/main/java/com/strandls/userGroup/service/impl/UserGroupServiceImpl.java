@@ -530,7 +530,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
-	public List<UserGroupExpanded> fetchAllUserGroupExpanded() {
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded(Long langId) {
 		List<UserGroupExpanded> result = new ArrayList<UserGroupExpanded>();
 
 		try {
@@ -538,30 +538,39 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			List<UserGroupMembersCount> count = ugMemberService.getUserGroupMemberCount();
 			Map<Long, UserGroupExpanded> ugMap = new HashMap<Long, UserGroupExpanded>();
 			UserGroupExpanded ibp = null;
+			List<Long> groupIds = new ArrayList<>();
 			for (UserGroup userGroup : userGroupList) {
+				Long groupId = userGroup.getGroupId();
+				boolean alreadyAdded = groupIds.contains(groupId);
+				boolean isPreferredLang = userGroup.getLanguageId().equals(langId);
 
-				List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroup.getId());
-				List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroup.getId());
-				List<Long> speciesGroupIds = new ArrayList<Long>();
-				List<Long> habitatIds = new ArrayList<Long>();
-				for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
-					speciesGroupIds.add(ugSpeciesGroup.getSpeciesGroupId());
+				if (!alreadyAdded || isPreferredLang) {
+					if (!alreadyAdded) {
+						groupIds.add(groupId);
+					}
+					List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(groupId);
+					List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(groupId);
+					List<Long> speciesGroupIds = new ArrayList<Long>();
+					List<Long> habitatIds = new ArrayList<Long>();
+					for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
+						speciesGroupIds.add(ugSpeciesGroup.getSpeciesGroupId());
+					}
+					for (UserGroupHabitat ugHabitat : ugHabitats) {
+						habitatIds.add(ugHabitat.getHabitatId());
+					}
+
+					String webAddress = userGroup.getDomianName();
+
+					if (webAddress == null) {
+						webAddress = "/group/" + userGroup.getWebAddress();
+					}
+
+					ibp = new UserGroupExpanded(groupId, userGroup.getName(), userGroup.getIcon(), webAddress,
+							userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(),
+							speciesGroupIds, habitatIds);
+
+					ugMap.put(groupId, ibp);
 				}
-				for (UserGroupHabitat ugHabitat : ugHabitats) {
-					habitatIds.add(ugHabitat.getHabitatId());
-				}
-
-				String webAddress = userGroup.getDomianName();
-
-				if (webAddress == null) {
-					webAddress = "/group/" + userGroup.getWebAddress();
-				}
-
-				ibp = new UserGroupExpanded(userGroup.getId(), userGroup.getName(), userGroup.getIcon(), webAddress,
-						userGroup.getAllowUserToJoin(), 0L, userGroup.getFoundedOn(), userGroup.getStartDate(),
-						speciesGroupIds, habitatIds);
-
-				ugMap.put(userGroup.getId(), ibp);
 			}
 
 			// Iterate through member count and assign it to expanded modal
@@ -2006,9 +2015,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 					targetGallery.setTranslations(translations);
 					if (gallery.getLanguageId().equals(langId)) {
-						targetGallery.setTitle(gallery.getTitle());
-						targetGallery.setLanguageId(langId);
-						targetGallery.setCustomDescripition(gallery.getCustomDescripition());
+						gallerySlider.set(targetIndex, gallery);
 					}
 				}
 			}
@@ -2096,9 +2103,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 					targetGallery.setTranslations(translations);
 					if (gallery.getLanguageId().equals(languageId)) {
-						targetGallery.setTitle(gallery.getTitle());
-						targetGallery.setLanguageId(languageId);
-						targetGallery.setCustomDescripition(gallery.getCustomDescripition());
+						gallerySlider.set(targetIndex, gallery);
 					}
 				}
 			}
@@ -2171,8 +2176,10 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				}
 
 				for (GroupGalleryConfig miniGallerySlider : editData.getMiniGallery()) {
-					if (miniGallerySlider.getGallerySlider() != null && !miniGallerySlider.getGallerySlider().isEmpty()&& miniGallerySlider.getGallerySlider().size() > 0 ) {
-						miniGallerySlider.getGallerySlider().forEach(languageMap -> saveMiniGroupGallerySliderTranslations(languageMap, userGroupId));
+					if (miniGallerySlider.getGallerySlider() != null && !miniGallerySlider.getGallerySlider().isEmpty()
+							&& miniGallerySlider.getGallerySlider().size() > 0) {
+						miniGallerySlider.getGallerySlider().forEach(
+								languageMap -> saveMiniGroupGallerySliderTranslations(languageMap, userGroupId));
 					}
 				}
 

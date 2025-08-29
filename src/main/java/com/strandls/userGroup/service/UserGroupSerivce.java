@@ -67,7 +67,7 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> fetchAllUserGroup(Long langId);
 
-	public List<UserGroupExpanded> fetchAllUserGroupExpanded();
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded(Long langId);
 
 	public List<Featured> fetchFeatured(String objectType, Long id);
 
