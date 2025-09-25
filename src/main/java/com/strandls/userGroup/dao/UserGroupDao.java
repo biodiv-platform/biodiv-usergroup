@@ -170,33 +170,32 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 
 	@SuppressWarnings("unchecked")
 	public boolean isWebAddressAllowedForGroup(String webAddress, Long excludeGroupId) {
-	    Session session = sessionFactory.openSession();
-	    boolean isAllowed = true;
+		Session session = sessionFactory.openSession();
+		boolean isAllowed = true;
 
-	    String qry = "SELECT COUNT(*) FROM UserGroup WHERE webaddress = :webAddress";
-	    if (excludeGroupId != null) {
-	        qry+=" AND group_id != :excludeGroupId";
-	    }
+		String qry = "SELECT COUNT(*) FROM UserGroup WHERE webaddress = :webAddress";
+		if (excludeGroupId != null) {
+			qry += " AND group_id != :excludeGroupId";
+		}
 
-	    try {
-	        Query<Long> query = session.createQuery(qry);
-	        query.setParameter("webAddress", webAddress);
-	        if (excludeGroupId != null) {
-	            query.setParameter("excludeGroupId", excludeGroupId);
-	        }
+		try {
+			Query<Long> query = session.createQuery(qry);
+			query.setParameter("webAddress", webAddress);
+			if (excludeGroupId != null) {
+				query.setParameter("excludeGroupId", excludeGroupId);
+			}
 
-	        Long count = query.uniqueResult();
-	        isAllowed = (count == 0); // allowed only if no conflict
+			Long count = query.uniqueResult();
+			isAllowed = (count == 0); // allowed only if no conflict
 
-	    } catch (Exception e) {
-	        logger.error("Error checking webaddress uniqueness: {}", e.getMessage());
-	        isAllowed = false; // safest to assume false if there's an error
-	    } finally {
-	        session.close();
-	    }
+		} catch (Exception e) {
+			logger.error("Error checking webaddress uniqueness: {}", e.getMessage());
+			isAllowed = false; // safest to assume false if there's an error
+		} finally {
+			session.close();
+		}
 
-	    return isAllowed;
+		return isAllowed;
 	}
-
 
 }

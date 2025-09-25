@@ -57,9 +57,10 @@ public class UserGroupCreateData {
 	 * @param invitationData
 	 */
 	public UserGroupCreateData(Boolean allowUserToJoin, String description, String homePage, String icon,
-			String domainName, String name, List<Long> speciesGroup, List<Long> habitatId, String theme, Long languageId,
-			UserGroupInvitationData invitationData, Boolean showGallery, Boolean showStats, Boolean showDesc,
-			Boolean showRecentObservation, Boolean showGridMap, Boolean showPartners, String mediaToggle, String spatialData) {
+			String domainName, String name, List<Long> speciesGroup, List<Long> habitatId, String theme,
+			Long languageId, UserGroupInvitationData invitationData, Boolean showGallery, Boolean showStats,
+			Boolean showDesc, Boolean showRecentObservation, Boolean showGridMap, Boolean showPartners,
+			String mediaToggle, String spatialData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.description = description;

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.strandls.userGroup.pojo.GroupGalleryConfig;
-import com.strandls.userGroup.pojo.MiniGroupGallerySlider;
 import com.strandls.userGroup.util.AbstractDAO;
 
 public class GroupGalleryConfigDao extends AbstractDAO<GroupGalleryConfig, Long> {

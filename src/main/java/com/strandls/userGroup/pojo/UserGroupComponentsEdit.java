@@ -93,11 +93,11 @@ public class UserGroupComponentsEdit {
 	public void setShowDesc(Boolean showDesc) {
 		this.showDesc = showDesc;
 	}
-	
+
 	public Long getLanguageId() {
 		return languageId;
 	}
-	
+
 	public void setLanguageId(Long languageId) {
 		this.languageId = languageId;
 	}

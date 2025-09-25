@@ -15,8 +15,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;

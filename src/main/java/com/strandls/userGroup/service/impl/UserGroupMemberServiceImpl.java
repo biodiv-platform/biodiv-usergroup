@@ -62,7 +62,7 @@ public class UserGroupMemberServiceImpl implements UserGroupMemberService {
 
 	@Inject
 	private LogActivities logActivity;
-	
+
 	private Long defaultLanguageId = Long
 			.parseLong(PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId"));
 

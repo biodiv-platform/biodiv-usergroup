@@ -2,7 +2,6 @@
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Abhishek Rudra
@@ -36,7 +35,7 @@ public class UserGroupHomePageEditData {
 	 */
 	public UserGroupHomePageEditData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation,
 			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String description,
-			List<GroupGallerySlider> gallerySlider,List<GroupGalleryConfig> miniGallery) {
+			List<GroupGallerySlider> gallerySlider, List<GroupGalleryConfig> miniGallery) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;

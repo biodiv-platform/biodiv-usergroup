@@ -48,8 +48,7 @@ public class MiniGroupGallerySliderDao extends AbstractDAO<MiniGroupGallerySlide
 	@SuppressWarnings("unchecked")
 	public List<MiniGroupGallerySlider> getAllGallerySliderInfoByGroupId(Long groupId, Long galleryId) {
 		List<MiniGroupGallerySlider> result = null;
-		String qry = 
-				"from  MiniGroupGallerySlider where galleryId = :galleryId and ugId=:groupId";
+		String qry = "from  MiniGroupGallerySlider where galleryId = :galleryId and ugId=:groupId";
 		Session session = sessionFactory.openSession();
 		try {
 			Query<MiniGroupGallerySlider> query = session.createQuery(qry);
@@ -65,7 +64,7 @@ public class MiniGroupGallerySliderDao extends AbstractDAO<MiniGroupGallerySlide
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MiniGroupGallerySlider> findBySliderIdByGroupId(Long groupId,Long sId) {
+	public List<MiniGroupGallerySlider> findBySliderIdByGroupId(Long groupId, Long sId) {
 		String qry = "from MiniGroupGallerySlider where sliderId = :sId and ugId = :groupId";
 		Session session = sessionFactory.openSession();
 		List<MiniGroupGallerySlider> result = null;

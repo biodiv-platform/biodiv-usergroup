@@ -18,6 +18,7 @@ public class GroupHomePageData {
 	private Stats stats;
 	private List<GroupGallerySlider> gallerySlider;
 	private List<GroupGalleryConfig> miniGallery;
+
 	/**
 	 *
 	 */
@@ -38,7 +39,7 @@ public class GroupHomePageData {
 	 */
 	public GroupHomePageData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation, Boolean showGridMap,
 			Boolean showPartners, Boolean showDesc, String description, Stats stats,
-			List<GroupGallerySlider> gallerySlider,List<GroupGalleryConfig> miniGallery) {
+			List<GroupGallerySlider> gallerySlider, List<GroupGalleryConfig> miniGallery) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;

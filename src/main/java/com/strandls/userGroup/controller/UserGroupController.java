@@ -115,7 +115,8 @@ public class UserGroupController {
 			@ApiResponse(responseCode = "200", description = "UserGroup details", content = @Content(schema = @Schema(implementation = UserGroup.class))),
 			@ApiResponse(responseCode = "404", description = "UserGroup not found", content = @Content(schema = @Schema(implementation = String.class))) })
 	public Response getUserGroup(
-			@Parameter(description = "UserGroup object ID", required = true) @PathParam("objectId") String objectId, @PathParam("languageId") String languageId) {
+			@Parameter(description = "UserGroup object ID", required = true) @PathParam("objectId") String objectId,
+			@PathParam("languageId") String languageId) {
 		try {
 			Long id = Long.parseLong(objectId);
 			Long langId = Long.parseLong(languageId);
@@ -321,8 +322,8 @@ public class UserGroupController {
 	public Response getAllUserGroup(@QueryParam("languageId") String languageId) {
 		try {
 			if (languageId == null || languageId.isEmpty()) {
-	            languageId = PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId");
-	        }
+				languageId = PropertyFileUtil.fetchProperty("config.properties", "defaultLanguageId");
+			}
 			Long langId = Long.parseLong(languageId);
 			List<UserGroupIbp> result = ugServices.fetchAllUserGroup(langId);
 			return Response.status(Status.OK).entity(result).build();
@@ -826,113 +827,89 @@ public class UserGroupController {
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
+
 // CREATE mini gallery in group
-@POST
-@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.CREATE + "/{groupId}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Creates a new mini gallery",
-    description = "Return created mini gallery"
-)
-@ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Created",
-        content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class))),
-    @ApiResponse(responseCode = "400", description = "Unable to create mini gallery",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
-public Response createMiniGallery(
-    @Context HttpServletRequest request,
-    @RequestBody(description = "Mini gallery payload", required = true,
-        content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class)))
-    GroupGalleryConfig miniGalleryData,
-    @Parameter(description = "Group ID") @PathParam("groupId") String groupId
-) {
-    try {
-        Long ugId = Long.parseLong(groupId);
-        GroupGalleryConfig result = ugServices.createMiniGallery(request, miniGalleryData, ugId);
-        if (result != null) return Response.status(Response.Status.OK).entity(result).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@POST
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.CREATE + "/{groupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Creates a new mini gallery", description = "Return created mini gallery")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Created", content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to create mini gallery", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "404", description = "Not found") })
+	public Response createMiniGallery(@Context HttpServletRequest request,
+			@RequestBody(description = "Mini gallery payload", required = true, content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class))) GroupGalleryConfig miniGalleryData,
+			@Parameter(description = "Group ID") @PathParam("groupId") String groupId) {
+		try {
+			Long ugId = Long.parseLong(groupId);
+			GroupGalleryConfig result = ugServices.createMiniGallery(request, miniGalleryData, ugId);
+			if (result != null)
+				return Response.status(Response.Status.OK).entity(result).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 // EDIT mini gallery in group
-@PUT
-@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.EDIT + "/{groupId}/{galleryId}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Edit mini gallery data",
-    description = "Return mini gallery data"
-)
-@ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK",
-        content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class))),
-    @ApiResponse(responseCode = "400", description = "Unable to retrieve the data",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
-public Response editMiniGallery(
-    @Context HttpServletRequest request,
-    @Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId,
-    @Parameter(description = "Group ID") @PathParam("groupId") String groupId,
-    @RequestBody(description = "Edit payload", required = true,
-        content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class)))
-    GroupGalleryConfig editData
-) {
-    try {
-        if (galleryId == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
-        }
-        Long gId = Long.parseLong(galleryId);
-        Long ugId = Long.parseLong(groupId);
-        GroupGalleryConfig result = ugServices.editMiniGallery(request, ugId, gId, editData);
-        if (result != null) return Response.status(Response.Status.OK).entity(result).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.EDIT + "/{groupId}/{galleryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Edit mini gallery data", description = "Return mini gallery data")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "404", description = "Not found") })
+	public Response editMiniGallery(@Context HttpServletRequest request,
+			@Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId,
+			@Parameter(description = "Group ID") @PathParam("groupId") String groupId,
+			@RequestBody(description = "Edit payload", required = true, content = @Content(schema = @Schema(implementation = GroupGalleryConfig.class))) GroupGalleryConfig editData) {
+		try {
+			if (galleryId == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
+			}
+			Long gId = Long.parseLong(galleryId);
+			Long ugId = Long.parseLong(groupId);
+			GroupGalleryConfig result = ugServices.editMiniGallery(request, ugId, gId, editData);
+			if (result != null)
+				return Response.status(Response.Status.OK).entity(result).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 // DELETE mini gallery in group
-@DELETE
-@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.REMOVE + "/{groupId}/{galleryId}")
-@Consumes(MediaType.TEXT_PLAIN)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Delete mini gallery data",
-    description = "Returns no content on success"
-)
-@ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Deleted"),
-    @ApiResponse(responseCode = "400", description = "Unable to delete the data",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
-public Response removeMiniGalleryData(
-    @Context HttpServletRequest request,
-    @Parameter(description = "Group ID") @PathParam("groupId") String groupId,
-    @Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId
-) {
-    try {
-        if (galleryId == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
-        }
-        Long gId = Long.parseLong(galleryId);
-        Long ugId = Long.parseLong(groupId);
-        Boolean result = ugServices.removeMiniGallery(request, ugId, gId);
-        if (Boolean.TRUE.equals(result)) return Response.status(Response.Status.OK).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@DELETE
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_GALLERY + ApiConstants.REMOVE + "/{groupId}/{galleryId}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Delete mini gallery data", description = "Returns no content on success")
+	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Deleted"),
+			@ApiResponse(responseCode = "400", description = "Unable to delete the data", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "404", description = "Not found") })
+	public Response removeMiniGalleryData(@Context HttpServletRequest request,
+			@Parameter(description = "Group ID") @PathParam("groupId") String groupId,
+			@Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId) {
+		try {
+			if (galleryId == null) {
+				return Response.status(Response.Status.BAD_REQUEST).entity("Gallery Id cannot be null").build();
+			}
+			Long gId = Long.parseLong(galleryId);
+			Long ugId = Long.parseLong(groupId);
+			Boolean result = ugServices.removeMiniGallery(request, ugId, gId);
+			if (Boolean.TRUE.equals(result))
+				return Response.status(Response.Status.OK).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 	@GET
 	@Path(ApiConstants.PERMISSION + ApiConstants.OBSERVATION)
@@ -995,105 +972,85 @@ public Response removeMiniGalleryData(
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
+
 // 1) Remove group homepage mini-slider gallery data (PUT)
-@PUT
-@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.REMOVE + "/{userGroupId}/{galleryId}")
-@Consumes(MediaType.TEXT_PLAIN)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Delete group homepage gallery data",
-    description = "Return group home page data"
-)
-@ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK",
-        content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
-    @ApiResponse(responseCode = "400", description = "Unable to retrieve the data",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
-public Response removeMiniSliderGalleryData(
-    @Context HttpServletRequest request,
-    @Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
-    @Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId
-) {
-    try {
-        Long userGroupId = Long.parseLong(ugId);
-        Long groupGalleryId = Long.parseLong(galleryId);
-        GroupHomePageData result = ugServices.removeMiniHomePage(request, userGroupId, groupGalleryId);
-        if (result != null) return Response.status(Response.Status.OK).entity(result).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.REMOVE + "/{userGroupId}/{galleryId}")
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Delete group homepage gallery data", description = "Return group home page data")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "404", description = "Not found") })
+	public Response removeMiniSliderGalleryData(@Context HttpServletRequest request,
+			@Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
+			@Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			Long groupGalleryId = Long.parseLong(galleryId);
+			GroupHomePageData result = ugServices.removeMiniHomePage(request, userGroupId, groupGalleryId);
+			if (result != null)
+				return Response.status(Response.Status.OK).entity(result).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 // 2) Edit group homepage gallery data
-@PUT
-@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Edit group homepage gallery data",
-    description = "Return group home page data"
-)
-@ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Gallery data updated",
-        content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
-    @ApiResponse(responseCode = "400", description = "Unable to retrieve the data",
-        content = @Content(schema = @Schema(implementation = String.class)))
-})
-public Response editHomePage(
-    @Context HttpServletRequest request,
-    @Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
-    @Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId,
-    GroupGallerySlider editData
-) {
-    try {
-        Long userGroupId = Long.parseLong(ugId);
-        Long groupGalleryId = Long.parseLong(galleryId);
-        GroupHomePageData result = ugServices.editHomePage(request, userGroupId, groupGalleryId, editData);
-        if (result != null) return Response.status(Response.Status.OK).entity(result).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Edit group homepage gallery data", description = "Return group home page data")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Gallery data updated", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))) })
+	public Response editHomePage(@Context HttpServletRequest request,
+			@Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
+			@Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId,
+			GroupGallerySlider editData) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			Long groupGalleryId = Long.parseLong(galleryId);
+			GroupHomePageData result = ugServices.editHomePage(request, userGroupId, groupGalleryId, editData);
+			if (result != null)
+				return Response.status(Response.Status.OK).entity(result).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 // 3) Edit group mini homepage gallery data
-@PUT
-@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Edit group homepage gallery data",
-    description = "Return group home page data"
-)
-@ApiResponses({
-    @ApiResponse(responseCode = "200", description = "OK",
-        content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
-    @ApiResponse(responseCode = "400", description = "Unable to retrieve the data",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "404", description = "Not found")
-})
-public Response editMiniHomePage(
-    @Context HttpServletRequest request,
-    @Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
-    @Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId,
-    MiniGroupGallerySlider editData
-) {
-    try {
-        Long userGroupId = Long.parseLong(ugId);
-        Long groupGalleryId = Long.parseLong(galleryId);
-        GroupHomePageData result = ugServices.editMiniHomePage(request, userGroupId, groupGalleryId, editData);
-        if (result != null) return Response.status(Response.Status.OK).entity(result).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Edit group homepage gallery data", description = "Return group home page data")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = GroupHomePageData.class))),
+			@ApiResponse(responseCode = "400", description = "Unable to retrieve the data", content = @Content(schema = @Schema(implementation = String.class))),
+			@ApiResponse(responseCode = "404", description = "Not found") })
+	public Response editMiniHomePage(@Context HttpServletRequest request,
+			@Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
+			@Parameter(description = "Gallery ID") @PathParam("galleryId") String galleryId,
+			MiniGroupGallerySlider editData) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			Long groupGalleryId = Long.parseLong(galleryId);
+			GroupHomePageData result = ugServices.editMiniHomePage(request, userGroupId, groupGalleryId, editData);
+			if (result != null)
+				return Response.status(Response.Status.OK).entity(result).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 
 	@GET
 	@Path(ApiConstants.PERMISSION)
@@ -1221,37 +1178,29 @@ public Response editMiniHomePage(
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
 		}
 	}
+
 // Reorder mini homepage gallery slider for a group
-@PUT
-@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.REORDERING + "/{userGroupId}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@ValidateUser
-@Operation(
-    summary = "Reorder mini homepage gallery slider for a group",
-    description = "Returns updated group home page data after reordering"
-)
-@ApiResponse(responseCode = "200", description = "Reordered successfully",
-    content = @Content(schema = @Schema(implementation = GroupHomePageData.class)))
-public Response reorderingMiniHomePageGallerySlider(
-    @Context HttpServletRequest request,
-    @Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
-    @RequestBody(
-        required = true,
-        description = "Array of reordering instructions",
-        content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReorderingHomePage.class)))
-    )
-    List<ReorderingHomePage> reorderingHomePage
-) {
-    try {
-        Long userGroupId = Long.parseLong(ugId);
-        GroupHomePageData result = ugServices.reorderMiniHomePageSlider(request, userGroupId, reorderingHomePage);
-        if (result != null) return Response.status(Response.Status.OK).entity(result).build();
-        return Response.status(Response.Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-    }
-}
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER + ApiConstants.REORDERING + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ValidateUser
+	@Operation(summary = "Reorder mini homepage gallery slider for a group", description = "Returns updated group home page data after reordering")
+	@ApiResponse(responseCode = "200", description = "Reordered successfully", content = @Content(schema = @Schema(implementation = GroupHomePageData.class)))
+	public Response reorderingMiniHomePageGallerySlider(@Context HttpServletRequest request,
+			@Parameter(description = "User group ID") @PathParam("userGroupId") String ugId,
+			@RequestBody(required = true, description = "Array of reordering instructions", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReorderingHomePage.class)))) List<ReorderingHomePage> reorderingHomePage) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			GroupHomePageData result = ugServices.reorderMiniHomePageSlider(request, userGroupId, reorderingHomePage);
+			if (result != null)
+				return Response.status(Response.Status.OK).entity(result).build();
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} catch (Exception e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
 	@GET
 	@Path(ApiConstants.ENABLE + ApiConstants.EDIT + "/{userGroupId}")
 	@Consumes(MediaType.TEXT_PLAIN)

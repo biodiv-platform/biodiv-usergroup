@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.annotations.Type;
-
 import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
 import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -97,9 +95,10 @@ public class UserGroup implements Serializable {
 	 */
 	public UserGroup(Long id, Boolean allow_members_to_make_species_call, Boolean allow_non_members_to_comment,
 			Boolean allow_obv_cross_posting, Boolean allowUserToJoin, String description, String domianName,
-			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, String theme, Long visitCount, String webAddress,
-			Long languageId, Date startDate, Boolean showGallery, Boolean showStats, Boolean showRecentObservations,
-			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle, Long groupId, Geometry spatialCoverage) {
+			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, String theme, Long visitCount,
+			String webAddress, Long languageId, Date startDate, Boolean showGallery, Boolean showStats,
+			Boolean showRecentObservations, Boolean showGridMap, Boolean showPartners, Boolean showDesc,
+			String mediaToggle, Long groupId, Geometry spatialCoverage) {
 		super();
 		this.id = id;
 		this.allow_members_to_make_species_call = allow_members_to_make_species_call;

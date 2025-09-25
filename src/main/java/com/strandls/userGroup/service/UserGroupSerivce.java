@@ -163,17 +163,18 @@ public interface UserGroupSerivce {
 
 	public List<SpeciesFieldValuesDTO> fetchSpeciesFieldsWithValuesByUgId(Long ugId);
 
-	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId,
-			List<SField> speciesFields);
+	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields);
 
-	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId, List<SpeciesFieldMetadata> metadata);
+	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId,
+			List<SpeciesFieldMetadata> metadata);
 
 	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
 
-	public GroupGalleryConfig createMiniGallery(HttpServletRequest request, GroupGalleryConfig miniGalleryData, Long ugId);
+	public GroupGalleryConfig createMiniGallery(HttpServletRequest request, GroupGalleryConfig miniGalleryData,
+			Long ugId);
 
-	public GroupGalleryConfig editMiniGallery(HttpServletRequest request, Long ugId,
-			Long gId, GroupGalleryConfig editData);
+	public GroupGalleryConfig editMiniGallery(HttpServletRequest request, Long ugId, Long gId,
+			GroupGalleryConfig editData);
 
 	public Boolean removeMiniGallery(HttpServletRequest request, Long ugId, Long gId);
 

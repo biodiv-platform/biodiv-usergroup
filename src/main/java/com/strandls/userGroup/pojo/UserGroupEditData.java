@@ -13,7 +13,7 @@ public class UserGroupEditData {
 	private String homePage;
 	private String icon;
 	private String domainName;
-	private List<Map<String,Object>> translation;
+	private List<Map<String, Object>> translation;
 	private String theme;
 	private Long languageId;
 	private List<Long> speciesGroupId;
@@ -42,8 +42,9 @@ public class UserGroupEditData {
 	 * @param speciesGroupId
 	 * @param habitatId
 	 */
-	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon,
-			String domainName, List<Map<String,Object>> translation, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress, String spatialData) {
+	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon, String domainName,
+			List<Map<String, Object>> translation, String theme, Long languageId, List<Long> speciesGroupId,
+			List<Long> habitatId, String webAddress, String spatialData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
 		this.homePage = homePage;
@@ -98,11 +99,11 @@ public class UserGroupEditData {
 		this.webAddress = webAddress;
 	}
 
-	public List<Map<String,Object>> getTranslation() {
+	public List<Map<String, Object>> getTranslation() {
 		return translation;
 	}
 
-	public void setTranslation(List<Map<String,Object>> translation) {
+	public void setTranslation(List<Map<String, Object>> translation) {
 		this.translation = translation;
 	}
 
