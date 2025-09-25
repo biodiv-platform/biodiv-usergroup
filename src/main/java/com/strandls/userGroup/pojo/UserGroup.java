@@ -5,7 +5,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.annotations.Type;
+
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
+import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vividsolutions.jts.geom.Geometry;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,10 +44,6 @@ public class UserGroup implements Serializable {
 	private String icon;
 	private Boolean isDeleted;
 	private String name;
-	private Double neLatitude;
-	private Double neLongitude;
-	private Double swLatitude;
-	private Double swLongitude;
 	private String theme;
 	private Long visitCount;
 	private String webAddress;
@@ -55,6 +58,8 @@ public class UserGroup implements Serializable {
 	private List<Long> habitatIds;
 	private List<Long> speciesGroupIds;
 	private String mediaToggle;
+	private Long groupId;
+	private Geometry spatialCoverage;
 
 	/** */
 	public UserGroup() {
@@ -92,10 +97,9 @@ public class UserGroup implements Serializable {
 	 */
 	public UserGroup(Long id, Boolean allow_members_to_make_species_call, Boolean allow_non_members_to_comment,
 			Boolean allow_obv_cross_posting, Boolean allowUserToJoin, String description, String domianName,
-			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, Double neLatitude,
-			Double neLongitude, Double swLatitude, Double swLongitude, String theme, Long visitCount, String webAddress,
+			Date foundedOn, String homePage, String icon, Boolean isDeleted, String name, String theme, Long visitCount, String webAddress,
 			Long languageId, Date startDate, Boolean showGallery, Boolean showStats, Boolean showRecentObservations,
-			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle) {
+			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String mediaToggle, Long groupId, Geometry spatialCoverage) {
 		super();
 		this.id = id;
 		this.allow_members_to_make_species_call = allow_members_to_make_species_call;
@@ -109,10 +113,6 @@ public class UserGroup implements Serializable {
 		this.icon = icon;
 		this.isDeleted = isDeleted;
 		this.name = name;
-		this.neLatitude = neLatitude;
-		this.neLongitude = neLongitude;
-		this.swLatitude = swLatitude;
-		this.swLongitude = swLongitude;
 		this.theme = theme;
 		this.visitCount = visitCount;
 		this.webAddress = webAddress;
@@ -125,6 +125,8 @@ public class UserGroup implements Serializable {
 		this.showPartners = showPartners;
 		this.showDesc = showDesc;
 		this.mediaToggle = mediaToggle;
+		this.groupId = groupId;
+		this.spatialCoverage = spatialCoverage;
 	}
 
 	@Id
@@ -235,42 +237,6 @@ public class UserGroup implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Column(name = "ne_latitude")
-	public Double getNeLatitude() {
-		return neLatitude;
-	}
-
-	public void setNeLatitude(Double neLatitude) {
-		this.neLatitude = neLatitude;
-	}
-
-	@Column(name = "ne_longitude")
-	public Double getNeLongitude() {
-		return neLongitude;
-	}
-
-	public void setNeLongitude(Double neLongitude) {
-		this.neLongitude = neLongitude;
-	}
-
-	@Column(name = "sw_latitude")
-	public Double getSwLatitude() {
-		return swLatitude;
-	}
-
-	public void setSwLatitude(Double swLatitude) {
-		this.swLatitude = swLatitude;
-	}
-
-	@Column(name = "sw_longitude")
-	public Double getSwLongitude() {
-		return swLongitude;
-	}
-
-	public void setSwLongitude(Double swLongitude) {
-		this.swLongitude = swLongitude;
 	}
 
 	@Column(name = "theme")
@@ -398,4 +364,25 @@ public class UserGroup implements Serializable {
 	public void setMediaToggle(String mediaTogle) {
 		this.mediaToggle = mediaTogle;
 	}
+
+	@Column(name = "group_id")
+	public Long getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Long groupId) {
+		this.groupId = groupId;
+	}
+
+	@Column(name = "spatial_coverage", columnDefinition = "Geometry")
+	@JsonSerialize(using = GeometrySerializer.class)
+	@JsonDeserialize(contentUsing = GeometryDeserializer.class)
+	public Geometry getSpatialCoverage() {
+		return spatialCoverage;
+	}
+
+	public void setSpatialCoverage(Geometry spatialCoverage) {
+		this.spatialCoverage = spatialCoverage;
+	}
+
 }

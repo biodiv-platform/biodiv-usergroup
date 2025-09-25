@@ -60,4 +60,24 @@ public class GroupGallerySliderDao extends AbstractDAO<GroupGallerySlider, Long>
 		}
 		return result;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<GroupGallerySlider> findBySliderId(Long sId) {
+		String qry = "from GroupGallerySlider where sliderId = :sId";
+		Session session = sessionFactory.openSession();
+		List<GroupGallerySlider> result = null;
+		try {
+			Query<GroupGallerySlider> query = session.createQuery(qry);
+			query.setParameter("sId", sId);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+
+	}
+
 }

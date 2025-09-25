@@ -130,4 +130,73 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		}
 		return null;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<UserGroup> findByGroupId(Long ugId) {
+		Session session = sessionFactory.openSession();
+		List<UserGroup> result = null;
+		String qry = "from UserGroup where group_id = :ugId";
+		try {
+			Query<UserGroup> query = session.createQuery(qry);
+			query.setParameter("ugId", ugId);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public UserGroup findByGroupIdByLanguageId(Long ugId, Long langId) {
+		Session session = sessionFactory.openSession();
+		UserGroup result = null;
+		String qry = "from UserGroup where group_id = :ugId and language_id = :langId";
+		try {
+			Query<UserGroup> query = session.createQuery(qry);
+			query.setParameter("ugId", ugId);
+			query.setParameter("langId", langId);
+			result = query.getResultList().get(0);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean isWebAddressAllowedForGroup(String webAddress, Long excludeGroupId) {
+	    Session session = sessionFactory.openSession();
+	    boolean isAllowed = true;
+
+	    String qry = "SELECT COUNT(*) FROM UserGroup WHERE webaddress = :webAddress";
+	    if (excludeGroupId != null) {
+	        qry+=" AND group_id != :excludeGroupId";
+	    }
+
+	    try {
+	        Query<Long> query = session.createQuery(qry);
+	        query.setParameter("webAddress", webAddress);
+	        if (excludeGroupId != null) {
+	            query.setParameter("excludeGroupId", excludeGroupId);
+	        }
+
+	        Long count = query.uniqueResult();
+	        isAllowed = (count == 0); // allowed only if no conflict
+
+	    } catch (Exception e) {
+	        logger.error("Error checking webaddress uniqueness: {}", e.getMessage());
+	        isAllowed = false; // safest to assume false if there's an error
+	    } finally {
+	        session.close();
+	    }
+
+	    return isAllowed;
+	}
+
+
 }

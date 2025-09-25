@@ -13,8 +13,10 @@ import com.strandls.userGroup.pojo.BulkGroupPostingData;
 import com.strandls.userGroup.pojo.BulkGroupUnPostingData;
 import com.strandls.userGroup.pojo.Featured;
 import com.strandls.userGroup.pojo.FeaturedCreateData;
+import com.strandls.userGroup.pojo.GroupGalleryConfig;
 import com.strandls.userGroup.pojo.GroupGallerySlider;
 import com.strandls.userGroup.pojo.GroupHomePageData;
+import com.strandls.userGroup.pojo.MiniGroupGallerySlider;
 import com.strandls.userGroup.pojo.ObservationCustomisations;
 import com.strandls.userGroup.pojo.ReorderingHomePage;
 import com.strandls.userGroup.pojo.SField;
@@ -44,7 +46,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public interface UserGroupSerivce {
 
-	public UserGroup fetchByGroupId(Long id);
+	public UserGroup fetchByGroupId(Long id, Long langId);
 
 	public UserGroupIbp fetchByGroupIdIbp(Long id);
 
@@ -60,9 +62,9 @@ public interface UserGroupSerivce {
 	public List<UserGroupIbp> updateUserGroupObservationMapping(HttpServletRequest request, Long observationId,
 			UserGroupMappingCreateData userGorups);
 
-	public List<UserGroupIbp> fetchAllUserGroup();
+	public List<UserGroupIbp> fetchAllUserGroup(Long langId);
 
-	public List<UserGroupExpanded> fetchAllUserGroupExpanded();
+	public List<UserGroupExpanded> fetchAllUserGroupExpanded(Long langId);
 
 	public List<Featured> fetchFeatured(String objectType, Long id);
 
@@ -120,9 +122,7 @@ public interface UserGroupSerivce {
 
 	public List<UserGroupIbp> updateUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate);
 
-	public UserGroupHomePageEditData getGroupHomePageEditData(HttpServletRequest request, Long userGroupId);
-
-	public GroupHomePageData getGroupHomePageData(Long userGroupId);
+	public GroupHomePageData getGroupHomePageData(Long userGroupId, Long langId);
 
 	public GroupHomePageData updateGroupHomePage(HttpServletRequest request, Long userGroupId,
 			UserGroupHomePageEditData editData);
@@ -163,10 +163,25 @@ public interface UserGroupSerivce {
 
 	public List<SpeciesFieldValuesDTO> fetchSpeciesFieldsWithValuesByUgId(Long ugId);
 
-	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId, List<SField> speciesFields);
+	public List<UsergroupSpeciesFieldMapping> updateSpeciesFieldsMappingByUgId(Long ugId,
+			List<SField> speciesFields);
 
-	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId,
-			List<SpeciesFieldMetadata> metadata);
+	public List<UserGroupSpeciesFieldMeta> updateSpeciesFieldMetadata(Long userGroupId, List<SpeciesFieldMetadata> metadata);
 
 	public List<UserGroupSpeciesFieldMeta> getSpeciesFieldMetaData(Long userGroupId);
+
+	public GroupGalleryConfig createMiniGallery(HttpServletRequest request, GroupGalleryConfig miniGalleryData, Long ugId);
+
+	public GroupGalleryConfig editMiniGallery(HttpServletRequest request, Long ugId,
+			Long gId, GroupGalleryConfig editData);
+
+	public Boolean removeMiniGallery(HttpServletRequest request, Long ugId, Long gId);
+
+	public GroupHomePageData reorderMiniHomePageSlider(HttpServletRequest request, Long userGroupId,
+			List<ReorderingHomePage> reorderingHomePage);
+
+	public GroupHomePageData removeMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId);
+
+	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
+			MiniGroupGallerySlider editData);
 }

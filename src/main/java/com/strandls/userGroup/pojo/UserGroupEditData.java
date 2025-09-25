@@ -2,6 +2,7 @@
 package com.strandls.userGroup.pojo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Abhishek Rudra
@@ -9,19 +10,16 @@ import java.util.List;
 public class UserGroupEditData {
 
 	private Boolean allowUserToJoin;
-	private String description;
 	private String homePage;
 	private String icon;
 	private String domainName;
-	private String name;
-	private Double neLatitude;
-	private Double neLongitude;
-	private Double swLatitude;
-	private Double swLongitude;
+	private List<Map<String,Object>> translation;
 	private String theme;
 	private Long languageId;
 	private List<Long> speciesGroupId;
 	private List<Long> habitatId;
+	private String webAddress;
+	private String spatialData;
 
 	/** */
 	public UserGroupEditData() {
@@ -44,24 +42,20 @@ public class UserGroupEditData {
 	 * @param speciesGroupId
 	 * @param habitatId
 	 */
-	public UserGroupEditData(Boolean allowUserToJoin, String description, String homePage, String icon,
-			String domainName, String name, Double neLatitude, Double neLongitude, Double swLatitude,
-			Double swLongitude, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId) {
+	public UserGroupEditData(Boolean allowUserToJoin, String homePage, String icon,
+			String domainName, List<Map<String,Object>> translation, String theme, Long languageId, List<Long> speciesGroupId, List<Long> habitatId, String webAddress, String spatialData) {
 		super();
 		this.allowUserToJoin = allowUserToJoin;
-		this.description = description;
 		this.homePage = homePage;
 		this.icon = icon;
 		this.domainName = domainName;
-		this.name = name;
-		this.neLatitude = neLatitude;
-		this.neLongitude = neLongitude;
-		this.swLatitude = swLatitude;
-		this.swLongitude = swLongitude;
+		this.translation = translation;
 		this.theme = theme;
 		this.languageId = languageId;
 		this.speciesGroupId = speciesGroupId;
 		this.habitatId = habitatId;
+		this.webAddress = webAddress;
+		this.spatialData = spatialData;
 	}
 
 	public Boolean getAllowUserToJoin() {
@@ -70,14 +64,6 @@ public class UserGroupEditData {
 
 	public void setAllowUserToJoin(Boolean allowUserToJoin) {
 		this.allowUserToJoin = allowUserToJoin;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public String getHomePage() {
@@ -104,44 +90,20 @@ public class UserGroupEditData {
 		this.domainName = domainName;
 	}
 
-	public String getName() {
-		return name;
+	public String getWebAddress() {
+		return webAddress;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setWebAddress(String webAddress) {
+		this.webAddress = webAddress;
 	}
 
-	public Double getNeLatitude() {
-		return neLatitude;
+	public List<Map<String,Object>> getTranslation() {
+		return translation;
 	}
 
-	public void setNeLatitude(Double neLatitude) {
-		this.neLatitude = neLatitude;
-	}
-
-	public Double getNeLongitude() {
-		return neLongitude;
-	}
-
-	public void setNeLongitude(Double neLongitude) {
-		this.neLongitude = neLongitude;
-	}
-
-	public Double getSwLatitude() {
-		return swLatitude;
-	}
-
-	public void setSwLatitude(Double swLatitude) {
-		this.swLatitude = swLatitude;
-	}
-
-	public Double getSwLongitude() {
-		return swLongitude;
-	}
-
-	public void setSwLongitude(Double swLongitude) {
-		this.swLongitude = swLongitude;
+	public void setTranslation(List<Map<String,Object>> translation) {
+		this.translation = translation;
 	}
 
 	public String getTheme() {
@@ -175,4 +137,13 @@ public class UserGroupEditData {
 	public void setHabitatId(List<Long> habitatId) {
 		this.habitatId = habitatId;
 	}
+
+	public String getSpatialData() {
+		return spatialData;
+	}
+
+	public void setSpatialData(String spatialData) {
+		this.spatialData = spatialData;
+	}
+
 }

@@ -1,13 +1,13 @@
-/** */
+/**
+ * 
+ */
 package com.strandls.userGroup.pojo;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Abhishek Rudra
+ *
  */
-public class UserGroupHomePageEditData {
+public class UserGroupComponentsEdit {
 
 	private Boolean showGallery;
 	private Boolean showStats;
@@ -15,12 +15,12 @@ public class UserGroupHomePageEditData {
 	private Boolean showGridMap;
 	private Boolean showPartners;
 	private Boolean showDesc;
-	private String description;
-	private List<GroupGallerySlider> gallerySlider;
-	private List<GroupGalleryConfig> miniGallery;
+	private Long languageId;
 
-	/** */
-	public UserGroupHomePageEditData() {
+	/**
+	 * 
+	 */
+	public UserGroupComponentsEdit() {
 		super();
 	}
 
@@ -34,9 +34,8 @@ public class UserGroupHomePageEditData {
 	 * @param description
 	 * @param gallerySlider
 	 */
-	public UserGroupHomePageEditData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation,
-			Boolean showGridMap, Boolean showPartners, Boolean showDesc, String description,
-			List<GroupGallerySlider> gallerySlider,List<GroupGalleryConfig> miniGallery) {
+	public UserGroupComponentsEdit(Boolean showGallery, Boolean showStats, Boolean showRecentObservation,
+			Boolean showGridMap, Boolean showPartners, Boolean showDesc, Long languageId) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;
@@ -44,9 +43,7 @@ public class UserGroupHomePageEditData {
 		this.showGridMap = showGridMap;
 		this.showPartners = showPartners;
 		this.showDesc = showDesc;
-		this.description = description;
-		this.gallerySlider = gallerySlider;
-		this.miniGallery = miniGallery;
+		this.languageId = languageId;
 	}
 
 	public Boolean getShowGallery() {
@@ -96,29 +93,13 @@ public class UserGroupHomePageEditData {
 	public void setShowDesc(Boolean showDesc) {
 		this.showDesc = showDesc;
 	}
-
-	public String getDescription() {
-		return description;
+	
+	public Long getLanguageId() {
+		return languageId;
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public List<GroupGallerySlider> getGallerySlider() {
-		return gallerySlider;
-	}
-
-	public void setGallerySlider(List<GroupGallerySlider> gallerySlider) {
-		this.gallerySlider = gallerySlider;
-	}
-
-	public List<GroupGalleryConfig> getMiniGallery() {
-		return miniGallery;
-	}
-
-	public void setMiniGallery(List<GroupGalleryConfig> miniGallery) {
-		this.miniGallery = miniGallery;
+	
+	public void setLanguageId(Long languageId) {
+		this.languageId = languageId;
 	}
 
 }
