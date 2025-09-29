@@ -2,7 +2,7 @@
 
 <hibernate-configuration>
 	<session-factory>
-		<property name="hibernate.dialect">org.hibernate.spatial.dialect.postgis.PostgisDialect</property>
+		<property name="hibernate.dialect">org.hibernate.spatial.dialect.postgis.PostgisPGDialect</property>
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.username">postgres</property>
 		<property name="hibernate.connection.password">postgres123</property>
