@@ -1941,7 +1941,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			List<Long> uniqueAuthorIds = galleryData.stream().map(GroupGallerySlider::getAuthorId)
 					.filter(Objects::nonNull).distinct().collect(Collectors.toList());
 			List<Integer> uniqueAuthorIdsAsInt = uniqueAuthorIds.stream()
-					.map(Math::toIntExact).collect(Collectors.toList());
+					.map(Math::toIntExact).collect(Collectors.toCollection(ArrayList::new));
 			List<User> users = userService.getUserBulk(uniqueAuthorIdsAsInt);
 			Map<String, User> userMap = users.stream()
 					.collect(Collectors.toMap(user -> user.getId().toString(), Function.identity()));
@@ -2032,7 +2032,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 				.distinct().collect(Collectors.toList());
 		try {
 			List<Integer> uniqueAuthorIdsAsInt = uniqueAuthorIds.stream()
-					.map(Math::toIntExact).collect(Collectors.toList());
+					.map(Math::toIntExact).collect(Collectors.toCollection(ArrayList::new));
 			List<User> users = userService.getUserBulk(uniqueAuthorIdsAsInt);
 			Map<String, User> userMap = users.stream()
 					.collect(Collectors.toMap(user -> user.getId().toString(), Function.identity()));
