@@ -375,7 +375,7 @@ public class UserGroup implements Serializable {
 
 	@Column(name = "spatial_coverage", columnDefinition = "Geometry")
 	@JsonSerialize(using = GeometrySerializer.class)
-	@JsonDeserialize(contentUsing = GeometryDeserializer.class)
+	@JsonDeserialize(using = GeometryDeserializer.class)
 	public Geometry getSpatialCoverage() {
 		return spatialCoverage;
 	}
