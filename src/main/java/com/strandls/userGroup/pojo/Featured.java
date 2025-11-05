@@ -81,7 +81,7 @@ public class Featured implements Serializable {
 		this.authorId = authorId;
 	}
 
-	@Column(name = "created_on")
+	@Column(name = "created_on", columnDefinition = "TIMESTAMP(6) WITHOUT TIME ZONE")
 	public Date getCreatedOn() {
 		return createdOn;
 	}
