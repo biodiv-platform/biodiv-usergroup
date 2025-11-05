@@ -38,7 +38,7 @@ public class GroupGalleryConfigDao extends AbstractDAO<GroupGalleryConfig, Long>
 	@SuppressWarnings("unchecked")
 	public List<GroupGalleryConfig> getAllMiniSliderByGroup(Long groupId) {
 		List<GroupGalleryConfig> result = null;
-		String qry = "from  GroupGalleryConfig where ug_id =: groupId";
+		String qry = "from  GroupGalleryConfig where ugId = :groupId";
 		Session session = sessionFactory.openSession();
 		try {
 			Query<GroupGalleryConfig> query = session.createQuery(qry);
@@ -54,7 +54,7 @@ public class GroupGalleryConfigDao extends AbstractDAO<GroupGalleryConfig, Long>
 
 	@SuppressWarnings("unchecked")
 	public List<GroupGalleryConfig> getByGalleryId(Long groupId, Long galleryId) {
-		String qry = "from GroupGalleryConfig where gallery_id = :galleryId and ug_id=:groupId";
+		String qry = "from GroupGalleryConfig where galleryId = :galleryId and ugId = :groupId";
 		Session session = sessionFactory.openSession();
 		List<GroupGalleryConfig> result = null;
 		try {

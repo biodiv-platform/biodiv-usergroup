@@ -135,7 +135,7 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 	public List<UserGroup> findByGroupId(Long ugId) {
 		Session session = sessionFactory.openSession();
 		List<UserGroup> result = null;
-		String qry = "from UserGroup where group_id = :ugId";
+		String qry = "from UserGroup where groupId = :ugId";
 		try {
 			Query<UserGroup> query = session.createQuery(qry);
 			query.setParameter("ugId", ugId);
@@ -153,7 +153,7 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 	public UserGroup findByGroupIdByLanguageId(Long ugId, Long langId) {
 		Session session = sessionFactory.openSession();
 		UserGroup result = null;
-		String qry = "from UserGroup where group_id = :ugId and language_id = :langId";
+		String qry = "from UserGroup where groupId = :ugId and languageId = :langId";
 		try {
 			Query<UserGroup> query = session.createQuery(qry);
 			query.setParameter("ugId", ugId);
@@ -173,9 +173,9 @@ public class UserGroupDao extends AbstractDAO<UserGroup, Long> {
 		Session session = sessionFactory.openSession();
 		boolean isAllowed = true;
 
-		String qry = "SELECT COUNT(*) FROM UserGroup WHERE webaddress = :webAddress";
+		String qry = "SELECT COUNT(*) FROM UserGroup WHERE webAddress = :webAddress";
 		if (excludeGroupId != null) {
-			qry += " AND group_id != :excludeGroupId";
+			qry += " AND groupId != :excludeGroupId";
 		}
 
 		try {
