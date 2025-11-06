@@ -175,7 +175,7 @@ public class CustomFieldController {
 	@GET
 	@Path(ApiConstants.GROUP + "/{userGroupId}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@ValidateUser
+	
 	@Operation(summary = "Find all the custom field related with a userGroup", responses = {
 			@ApiResponse(responseCode = "200", description = "All custom fields for a user group", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CustomFieldDetails.class)))),
 			@ApiResponse(responseCode = "406", description = "No custom fields for user group", content = @Content(schema = @Schema(implementation = String.class))),
