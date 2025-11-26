@@ -1886,11 +1886,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					logger.error(e.getMessage());
 				}
 
-				MailData mailData = updateDocumentMailData(ugDocCreate.getDocumentId(), ugDocCreate.getMailData());
+				//MailData mailData = updateDocumentMailData(ugDocCreate.getDocumentId(), ugDocCreate.getMailData());
 
 				logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						ugDocCreate.getDocumentId(), ugDocCreate.getDocumentId(), "document", ug.getUserGroupId(),
-						"Removed resoruce", mailData);
+						"Removed resoruce", null);
 			}
 			previousUserGroup.add(ug.getUserGroupId());
 		}
