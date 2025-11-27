@@ -4,6 +4,7 @@ package com.strandls.userGroup.pojo;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -68,10 +69,12 @@ public class UserGroupMemberRole implements Serializable {
 
 	@Id
 	@Column(name = "s_user_id")
+	@JsonProperty("sUserId")
 	public Long getsUserId() {
 		return sUserId;
 	}
 
+	@JsonProperty("sUserId")
 	public void setsUserId(Long sUserId) {
 		this.sUserId = sUserId;
 	}
