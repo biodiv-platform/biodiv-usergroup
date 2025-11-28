@@ -67,6 +67,9 @@ public class ApplicationConfig extends Application {
 			}
 		});
 
+		// Register InterceptorModule for @ValidateUser annotation support
+		singletons.add(new InterceptorModule());
+
 		singletons.add(new InterceptorModule());
 
 		return singletons;
