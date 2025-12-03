@@ -5,6 +5,8 @@ package com.strandls.userGroup.pojo;
 
 import java.util.List;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 /**
  * @author Abhishek Rudra
  *
@@ -21,6 +23,8 @@ public class GroupHomePageData {
 	private Stats stats;
 	private List<GroupGallerySlider> gallerySlider;
 	private List<GroupGalleryConfig> miniGallery;
+	private Geometry spatialCoverage;
+
 	/**
 	 * 
 	 */
@@ -37,11 +41,12 @@ public class GroupHomePageData {
 	 * @param showDesc
 	 * @param description
 	 * @param stats
+	 * @param geometry
 	 * @param groupedBySliderId
 	 */
 	public GroupHomePageData(Boolean showGallery, Boolean showStats, Boolean showRecentObservation, Boolean showGridMap,
 			Boolean showPartners, Boolean showDesc, String description, Stats stats,
-			List<GroupGallerySlider> gallerySlider,List<GroupGalleryConfig> miniGallery) {
+			List<GroupGallerySlider> gallerySlider, List<GroupGalleryConfig> miniGallery, Geometry spatialCoverage) {
 		super();
 		this.showGallery = showGallery;
 		this.showStats = showStats;
@@ -53,6 +58,7 @@ public class GroupHomePageData {
 		this.stats = stats;
 		this.gallerySlider = gallerySlider;
 		this.miniGallery = miniGallery;
+		this.setSpatialCoverage(spatialCoverage);
 	}
 
 	public Boolean getShowGallery() {
@@ -126,13 +132,21 @@ public class GroupHomePageData {
 	public void setGallerySlider(List<GroupGallerySlider> gallerySlider) {
 		this.gallerySlider = gallerySlider;
 	}
-	
+
 	public List<GroupGalleryConfig> getMiniGallery() {
 		return miniGallery;
 	}
 
 	public void setMiniGallery(List<GroupGalleryConfig> miniGallery) {
 		this.miniGallery = miniGallery;
+	}
+
+	public Geometry getSpatialCoverage() {
+		return spatialCoverage;
+	}
+
+	public void setSpatialCoverage(Geometry spatialCoverage) {
+		this.spatialCoverage = spatialCoverage;
 	}
 
 }

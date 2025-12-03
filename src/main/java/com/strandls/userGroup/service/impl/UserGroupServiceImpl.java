@@ -2059,7 +2059,8 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 			GroupHomePageData result = new GroupHomePageData(userGroup.getShowGallery(), userGroup.getShowStats(),
 					userGroup.getShowRecentObservations(), userGroup.getShowGridMap(), userGroup.getShowPartners(),
-					userGroup.getShowDesc(), userGroup.getDescription(), stats, gallerySlider, miniGalleryConfig);
+					userGroup.getShowDesc(), userGroup.getDescription(), stats, gallerySlider, miniGalleryConfig,
+					userGroup.getSpatialCoverage());
 
 			return result;
 
