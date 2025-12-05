@@ -1413,7 +1413,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							ugDatapayload.setDocumentId(item.getObservationId());
 							ugDatapayload.setUserGroupIds(ugList);
 							ugDatapayload.setMailData(null);
-							updateUGDocMapping(request, ugDatapayload);
+							removeUGDocMapping(request, ugDatapayload);
 							counter++;
 						} else if (recordType.contains(RecordType.DATATABLE.getValue())) {
 							ugDatatableService.updateUserGroupDatatableMapping(request, item.getObservationId(),
@@ -1859,6 +1859,38 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						"Posted resource", mailData);
 
 			}
+		}
+
+		return fetchByDocumentId(ugDocCreate.getDocumentId());
+
+	}
+
+	public List<UserGroupIbp> removeUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate) {
+
+		List<Long> previousUserGroup = new ArrayList<Long>();
+		List<UserGroupDocument> previousMapping = ugDocumentDao.findByDocumentId(ugDocCreate.getDocumentId());
+		for (UserGroupDocument ug : previousMapping) {
+			if ((ugDocCreate.getUserGroupIds().contains(ug.getUserGroupId()))) {
+				ugDocumentDao.delete(ug);
+
+				UserGroupActivity ugActivity = new UserGroupActivity();
+				UserGroupIbp ugIbp = fetchByGroupIdIbp(ug.getUserGroupId());
+				String description = null;
+				ugActivity.setFeatured(null);
+				ugActivity.setUserGroupId(ugIbp.getId());
+				ugActivity.setUserGroupName(ugIbp.getName());
+				ugActivity.setWebAddress(ugIbp.getWebAddress());
+				try {
+					description = objectMapper.writeValueAsString(ugActivity);
+				} catch (Exception e) {
+					logger.error(e.getMessage());
+				}
+
+				logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
+						ugDocCreate.getDocumentId(), ugDocCreate.getDocumentId(), "document", ug.getUserGroupId(),
+						"Removed resoruce", null);
+			}
+			previousUserGroup.add(ug.getUserGroupId());
 		}
 
 		return fetchByDocumentId(ugDocCreate.getDocumentId());
