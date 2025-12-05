@@ -1864,7 +1864,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 		return fetchByDocumentId(ugDocCreate.getDocumentId());
 
 	}
-	
+
 	public List<UserGroupIbp> removeUGDocMapping(HttpServletRequest request, UserGroupDocCreateData ugDocCreate) {
 
 		List<Long> previousUserGroup = new ArrayList<Long>();
@@ -1886,8 +1886,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					logger.error(e.getMessage());
 				}
 
-				//MailData mailData = updateDocumentMailData(ugDocCreate.getDocumentId(), ugDocCreate.getMailData());
-
 				logActivity.LogDocumentActivities(request.getHeader(HttpHeaders.AUTHORIZATION), description,
 						ugDocCreate.getDocumentId(), ugDocCreate.getDocumentId(), "document", ug.getUserGroupId(),
 						"Removed resoruce", null);
@@ -1895,11 +1893,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			previousUserGroup.add(ug.getUserGroupId());
 		}
 
-
 		return fetchByDocumentId(ugDocCreate.getDocumentId());
 
 	}
-
 
 	private MailData updateDocumentMailData(Long documentId, MailData mailData) {
 		List<UserGroupMailData> userGroup = new ArrayList<UserGroupMailData>();
