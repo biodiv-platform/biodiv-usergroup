@@ -1523,7 +1523,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					nameMap.put("id", userGroup.getId());
 					translation.add(nameMap);
 				}
-				if (userGroupTranslations != null) {
+				if (userGroupTranslations != null && !userGroupTranslations.isEmpty()) {
 					List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroupId);
 					List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroupId);
 					List<Long> speciesGroupId = new ArrayList<Long>();
@@ -1534,8 +1534,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					for (UserGroupHabitat ugHabitat : ugHabitats) {
 						habitatId.add(ugHabitat.getHabitatId());
 					}
-					WKTWriter writer = new WKTWriter();
-					String wktData = writer.write(userGroupTranslations.get(0).getSpatialCoverage());
+					String wktData = null;
+					if (userGroupTranslations.get(0).getSpatialCoverage() != null) {
+						WKTWriter writer = new WKTWriter();
+						wktData = writer.write(userGroupTranslations.get(0).getSpatialCoverage());
+					}
 					UserGroupEditData ugEditData = new UserGroupEditData(
 							userGroupTranslations.get(0).getAllowUserToJoin(),
 							userGroupTranslations.get(0).getHomePage(), userGroupTranslations.get(0).getIcon(),
