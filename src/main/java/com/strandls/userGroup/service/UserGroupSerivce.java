@@ -188,4 +188,9 @@ public interface UserGroupSerivce {
 	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
 			MiniGroupGallerySlider editData);
 
+	public GroupHomePageData insertHomePage(HttpServletRequest request, Long userGroupId, GroupGallerySlider editData);
+
+	public GroupHomePageData insertMiniHomePage(HttpServletRequest request, Long userGroupId,
+			MiniGroupGallerySlider editData);
+
 }

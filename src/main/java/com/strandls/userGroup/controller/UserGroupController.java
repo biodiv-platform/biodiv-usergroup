@@ -1091,6 +1091,31 @@ public class UserGroupController {
 	}
 	
 	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.INSERT + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Edit group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+
+	public Response insertHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
+			@ApiParam(name = "editData") GroupGallerySlider editData) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			GroupHomePageData result = ugServices.insertHomePage(request, userGroupId, editData);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
+	@PUT
 	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER +ApiConstants.EDIT + "/{userGroupId}/{galleryId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -1108,6 +1133,31 @@ public class UserGroupController {
 			Long userGroupId = Long.parseLong(ugId);
 			Long groupGalleryId = Long.parseLong(galleryId);
 			GroupHomePageData result = ugServices.editMiniHomePage(request, userGroupId, groupGalleryId, editData);
+			if (result != null)
+				return Response.status(Status.OK).entity(result).build();
+			return Response.status(Status.NOT_FOUND).build();
+
+		} catch (Exception e) {
+			return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+	
+	@PUT
+	@Path(ApiConstants.HOMEPAGE + ApiConstants.MINI_SLIDER +ApiConstants.INSERT + "/{userGroupId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+
+	@ValidateUser
+
+	@ApiOperation(value = "Edit group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
+
+	public Response insertMiniHomePage(@Context HttpServletRequest request, @PathParam("userGroupId") String ugId,
+			@ApiParam(name = "editData") MiniGroupGallerySlider editData) {
+		try {
+			Long userGroupId = Long.parseLong(ugId);
+			GroupHomePageData result = ugServices.insertMiniHomePage(request, userGroupId, editData);
 			if (result != null)
 				return Response.status(Status.OK).entity(result).build();
 			return Response.status(Status.NOT_FOUND).build();
