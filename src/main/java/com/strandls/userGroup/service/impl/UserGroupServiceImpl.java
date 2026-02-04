@@ -2310,10 +2310,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return null;
 	}
-	
+
 	@Override
-	public GroupHomePageData insertHomePage(HttpServletRequest request, Long userGroupId,
-			GroupGallerySlider editData) {
+	public GroupHomePageData insertHomePage(HttpServletRequest request, Long userGroupId, GroupGallerySlider editData) {
 		try {
 			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
@@ -2359,7 +2358,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return null;
 	}
-
 
 	@Override
 	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
@@ -2420,7 +2418,7 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return null;
 	}
-	
+
 	@Override
 	public GroupHomePageData insertMiniHomePage(HttpServletRequest request, Long userGroupId,
 			MiniGroupGallerySlider editData) {
@@ -2470,7 +2468,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 		return null;
 	}
-
 
 	@Override
 	public GroupHomePageData reorderingHomePageSlider(HttpServletRequest request, Long userGroupId,
