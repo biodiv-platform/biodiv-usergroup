@@ -1094,7 +1094,7 @@ public class UserGroupController {
 
 	@ValidateUser
 
-	@ApiOperation(value = "Edit group homepage gallery data", notes = "return group home page data", response = GroupHomePageData.class)
+	@ApiOperation(value = "Create group homepage gallery", notes = "return group home page data", response = GroupHomePageData.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 400, message = "unable to retrieve the data", response = String.class) })
 
