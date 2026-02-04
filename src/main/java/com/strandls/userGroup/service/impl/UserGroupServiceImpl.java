@@ -2168,53 +2168,6 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					userGroupDao.update(userGroup);
 				}
 
-//		update gallery slider
-
-				List<GroupGallerySlider> galleryData = editData.getGallerySlider();
-
-				if (galleryData != null && !galleryData.isEmpty()) {
-					for (GroupGallerySlider galleryMap : galleryData) {
-						Long sliderId = null;
-
-						for (Translation translation : galleryMap.getTranslations()) {
-							GroupGallerySlider gallerySliderEntity = new GroupGallerySlider();
-							gallerySliderEntity.setId(null);
-							gallerySliderEntity.setAuthorId(galleryMap.getAuthorId());
-							gallerySliderEntity.setCustomDescripition(translation.getDescription());
-							gallerySliderEntity.setFileName(galleryMap.getFileName());
-							gallerySliderEntity.setMoreLinks(galleryMap.getMoreLinks());
-							gallerySliderEntity.setObservationId(galleryMap.getObservationId());
-							gallerySliderEntity.setTitle(translation.getTitle());
-							gallerySliderEntity.setUgId(userGroupId);
-							gallerySliderEntity.setDisplayOrder(galleryMap.getDisplayOrder());
-							gallerySliderEntity.setReadMoreText(translation.getReadMoreText());
-							gallerySliderEntity.setGallerySidebar(galleryMap.getGallerySidebar());
-							gallerySliderEntity.setReadMoreUIType(galleryMap.getReadMoreUIType());
-							gallerySliderEntity.setLanguageId(translation.getLanguageId());
-
-							if (sliderId != null) {
-								gallerySliderEntity.setSliderId(sliderId);
-							}
-
-							gallerySliderEntity = groupGallerySliderDao.save(gallerySliderEntity);
-
-							if (sliderId == null) {
-								sliderId = gallerySliderEntity.getId();
-								gallerySliderEntity.setSliderId(sliderId);
-								groupGallerySliderDao.update(gallerySliderEntity); // Update with its own sliderId
-							}
-						}
-					}
-				}
-
-				for (GroupGalleryConfig miniGallerySlider : editData.getMiniGallery()) {
-					if (miniGallerySlider.getGallerySlider() != null && !miniGallerySlider.getGallerySlider().isEmpty()
-							&& miniGallerySlider.getGallerySlider().size() > 0) {
-						miniGallerySlider.getGallerySlider().forEach(
-								languageMap -> saveMiniGroupGallerySliderTranslations(languageMap, userGroupId));
-					}
-				}
-
 				return getGroupHomePageData(userGroupId, defaultLanguageId);
 			}
 		} catch (Exception e) {
@@ -2359,6 +2312,54 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	}
 
 	@Override
+	public GroupHomePageData insertHomePage(HttpServletRequest request, Long userGroupId, GroupGallerySlider editData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			Long userId = Long.parseLong(profile.getId());
+			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
+				Long sliderId = null;
+
+				for (Translation translation : editData.getTranslations()) {
+					GroupGallerySlider gallerySliderEntity = new GroupGallerySlider();
+					gallerySliderEntity.setId(null);
+					gallerySliderEntity.setAuthorId(editData.getAuthorId());
+					gallerySliderEntity.setCustomDescripition(translation.getDescription());
+					gallerySliderEntity.setFileName(editData.getFileName());
+					gallerySliderEntity.setMoreLinks(editData.getMoreLinks());
+					gallerySliderEntity.setObservationId(editData.getObservationId());
+					gallerySliderEntity.setTitle(translation.getTitle());
+					gallerySliderEntity.setUgId(userGroupId);
+					gallerySliderEntity.setDisplayOrder(editData.getDisplayOrder());
+					gallerySliderEntity.setReadMoreText(translation.getReadMoreText());
+					gallerySliderEntity.setGallerySidebar(editData.getGallerySidebar());
+					gallerySliderEntity.setReadMoreUIType(editData.getReadMoreUIType());
+					gallerySliderEntity.setLanguageId(translation.getLanguageId());
+
+					if (sliderId != null) {
+						gallerySliderEntity.setSliderId(sliderId);
+					}
+
+					gallerySliderEntity = groupGallerySliderDao.save(gallerySliderEntity);
+
+					if (sliderId == null) {
+						sliderId = gallerySliderEntity.getId();
+						gallerySliderEntity.setSliderId(sliderId);
+						groupGallerySliderDao.update(gallerySliderEntity); // Update with its own sliderId
+					}
+				}
+
+				return getGroupHomePageData(userGroupId, defaultLanguageId);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
 	public GroupHomePageData editMiniHomePage(HttpServletRequest request, Long userGroupId, Long groupGalleryId,
 			MiniGroupGallerySlider editData) {
 		try {
@@ -2406,6 +2407,56 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 						gallerySliderEntity.setBgColor(editData.getBgColor());
 						gallerySliderEntity.setGalleryId(editData.getGalleryId());
 						miniGroupGallerySliderDao.save(gallerySliderEntity);
+					}
+				}
+
+				return getGroupHomePageData(userGroupId, defaultLanguageId);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+
+		return null;
+	}
+
+	@Override
+	public GroupHomePageData insertMiniHomePage(HttpServletRequest request, Long userGroupId,
+			MiniGroupGallerySlider editData) {
+		try {
+			CommonProfile profile = AuthUtil.getProfileFromRequest(request);
+			JSONArray roles = (JSONArray) profile.getAttribute("roles");
+			Long userId = Long.parseLong(profile.getId());
+			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
+			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
+				Long sliderId = null;
+				for (Translation translation : editData.getTranslations()) {
+					MiniGroupGallerySlider gallerySliderEntity = new MiniGroupGallerySlider();
+					gallerySliderEntity.setId(null);
+					gallerySliderEntity.setAuthorId(editData.getAuthorId());
+					gallerySliderEntity.setCustomDescripition(translation.getDescription());
+					gallerySliderEntity.setFileName(editData.getFileName());
+					gallerySliderEntity.setMoreLinks(editData.getMoreLinks());
+					gallerySliderEntity.setObservationId(editData.getObservationId());
+					gallerySliderEntity.setTitle(translation.getTitle());
+					gallerySliderEntity.setUgId(userGroupId);
+					gallerySliderEntity.setDisplayOrder(editData.getDisplayOrder());
+					gallerySliderEntity.setReadMoreText(translation.getReadMoreText());
+					gallerySliderEntity.setReadMoreUIType(editData.getReadMoreUIType());
+					gallerySliderEntity.setLanguageId(translation.getLanguageId());
+					gallerySliderEntity.setColor(editData.getColor());
+					gallerySliderEntity.setBgColor(editData.getBgColor());
+					gallerySliderEntity.setGalleryId(editData.getGalleryId());
+
+					if (sliderId != null) {
+						gallerySliderEntity.setSliderId(sliderId);
+					}
+
+					gallerySliderEntity = miniGroupGallerySliderDao.save(gallerySliderEntity);
+
+					if (sliderId == null) {
+						sliderId = gallerySliderEntity.getId();
+						gallerySliderEntity.setSliderId(sliderId);
+						miniGroupGallerySliderDao.update(gallerySliderEntity);
 					}
 				}
 
