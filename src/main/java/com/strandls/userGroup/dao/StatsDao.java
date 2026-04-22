@@ -44,7 +44,7 @@ public class StatsDao {
 			stats.setSpecies(Long.parseLong(speciesQuery.getSingleResult().toString()));
 			stats.setDiscussions(Long.parseLong(disQuery.getSingleResult().toString()));
 			stats.setActiveUser(Long.parseLong(actUserQuery.getSingleResult().toString()));
-			stats.setMaps(203L);
+			stats.setMaps(0L);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
