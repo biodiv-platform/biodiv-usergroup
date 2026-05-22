@@ -2526,14 +2526,27 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 
 	@Override
 	public Boolean enableEdit(HttpServletRequest request, Long userGroupId) {
-
 		CommonProfile profile = AuthUtil.getProfileFromRequest(request);
 		Long userId = Long.parseLong(profile.getId());
 		JSONArray roles = (JSONArray) profile.getAttribute("roles");
+
+		logger.debug("Checking enableEdit for UserId: {}, UserGroupId: {}, Roles: {}", userId, userGroupId, roles);
+
 		Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
+		logger.debug("Result for checkFounderRole (User: {}, Group: {}): {}", userId, userGroupId, isFounder);
+
 		Boolean isModerator = ugMemberService.checkModeratorRole(userId, userGroupId);
-		return (roles.contains(roleAdmin) || roles.contains(ROLE_PAGE_EDITOR) || Boolean.TRUE.equals(isFounder)
+		logger.debug("Result for checkModeratorRole (User: {}, Group: {}): {}", userId, userGroupId, isModerator);
+
+		boolean hasAdminRole = roles.contains(roleAdmin);
+		boolean hasEditorRole = roles.contains(ROLE_PAGE_EDITOR);
+
+		boolean finalResult = (hasAdminRole || hasEditorRole || Boolean.TRUE.equals(isFounder)
 				|| Boolean.TRUE.equals(isModerator));
+		logger.info("Final permission evaluation for UserId: {} on GroupId: {} is -> {}", userId, userGroupId,
+				finalResult);
+
+		return finalResult;
 	}
 
 	@Override
