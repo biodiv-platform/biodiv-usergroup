@@ -293,8 +293,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	public List<UserGroupIbp> fetchByUserGroupDetails(List<Long> userGroupMember) {
 		List<UserGroupIbp> userGroupList = new ArrayList<UserGroupIbp>();
 		try {
+			List<UserGroup> userGroups = userGroupDao.findUgListByIds(userGroupMember);
+			Map<Long, UserGroup> userGroupById = userGroups.stream()
+					.collect(Collectors.toMap(UserGroup::getId, ug -> ug));
 			for (Long userGroupId : userGroupMember) {
-				userGroupList.add(fetchByGroupIdIbp(userGroupId));
+				userGroupList.add(getUserGroupIbp(userGroupById.get(userGroupId)));
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());

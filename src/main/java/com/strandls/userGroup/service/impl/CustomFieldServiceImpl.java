@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.pac4j.core.profile.CommonProfile;
@@ -91,18 +92,46 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 		List<CustomFieldObservationData> result = new ArrayList<CustomFieldObservationData>();
 		List<UserGroupObservation> userGroupObservation = userGroupObvDao.findByObservationId(observationId);
 
+		List<Long> userGroupIds = userGroupObservation.stream().map(UserGroupObservation::getUserGroupId)
+				.collect(Collectors.toList());
+
+		// batched: every custom-field mapping across all of this observation's groups, in one query
+		List<UserGroupCustomFieldMapping> allMappings = ugCFMappingDao.findByUserGroupIds(userGroupIds);
+		Map<Long, List<UserGroupCustomFieldMapping>> mappingsByGroup = allMappings.stream()
+				.collect(Collectors.groupingBy(UserGroupCustomFieldMapping::getUserGroupId));
+
+		List<Long> customFieldIds = allMappings.stream().map(UserGroupCustomFieldMapping::getCustomFieldId).distinct()
+				.collect(Collectors.toList());
+
+		// batched: the CustomFields definitions for every mapped field, in one query
+		Map<Long, CustomFields> customFieldsById = cfsDao.findByIds(customFieldIds).stream()
+				.collect(Collectors.toMap(CustomFields::getId, cf -> cf));
+
+		// batched: this observation's saved values across every mapped field and group, in one query
+		List<ObservationCustomField> allObservationCFData = observationCFDao
+				.findByObservationIdCFIdsUGIds(observationId, customFieldIds, userGroupIds);
+		Map<String, List<ObservationCustomField>> observationCFByGroupAndField = allObservationCFData.stream()
+				.collect(Collectors.groupingBy(o -> o.getUserGroupId() + "_" + o.getCustomFieldId()));
+
+		// batched: every custom-field-value row referenced by the saved values above (needed for
+		// SINGLE CATEGORICAL / MULTIPLE CATEGORICAL / RANGE field types), in one query
+		List<Long> customFieldValueIds = allObservationCFData.stream().map(ObservationCustomField::getCustomFieldValueId)
+				.filter(Objects::nonNull).distinct().collect(Collectors.toList());
+		Map<Long, CustomFieldValues> customFieldValuesById = cfValueDao.findByIds(customFieldValueIds).stream()
+				.collect(Collectors.toMap(CustomFieldValues::getId, cfv -> cfv));
+
 		for (UserGroupObservation ugObservation : userGroupObservation) {
-			List<UserGroupCustomFieldMapping> ugCFMappingList = ugCFMappingDao
-					.findByUserGroupId(ugObservation.getUserGroupId());
-			if (!(ugCFMappingList.isEmpty())) {
+			List<UserGroupCustomFieldMapping> ugCFMappingList = mappingsByGroup.get(ugObservation.getUserGroupId());
+			if (ugCFMappingList != null && !(ugCFMappingList.isEmpty())) {
 
 				List<CustomFieldData> customFieldDataList = new ArrayList<CustomFieldData>();
 
 				for (UserGroupCustomFieldMapping ugCFMapping : ugCFMappingList) {
-					CustomFields customFields = cfsDao.findById(ugCFMapping.getCustomFieldId());
+					CustomFields customFields = customFieldsById.get(ugCFMapping.getCustomFieldId());
 
-					List<ObservationCustomField> observationCFData = observationCFDao.findByObservationIdUGidCFId(
-							observationId, customFields.getId(), ugCFMapping.getUserGroupId());
+					List<ObservationCustomField> observationCFData = observationCFByGroupAndField.getOrDefault(
+							ugCFMapping.getUserGroupId() + "_" + customFields.getId(),
+							new ArrayList<ObservationCustomField>());
 
 					CustomFieldValuesData valuesData = null;
 
@@ -122,15 +151,15 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 
 						} else if (customFields.getFieldType().equals("SINGLE CATEGORICAL")) {
 
-							CustomFieldValues singleCat = cfValueDao
-									.findById(observationCFData.get(0).getCustomFieldValueId());
+							CustomFieldValues singleCat = customFieldValuesById
+									.get(observationCFData.get(0).getCustomFieldValueId());
 
 							valuesData = new CustomFieldValuesData(null, singleCat, null, null, null);
 
 						} else if (customFields.getFieldType().equals("MULTIPLE CATEGORICAL")) {
 							List<CustomFieldValues> multipleCat = new ArrayList<CustomFieldValues>();
 							for (ObservationCustomField obvCF : observationCFData)
-								multipleCat.add(cfValueDao.findById(obvCF.getCustomFieldValueId()));
+								multipleCat.add(customFieldValuesById.get(obvCF.getCustomFieldValueId()));
 
 							valuesData = new CustomFieldValuesData(null, null, multipleCat, null, null);
 
@@ -140,7 +169,7 @@ public class CustomFieldServiceImpl implements CustomFieldServices {
 							String max = "";
 
 							for (ObservationCustomField obvCF : observationCFData) {
-								CustomFieldValues rangeValue = cfValueDao.findById(obvCF.getCustomFieldValueId());
+								CustomFieldValues rangeValue = customFieldValuesById.get(obvCF.getCustomFieldValueId());
 								if (customFields.getDataType().equalsIgnoreCase("String")) {
 									if (rangeValue.getValues().equalsIgnoreCase("min"))
 										min = obvCF.getValueString();

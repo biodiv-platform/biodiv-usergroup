@@ -1,6 +1,7 @@
 /** */
 package com.strandls.userGroup.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -54,6 +55,30 @@ public class ObservationCustomFieldDao extends AbstractDAO<ObservationCustomFiel
 			query.setParameter("id", observationId);
 			query.setParameter("cfId", customFieldId);
 			query.setParameter("ugId", userGroupId);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ObservationCustomField> findByObservationIdCFIdsUGIds(Long observationId, List<Long> customFieldIds,
+			List<Long> userGroupIds) {
+		if (customFieldIds == null || customFieldIds.isEmpty() || userGroupIds == null || userGroupIds.isEmpty())
+			return new ArrayList<ObservationCustomField>();
+
+		Session session = sessionFactory.openSession();
+		String qry = "from ObservationCustomField where observationId = :id and customFieldId IN (:cfIds) and userGroupId IN (:ugIds)";
+		List<ObservationCustomField> result = null;
+		try {
+			Query<ObservationCustomField> query = session.createQuery(qry);
+			query.setParameter("id", observationId);
+			query.setParameter("cfIds", customFieldIds);
+			query.setParameter("ugIds", userGroupIds);
 			result = query.getResultList();
 
 		} catch (Exception e) {
