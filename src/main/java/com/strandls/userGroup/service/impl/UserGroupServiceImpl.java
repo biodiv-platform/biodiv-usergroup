@@ -276,9 +276,9 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 			List<UserGroupObservation> userGroupObv = userGroupObvDao.findByObservationId(id);
 			List<UserGroupIbp> userGroup = new ArrayList<UserGroupIbp>();
 			if (userGroupObv != null && !userGroupObv.isEmpty()) {
-				for (UserGroupObservation ugObv : userGroupObv) {
-					userGroup.add(fetchByGroupIdIbp(ugObv.getUserGroupId()));
-				}
+				List<Long> userGroupIds = userGroupObv.stream().map(UserGroupObservation::getUserGroupId)
+						.collect(Collectors.toList());
+				userGroup = fetchByUserGroupDetails(userGroupIds);
 			}
 			if (!userGroup.isEmpty())
 				return userGroup;
