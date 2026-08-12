@@ -2,6 +2,7 @@ package com.strandls.userGroup.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
@@ -42,9 +43,9 @@ public class UserGroupDatatableServiceImpl implements UserGroupDatatableService 
 			List<UserGroupDataTable> userGroupDataTable = userGroupDataTableDao.findByDataTableId(id);
 			List<UserGroupIbp> userGroup = new ArrayList<UserGroupIbp>();
 			if (userGroupDataTable != null && !userGroupDataTable.isEmpty()) {
-				for (UserGroupDataTable ugObv : userGroupDataTable) {
-					userGroup.add(userGroupService.fetchByGroupIdIbp(ugObv.getUserGroupId()));
-				}
+				List<Long> userGroupIds = userGroupDataTable.stream().map(UserGroupDataTable::getUserGroupId)
+						.collect(Collectors.toList());
+				userGroup = userGroupService.fetchByUserGroupDetails(userGroupIds);
 			}
 			if (!userGroup.isEmpty())
 				return userGroup;

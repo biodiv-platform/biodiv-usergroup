@@ -61,4 +61,25 @@ public class CustomFieldValuesDao extends AbstractDAO<CustomFieldValues, Long> {
 		}
 		return result;
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<CustomFieldValues> findByIds(List<Long> ids) {
+		if (ids == null || ids.isEmpty())
+			return new ArrayList<CustomFieldValues>();
+
+		Session session = sessionFactory.openSession();
+		List<CustomFieldValues> result = new ArrayList<CustomFieldValues>();
+		String qry = "from CustomFieldValues where id IN (:ids)";
+		try {
+			Query<CustomFieldValues> query = session.createQuery(qry);
+			query.setParameter("ids", ids);
+			result = query.getResultList();
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
 }
