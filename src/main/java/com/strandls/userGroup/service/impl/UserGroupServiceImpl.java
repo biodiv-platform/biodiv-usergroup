@@ -1468,43 +1468,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 	@Override
 	public UserGroupEditData getUGEditData(HttpServletRequest request, CommonProfile profile, Long userGroupId) {
 		try {
-			if (profile == null) {
-				logger.error("getUGEditData: profile is NULL for ugId={}", userGroupId);
-				return null;
-			}
-
 			JSONArray roles = (JSONArray) profile.getAttribute("roles");
-			if (roles == null) {
-				logger.error("getUGEditData: roles attribute is NULL for userId={}, ugId={}", profile.getId(),
-						userGroupId);
-				return null;
-			}
-
 			Long userId = Long.parseLong(profile.getId());
-
-			Boolean isFounder;
-			try {
-				isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
-			} catch (Exception e) {
-				logger.error("getUGEditData: checkFounderRole threw exception for userId={}, ugId={}: {}", userId,
-						userGroupId, e.getMessage(), e);
-				return null;
-			}
-
-			logger.info("getUGEditData: userId={}, ugId={}, roles={}, isFounder={}", userId, userGroupId, roles,
-					isFounder);
-
+			Boolean isFounder = ugMemberService.checkFounderRole(userId, userGroupId);
 			if (roles.contains(roleAdmin) || Boolean.TRUE.equals(isFounder)) {
-
 				List<UserGroup> userGroupTranslations = userGroupDao.findByGroupId(userGroupId);
-
-				if (userGroupTranslations == null || userGroupTranslations.isEmpty()) {
-					logger.error(
-							"getUGEditData: NO UserGroup translation rows found for ugId={} (userId={} was authorized, but data is missing)",
-							userGroupId, userId);
-					return null;
-				}
-
 				List<Map<String, Object>> translation = new ArrayList<>();
 				for (UserGroup userGroup : userGroupTranslations) {
 					Map<String, Object> nameMap = new HashMap<>();
@@ -1514,44 +1482,31 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 					nameMap.put("id", userGroup.getId());
 					translation.add(nameMap);
 				}
-
-				List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroupId);
-				List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroupId);
-
-				List<Long> speciesGroupId = new ArrayList<>();
-				List<Long> habitatId = new ArrayList<>();
-
-				for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
-					speciesGroupId.add(ugSpeciesGroup.getSpeciesGroupId());
-				}
-				for (UserGroupHabitat ugHabitat : ugHabitats) {
-					habitatId.add(ugHabitat.getHabitatId());
-				}
-
-				String wktData = null;
-				if (userGroupTranslations.get(0).getSpatialCoverage() != null) {
-					try {
+				if (userGroupTranslations != null && !userGroupTranslations.isEmpty()) {
+					List<UserGroupSpeciesGroup> ugSpeciesGroups = ugSGroupDao.findByUserGroupId(userGroupId);
+					List<UserGroupHabitat> ugHabitats = ugHabitatDao.findByUserGroupId(userGroupId);
+					List<Long> speciesGroupId = new ArrayList<Long>();
+					List<Long> habitatId = new ArrayList<Long>();
+					for (UserGroupSpeciesGroup ugSpeciesGroup : ugSpeciesGroups) {
+						speciesGroupId.add(ugSpeciesGroup.getSpeciesGroupId());
+					}
+					for (UserGroupHabitat ugHabitat : ugHabitats) {
+						habitatId.add(ugHabitat.getHabitatId());
+					}
+					String wktData = null;
+					if (userGroupTranslations.get(0).getSpatialCoverage() != null) {
 						WKTWriter writer = new WKTWriter();
 						wktData = writer.write(userGroupTranslations.get(0).getSpatialCoverage());
-					} catch (Exception e) {
-						logger.error("getUGEditData: WKTWriter failed for ugId={}: {}", userGroupId, e.getMessage(), e);
-						// Decide: fail hard, or continue with wktData = null.
-						// Continuing here so a bad geometry doesn't block the whole edit page.
 					}
+					UserGroupEditData ugEditData = new UserGroupEditData(
+							userGroupTranslations.get(0).getAllowUserToJoin(),
+							userGroupTranslations.get(0).getHomePage(), userGroupTranslations.get(0).getIcon(),
+							userGroupTranslations.get(0).getDomianName(), translation,
+							userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
+							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(), wktData);
+					return ugEditData;
+
 				}
-
-				UserGroupEditData ugEditData = new UserGroupEditData(userGroupTranslations.get(0).getAllowUserToJoin(),
-						userGroupTranslations.get(0).getHomePage(), userGroupTranslations.get(0).getIcon(),
-						userGroupTranslations.get(0).getDomianName(), translation,
-						userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
-						speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(), wktData);
-
-				logger.info("getUGEditData: SUCCESS for ugId={}", userGroupId);
-				return ugEditData;
-
-			} else {
-				logger.error("getUGEditData: user {} is NOT admin and NOT founder for ugId={} - roles={}", userId,
-						userGroupId, roles);
 			}
 
 		} catch (Exception e) {
