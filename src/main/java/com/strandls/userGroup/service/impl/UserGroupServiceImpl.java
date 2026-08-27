@@ -1505,12 +1505,11 @@ public class UserGroupServiceImpl implements UserGroupSerivce {
 							userGroupTranslations.get(0).getTheme(), userGroupTranslations.get(0).getLanguageId(),
 							speciesGroupId, habitatId, userGroupTranslations.get(0).getWebAddress(), wktData);
 					return ugEditData;
-
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error("getUGEditData: UNEXPECTED EXCEPTION for ugId={}: {}", userGroupId, e.getMessage(), e);
+			logger.error(e.getMessage());
 		}
 
 		return null;
