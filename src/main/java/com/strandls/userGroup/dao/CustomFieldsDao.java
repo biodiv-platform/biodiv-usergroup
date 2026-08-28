@@ -1,8 +1,12 @@
 /** */
 package com.strandls.userGroup.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +36,26 @@ public class CustomFieldsDao extends AbstractDAO<CustomFields, Long> {
 		CustomFields result = null;
 		try {
 			result = session.get(CustomFields.class, id);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<CustomFields> findByIds(List<Long> ids) {
+		if (ids == null || ids.isEmpty())
+			return new ArrayList<CustomFields>();
+
+		Session session = sessionFactory.openSession();
+		List<CustomFields> result = null;
+		String qry = "from CustomFields where id IN (:ids)";
+		try {
+			Query<CustomFields> query = session.createQuery(qry);
+			query.setParameter("ids", ids);
+			result = query.getResultList();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {

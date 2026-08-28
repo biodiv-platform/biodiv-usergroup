@@ -1,6 +1,7 @@
 /** */
 package com.strandls.userGroup.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -70,6 +71,26 @@ public class UserGroupCustomFieldMappingDao extends AbstractDAO<UserGroupCustomF
 			query.setParameter("id", userGroupId);
 			query.setParameter("cfId", customFieldId);
 			result = query.getSingleResult();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		} finally {
+			session.close();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<UserGroupCustomFieldMapping> findByUserGroupIds(List<Long> userGroupIds) {
+		if (userGroupIds == null || userGroupIds.isEmpty())
+			return new ArrayList<UserGroupCustomFieldMapping>();
+
+		Session session = sessionFactory.openSession();
+		List<UserGroupCustomFieldMapping> result = null;
+		String qry = "from UserGroupCustomFieldMapping where userGroupId IN (:ids)";
+		try {
+			Query<UserGroupCustomFieldMapping> query = session.createQuery(qry);
+			query.setParameter("ids", userGroupIds);
+			result = query.getResultList();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
