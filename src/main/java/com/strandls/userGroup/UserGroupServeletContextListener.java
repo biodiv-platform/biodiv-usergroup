@@ -32,10 +32,10 @@ import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Connection;
 import com.strandls.activity.controller.ActivityServiceApi;
 import com.strandls.esmodule.controllers.EsServicesApi;
-import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.user.controller.UserServiceApi;
 import com.strandls.userGroup.controller.UserGroupControllerModule;
 import com.strandls.userGroup.dao.UserGroupDaoModule;
@@ -70,16 +70,19 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 				configuration = configuration.configure();
 				SessionFactory sessionFactory = configuration.buildSessionFactory();
 
-				// Rabbit MQ initialization
-				RabbitMqConnection rabbitConnetion = new RabbitMqConnection();
-				Channel channel = null;
+//				Rabbit MQ initialisation: one long-lived Connection for the app;
+//				channels are handed out per-thread via RabbitChannelProvider instead
+//				of a single Channel being shared/injected everywhere.
+				RabbitMqConnection rabbitMqConnection = new RabbitMqConnection();
+				Connection rabbitConnection = null;
 				try {
-					channel = rabbitConnetion.setRabbitMQConnetion();
+					rabbitConnection = rabbitMqConnection.connect();
 				} catch (Exception e) {
-					logger.error(e.getMessage());
+					logger.error("Failed to establish RabbitMQ connection", e);
 				}
 
-				bind(Channel.class).toInstance(channel);
+				bind(Connection.class).toInstance(rabbitConnection);
+				bind(RabbitChannelProvider.class).in(Scopes.SINGLETON);
 
 				Map<String, String> props = new HashMap<String, String>();
 				props.put("jakarta.ws.rs.Application", ApplicationConfig.class.getName());
@@ -88,8 +91,6 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 
 				ObjectMapper objectMapper = new ObjectMapper();
 				bind(ObjectMapper.class).toInstance(objectMapper);
-				RabbitMQProducer producer = new RabbitMQProducer(channel);
-				bind(RabbitMQProducer.class).toInstance(producer);
 
 				bind(SessionFactory.class).toInstance(sessionFactory);
 				bind(ActivityServiceApi.class).in(Scopes.SINGLETON);
@@ -160,11 +161,15 @@ public class UserGroupServeletContextListener extends GuiceServletContextListene
 		SessionFactory sessionFactory = injector.getInstance(SessionFactory.class);
 		sessionFactory.close();
 
-		Channel channel = injector.getInstance(Channel.class);
-		try {
-			channel.getConnection().close();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
+		Connection rabbitConnection = injector.getInstance(Connection.class);
+		if (rabbitConnection != null) {
+			// abort() (unlike close()) forces the connection down immediately and
+			// cancels any in-flight/scheduled automatic-recovery attempt, and never
+			// throws. A graceful close() was observed leaving the client's own
+			// background recovery thread alive past contextDestroyed(), which then
+			// crashed trying to use this webapp's classloader after Tomcat had
+			// already stopped it (surfacing as a redeploy/reload memory leak).
+			rabbitConnection.abort(AMQP.REPLY_SUCCESS, "context destroyed", 5000);
 		}
 
 		super.contextDestroyed(servletContextEvent);
