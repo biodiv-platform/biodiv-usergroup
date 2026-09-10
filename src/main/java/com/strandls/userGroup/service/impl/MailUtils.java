@@ -14,10 +14,12 @@ import com.strandls.mail_utility.model.EnumModel.INFO_FIELDS;
 import com.strandls.mail_utility.model.EnumModel.INVITATION_DATA;
 import com.strandls.mail_utility.model.EnumModel.MAIL_TYPE;
 import com.strandls.mail_utility.model.EnumModel.REQUEST_DATA;
+import com.rabbitmq.client.Channel;
 import com.strandls.mail_utility.producer.RabbitMQProducer;
 import com.strandls.mail_utility.util.JsonUtil;
 import com.strandls.user.pojo.User;
 import com.strandls.user.pojo.UserIbp;
+import com.strandls.userGroup.RabbitChannelProvider;
 import com.strandls.userGroup.RabbitMqConnection;
 import com.strandls.userGroup.pojo.InvitaionMailData;
 import com.strandls.userGroup.pojo.UserGroupIbp;
@@ -32,7 +34,7 @@ public class MailUtils {
 	private final Logger logger = LoggerFactory.getLogger(MailUtils.class);
 
 	@Inject
-	private RabbitMQProducer producer;
+	private RabbitChannelProvider channelProvider;
 
 	public void sendInvites(List<InvitaionMailData> mailDataList, String serverUrl) {
 
@@ -58,6 +60,8 @@ public class MailUtils {
 					mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.SEND_INVITE.getAction());
 					mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 
+					Channel channel = channelProvider.get();
+					RabbitMQProducer producer = new RabbitMQProducer(channel);
 					producer.produceMail(RabbitMqConnection.EXCHANGE_BIODIV, RabbitMqConnection.MAILING_ROUTINGKEY,
 							null, JsonUtil.mapToJSON(mData));
 				}
@@ -90,6 +94,8 @@ public class MailUtils {
 					mData.put(INFO_FIELDS.TYPE.getAction(), MAIL_TYPE.SEND_REQUEST.getAction());
 					mData.put(INFO_FIELDS.RECIPIENTS.getAction(), Arrays.asList(data));
 
+					Channel channel = channelProvider.get();
+					RabbitMQProducer producer = new RabbitMQProducer(channel);
 					producer.produceMail(RabbitMqConnection.EXCHANGE_BIODIV, RabbitMqConnection.MAILING_ROUTINGKEY,
 							null, JsonUtil.mapToJSON(mData));
 				}
